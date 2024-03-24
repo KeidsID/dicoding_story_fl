@@ -2,8 +2,12 @@ part of '../container.dart';
 
 void _registerServices() {
   // externals
-  _locator.registerSingleton<ChopperClient>(baseClient);
+  _locator
+    ..registerSingleton<ChopperClient>(baseClient)
+    ..registerSingletonAsync(() => SharedPreferences.getInstance());
 
   // internals
-  _locator.registerLazySingleton<AuthRepo>(() => AuthRepoImpl(get()));
+  _locator.registerLazySingleton<AuthRepo>(() {
+    return AuthRepoImpl(client: get(), sharedPreferences: get());
+  });
 }

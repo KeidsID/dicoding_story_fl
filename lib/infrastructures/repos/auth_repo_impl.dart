@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:chopper/chopper.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:dicoding_story_fl/core/entities.dart';
 import 'package:dicoding_story_fl/core/repos.dart';
@@ -9,9 +10,14 @@ import 'package:dicoding_story_fl/infrastructures/api/responses.dart';
 part 'auth_repo_impl.chopper.dart';
 
 class AuthRepoImpl implements AuthRepo {
-  const AuthRepoImpl(this._client);
+  const AuthRepoImpl({
+    required ChopperClient client,
+    required SharedPreferences sharedPreferences,
+  })  : _client = client,
+        _cache = sharedPreferences;
 
   final ChopperClient _client;
+  final SharedPreferences _cache;
 
   _AuthService get _auth => _AuthService.create(_client);
 
@@ -78,6 +84,24 @@ class AuthRepoImpl implements AuthRepo {
       throw SimpleException(error: err, trace: trace);
     }
   }
+
+  // --------------------------------------------------------------------------
+  // CACHE
+  // --------------------------------------------------------------------------
+
+  static const _loginCacheKey = 'login_session';
+
+  @override
+  Future<UserCreds?> getLoginSession() async {
+    await _cache.reload();
+
+    final rawCreds = _cache.getString(_loginCacheKey);
+
+    return rawCreds == null ? null : UserCreds.fromCache(jsonDecode(rawCreds));
+  }
+
+  @override
+  Future<void> logout() => _cache.remove(_loginCacheKey);
 }
 
 @chopperApi

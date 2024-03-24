@@ -8,6 +8,6 @@ abstract class AuthRepo {
   });
 
   Future<UserCreds> login({required String email, required String password});
-  Future<UserCreds> getLoginSession();
+  Future<UserCreds?> getLoginSession();
   Future<void> logout();
 }

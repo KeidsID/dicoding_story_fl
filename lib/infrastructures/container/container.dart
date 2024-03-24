@@ -1,5 +1,6 @@
 import 'package:chopper/chopper.dart';
 import 'package:get_it/get_it.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:dicoding_story_fl/core/repos.dart';
 import 'package:dicoding_story_fl/core/use_cases.dart';
