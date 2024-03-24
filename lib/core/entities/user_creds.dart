@@ -13,4 +13,9 @@ class UserCreds {
 
   /// Token for fetching stories from API.
   final String token;
+
+  factory UserCreds.fromCache(Map<String, dynamic> map) =>
+      UserCreds(name: map['name'], token: map['token']);
+
+  Map<String, dynamic> toCache() => {'name': name, 'token': token};
 }
