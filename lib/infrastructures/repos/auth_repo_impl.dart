@@ -2,8 +2,8 @@ import 'dart:convert';
 
 import 'package:chopper/chopper.dart';
 
-import 'package:dicoding_story_fl/domain/entities.dart';
-import 'package:dicoding_story_fl/domain/repos.dart';
+import 'package:dicoding_story_fl/core/entities.dart';
+import 'package:dicoding_story_fl/core/repos.dart';
 import 'package:dicoding_story_fl/infrastructures/api/responses.dart';
 
 part 'auth_repo_impl.chopper.dart';
