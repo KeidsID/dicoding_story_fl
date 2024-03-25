@@ -1,6 +1,6 @@
 import '../entities.dart';
 
-abstract class AuthRepo {
+abstract interface class AuthRepo {
   Future<void> register({
     required String username,
     required String email,

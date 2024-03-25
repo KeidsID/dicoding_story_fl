@@ -64,6 +64,7 @@ class AuthRepoImpl implements AuthRepo {
       final resBody = LoginResponse.fromJson(rawResBody);
 
       final userCreds = UserCreds(
+        id: resBody.loginResult.userId,
         name: resBody.loginResult.name,
         token: resBody.loginResult.token,
       );
