@@ -1,10 +1,13 @@
 part of '../container.dart';
 
 void _registerUseCases() {
-  // auth
   _locator
+    // auth
     ..registerLazySingleton(() => LoginCase(get()))
     ..registerLazySingleton(() => RegisterCase(get()))
     ..registerLazySingleton(() => GetLoginSessionCase(get()))
-    ..registerLazySingleton(() => LogoutCase(get()));
+    ..registerLazySingleton(() => LogoutCase(get()))
+
+    // stories
+    ..registerLazySingleton(() => GetStoriesCase(get()));
 }

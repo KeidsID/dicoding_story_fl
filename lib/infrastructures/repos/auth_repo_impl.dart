@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:chopper/chopper.dart';
+import 'package:dicoding_story_fl/infrastructures/utils/on_error_response_mixin.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:dicoding_story_fl/core/entities.dart';
@@ -9,7 +10,7 @@ import 'package:dicoding_story_fl/infrastructures/api/responses.dart';
 
 part 'auth_repo_impl.chopper.dart';
 
-class AuthRepoImpl implements AuthRepo {
+class AuthRepoImpl with OnErrorResponseMixin implements AuthRepo {
   const AuthRepoImpl({
     required ChopperClient client,
     required SharedPreferences sharedPreferences,
@@ -19,28 +20,7 @@ class AuthRepoImpl implements AuthRepo {
   final ChopperClient _client;
   final SharedPreferences _cache;
 
-  _AuthService get _auth => _AuthService.create(_client);
-
-  Exception _onErrorResponse(Response<Map<String, dynamic>> res) {
-    try {
-      final error = res.error;
-
-      if (error != null) {
-        final errorBody =
-            CommonResponse.fromJson(error as Map<String, dynamic>);
-        return SimpleHttpException(
-          statusCode: res.statusCode,
-          message: errorBody.message,
-          error: errorBody,
-          trace: StackTrace.current,
-        );
-      }
-
-      return SimpleException(error: res, trace: StackTrace.current);
-    } catch (err, trace) {
-      return SimpleException(error: err, trace: trace);
-    }
-  }
+  AuthApiService get _authApi => AuthApiService.create(_client);
 
   @override
   Future<UserCreds> login({
@@ -49,25 +29,20 @@ class AuthRepoImpl implements AuthRepo {
   }) async {
     try {
       // check login session
-      final cachedUserCreds = await getLoginSession();
+      final UserCreds? cachedUserCreds = await getLoginSession();
 
       if (cachedUserCreds != null) return cachedUserCreds;
 
-      final rawRes = await _auth.postLogin(body: {
+      final rawRes = await _authApi.postLogin(body: {
         "email": email,
         "password": password,
       });
-      final rawResBody = rawRes.body;
+      final Map<String, dynamic>? rawResBody = rawRes.body;
 
-      if (rawResBody == null) throw _onErrorResponse(rawRes);
+      if (rawResBody == null) throw onErrorResponse(rawRes);
 
       final resBody = LoginResponse.fromJson(rawResBody);
-
-      final userCreds = UserCreds(
-        id: resBody.loginResult.userId,
-        name: resBody.loginResult.name,
-        token: resBody.loginResult.token,
-      );
+      final UserCreds userCreds = resBody.loginResult.toEntity();
 
       // cache login session
       _cache.setString(_loginCacheKey, jsonEncode(userCreds.toCache()));
@@ -87,13 +62,13 @@ class AuthRepoImpl implements AuthRepo {
     required String password,
   }) async {
     try {
-      final rawRes = await _auth.postRegister(body: {
+      final rawRes = await _authApi.postRegister(body: {
         "name": username,
         "email": email,
         "password": password,
       });
 
-      if (!rawRes.isSuccessful) throw _onErrorResponse(rawRes);
+      if (!rawRes.isSuccessful) throw onErrorResponse(rawRes);
     } on SimpleException {
       rethrow;
     } catch (err, trace) {
@@ -121,8 +96,9 @@ class AuthRepoImpl implements AuthRepo {
 }
 
 @chopperApi
-abstract class _AuthService extends ChopperService {
-  static _AuthService create([ChopperClient? client]) => _$_AuthService(client);
+abstract class AuthApiService extends ChopperService {
+  static AuthApiService create([ChopperClient? client]) =>
+      _$AuthApiService(client);
 
   /// Valid [body] value:
   ///

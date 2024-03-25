@@ -1,39 +1,37 @@
-import 'package:dicoding_story_fl/infrastructures/api/responses.dart';
+import 'package:flutter/foundation.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-class LoginResponse extends CommonResponse {
-  const LoginResponse({
-    required super.error,
-    required super.message,
-    required this.loginResult,
-  });
+import 'package:dicoding_story_fl/core/entities.dart';
 
-  final LoginResult loginResult;
+part 'login_response.freezed.dart';
+part 'login_response.g.dart';
 
-  factory LoginResponse.fromJson(Map<String, dynamic> json) {
-    return LoginResponse(
-      error: json['error'],
-      message: json['message'],
-      loginResult: LoginResult.fromJson(json['loginResult']),
-    );
-  }
+@freezed
+class LoginResponse with _$LoginResponse {
+  const factory LoginResponse({
+    required bool error,
+    required String message,
+    required RawUserCreds loginResult,
+  }) = _LoginResponse;
+
+  factory LoginResponse.fromJson(Map<String, dynamic> json) =>
+      _$LoginResponseFromJson(json);
 }
 
-class LoginResult {
-  const LoginResult({
-    required this.userId,
-    required this.name,
-    required this.token,
-  });
+@freezed
+class RawUserCreds with _$RawUserCreds {
+  const factory RawUserCreds({
+    required String userId,
+    required String name,
+    required String token,
+  }) = _RawUserCreds;
 
-  final String userId;
-  final String name;
-  final String token;
+  factory RawUserCreds.fromJson(Map<String, dynamic> json) =>
+      _$RawUserCredsFromJson(json);
 
-  factory LoginResult.fromJson(Map<String, dynamic> json) {
-    return LoginResult(
-      userId: json['userId'],
-      name: json['name'],
-      token: json['token'],
-    );
+  const RawUserCreds._();
+
+  UserCreds toEntity() {
+    return UserCreds(id: userId, name: name, token: token);
   }
 }

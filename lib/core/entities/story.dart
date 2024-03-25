@@ -11,8 +11,8 @@ class Story extends Equatable {
     required this.description,
     required this.photoUrl,
     required this.createdAt,
-    required this.lat,
-    required this.lon,
+    this.lat,
+    this.lon,
   });
 
   /// Unique identifier.
