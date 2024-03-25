@@ -6,6 +6,7 @@ import 'package:dicoding_story_fl/core/repos.dart';
 import 'package:dicoding_story_fl/core/use_cases.dart';
 import 'package:dicoding_story_fl/infrastructures/api/base_client.dart';
 import 'package:dicoding_story_fl/infrastructures/repos.dart';
+import 'package:dicoding_story_fl/interfaces/ux.dart';
 
 part '_res/register_services.dart';
 part '_res/register_use_cases.dart';
@@ -22,4 +23,11 @@ Future<void> init() async {
   _registerUseCases();
 
   await _locator.allReady();
+
+  _locator.registerSingleton(AuthProvider(
+    registerCase: get(),
+    loginCase: get(),
+    logoutCase: get(),
+    getLoginSessionCase: get(),
+  ));
 }
