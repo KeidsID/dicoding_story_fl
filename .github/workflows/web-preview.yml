@@ -28,14 +28,44 @@ jobs:
         run: flutter pub get
 
       - name: ⚙️ Setup environment
+        run: dart run build_runner build -d
+
+      - name: 🏗️ Build web profile
         run: |
-          dart run build_runner build -d
+          flutter build web --profile --web-renderer canvaskit
 
-      - name: 🏗️ Build web
-        run: flutter build web --profile --web-renderer canvaskit
-
-      - name: 📝 Deploy preview
-        uses: amondnet/vercel-action@v25
+      - name: 📝 Upload build
+        uses: actions/upload-artifact@v2
         with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          working-directory: .
+          name: build-web
+          path: ./build/web
+
+  deploy:
+    needs: build
+    permissions:
+      contents: write
+      pull-requests: read
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📚 Git Checkout "web-preview" branch
+        uses: actions/checkout@v3
+        with:
+          ref: web-preview
+
+      - name: 📝 Download build
+        uses: actions/download-artifact@v2
+        with:
+          name: build-web
+          path: ./build
+
+      - name: 📚 Push build to "web-preview" branch
+        env:
+          PR_REF: https://github.com/KeidsID/dicoding_story_fl/pull/${{github.event.pull_request.number}}
+        run: |
+          git config --global user.email "keidscode@gmail.com"
+          git config --global user.name "KeidsID"
+          git add .
+          git commit -m "web build from v${{env.PR_REF}}"
+          git push origin web-preview
