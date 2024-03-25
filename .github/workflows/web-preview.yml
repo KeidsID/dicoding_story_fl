@@ -58,7 +58,7 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: build-web
-          path: ./build
+          path: ./
 
       - name: 📚 Push build to "web-preview" branch
         env:
