@@ -11,6 +11,7 @@ class LoginCase {
   final AuthRepo _authRepo;
 
   /// Logging in user.
-  Future<UserCreds> execute({required String email, required String password}) =>
+  Future<UserCreds> execute(
+          {required String email, required String password}) =>
       _authRepo.login(email: email, password: password);
 }

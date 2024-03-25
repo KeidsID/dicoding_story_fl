@@ -23,6 +23,9 @@ jobs:
       - name: 📦 Get dependencies
         run: flutter pub get
 
+      - name: ⚙️ Setup environment
+        run: dart run build_runner build -d
+
       - name: 🏗️ Build web release
         run: |
           flutter build web --release --base-href --web-renderer canvaskit
