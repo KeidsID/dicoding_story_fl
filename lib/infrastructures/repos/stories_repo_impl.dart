@@ -15,13 +15,15 @@ class StoriesRepoImpl with OnErrorResponseMixin implements StoriesRepo {
   StoriesApiService get _storiesApi => StoriesApiService.create(_client);
 
   @override
-  Future<List<Story>> fetchStories({
+  Future<List<Story>> fetchStories(
+    UserCreds userCredentials, {
     int page = 1,
     int size = 10,
     bool? hasCordinate,
   }) async {
     try {
       final rawRes = await _storiesApi.getStories(
+        authorization: 'Bearer ${userCredentials.token}',
         page: page,
         size: size,
         hasCordinate: hasCordinate == null ? null : (hasCordinate ? 1 : 0),
@@ -46,6 +48,10 @@ abstract class StoriesApiService extends ChopperService {
   static StoriesApiService create([ChopperClient? client]) =>
       _$StoriesApiService(client);
 
+  /// Headers:
+  ///
+  /// - [authorization], `Bearer <token>` format.
+  ///
   /// Query Params:
   ///
   /// - [page], page number. Valid value is greater than `0`.
@@ -54,6 +60,7 @@ abstract class StoriesApiService extends ChopperService {
   ///   value are `1` for true and `0` for false, default is `0`.
   @Get(path: '/stories')
   Future<Response<Map<String, dynamic>>> getStories({
+    @Header('Authorization') required String authorization,
     @query int page = 1,
     @query int size = 10,
     @Query('location') int? hasCordinate,
