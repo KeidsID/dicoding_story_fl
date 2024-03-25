@@ -16,7 +16,7 @@ final _locator = GetIt.instance;
 /// Get dependency from container.
 T get<T extends Object>() => _locator();
 
-/// Register dependecies from `lib/infrastructures/container/_res/`.
+/// Register dependecies from `lib/container/_res/`.
 Future<void> init() async {
   _registerServices();
   _registerUseCases();

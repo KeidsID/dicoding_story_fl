@@ -3,7 +3,7 @@
 /// Call [init] before using [get].
 ///
 /// ```dart
-/// import 'package:dicoding_story_fl/infrastructures/container.dart' as container;
+/// import 'package:dicoding_story_fl/container.dart' as container;
 ///
 /// void main() async {
 ///   await container.init();

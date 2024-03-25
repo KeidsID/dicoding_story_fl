@@ -14,6 +14,11 @@ class SimpleException implements Exception {
 
   /// Stack trace of the [error].
   final StackTrace? trace;
+
+  @override
+  String toString() {
+    return 'SimpleException(name: $name, message: $message, error: $error)';
+  }
 }
 
 class SimpleHttpException extends SimpleException {

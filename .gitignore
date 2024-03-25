@@ -1,5 +1,6 @@
 # Generated files
 *.chopper.dart
+*.g.dart
 
 # Miscellaneous
 *.class

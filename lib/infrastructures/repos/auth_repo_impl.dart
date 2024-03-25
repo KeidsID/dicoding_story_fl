@@ -21,12 +21,13 @@ class AuthRepoImpl implements AuthRepo {
 
   _AuthService get _auth => _AuthService.create(_client);
 
-  Exception _onErrorResponse(Response<String> res) {
+  Exception _onErrorResponse(Response<Map<String, dynamic>> res) {
     try {
       final error = res.error;
 
       if (error != null) {
-        final errorBody = CommonResponse.fromJson(jsonDecode(error as String));
+        final errorBody =
+            CommonResponse.fromJson(error as Map<String, dynamic>);
         return SimpleHttpException(
           statusCode: res.statusCode,
           message: errorBody.message,
@@ -47,6 +48,11 @@ class AuthRepoImpl implements AuthRepo {
     required String password,
   }) async {
     try {
+      // check login session
+      final cachedUserCreds = await getLoginSession();
+
+      if (cachedUserCreds != null) return cachedUserCreds;
+
       final rawRes = await _auth.postLogin(body: {
         "email": email,
         "password": password,
@@ -55,12 +61,19 @@ class AuthRepoImpl implements AuthRepo {
 
       if (rawResBody == null) throw _onErrorResponse(rawRes);
 
-      final resBody = LoginResponse.fromJson(jsonDecode(rawResBody));
+      final resBody = LoginResponse.fromJson(rawResBody);
 
-      return UserCreds(
+      final userCreds = UserCreds(
         name: resBody.loginResult.name,
         token: resBody.loginResult.token,
       );
+
+      // cache login session
+      _cache.setString(_loginCacheKey, jsonEncode(userCreds.toCache()));
+
+      return userCreds;
+    } on SimpleException {
+      rethrow;
     } catch (err, trace) {
       throw SimpleException(error: err, trace: trace);
     }
@@ -80,6 +93,8 @@ class AuthRepoImpl implements AuthRepo {
       });
 
       if (!rawRes.isSuccessful) throw _onErrorResponse(rawRes);
+    } on SimpleException {
+      rethrow;
     } catch (err, trace) {
       throw SimpleException(error: err, trace: trace);
     }
@@ -108,7 +123,8 @@ class AuthRepoImpl implements AuthRepo {
 abstract class _AuthService extends ChopperService {
   static _AuthService create([ChopperClient? client]) => _$_AuthService(client);
 
-  /// Body:
+  /// Valid [body] value: 
+  /// 
   /// ```json
   /// {
   ///   "name": "String",
@@ -117,11 +133,12 @@ abstract class _AuthService extends ChopperService {
   /// }
   /// ```
   @Post(path: '/register')
-  Future<Response<String>> postRegister({
+  Future<Response<Map<String, dynamic>>> postRegister({
     @body required Map<String, dynamic> body,
   });
 
-  /// Body:
+  /// Valid [body] value:
+  /// 
   /// ```json
   /// {
   ///   "email": "String",
@@ -129,7 +146,7 @@ abstract class _AuthService extends ChopperService {
   /// }
   /// ```
   @Post(path: '/login')
-  Future<Response<String>> postLogin({
+  Future<Response<Map<String, dynamic>>> postLogin({
     @body required Map<String, dynamic> body,
   });
 }

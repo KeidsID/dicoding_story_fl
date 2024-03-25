@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-void main() {
+import 'container.dart' as container;
+import 'interfaces/ui.dart';
+import 'interfaces/ux.dart';
+
+void main() async {
+  await container.init();
+
   runApp(const MainApp());
 }
 
@@ -9,11 +16,15 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: Text('Hello World!'),
-        ),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<AuthProvider>.value(value: container.get()),
+      ],
+      child: MaterialApp.router(
+        routerConfig: router,
+        debugShowCheckedModeBanner: false,
+        theme: AppThemes.light,
+        darkTheme: AppThemes.dark,
       ),
     );
   }
