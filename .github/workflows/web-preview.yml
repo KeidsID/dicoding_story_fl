@@ -1,0 +1,41 @@
+name: Web Preview
+
+on:
+  pull_request:
+    branches: [main]
+    types: [review_requested]
+    paths-ignore:
+      - "**/*.md"
+      - "**/*.yaml"
+      - "**/*.yml"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📚 Git Checkout
+        uses: actions/checkout@v3
+
+      - name: 🐦 Setup Flutter SDK v3.10.x
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.10.x
+          channel: stable
+          cache: true
+
+      - name: 📦 Get dependencies
+        run: flutter pub get
+
+      - name: ⚙️ Setup environment
+        run: |
+          dart run build_runner build -d
+
+      - name: 🏗️ Build web
+        run: flutter build web --profile --web-renderer canvaskit
+
+      - name: 📝 Deploy preview
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          working-directory: .

@@ -123,8 +123,8 @@ class AuthRepoImpl implements AuthRepo {
 abstract class _AuthService extends ChopperService {
   static _AuthService create([ChopperClient? client]) => _$_AuthService(client);
 
-  /// Valid [body] value: 
-  /// 
+  /// Valid [body] value:
+  ///
   /// ```json
   /// {
   ///   "name": "String",
@@ -138,7 +138,7 @@ abstract class _AuthService extends ChopperService {
   });
 
   /// Valid [body] value:
-  /// 
+  ///
   /// ```json
   /// {
   ///   "email": "String",
