@@ -68,5 +68,5 @@ jobs:
           git config --global user.email "keidscode@gmail.com"
           git config --global user.name "KeidsID"
           git add .
-          git commit -m "web release build v${{env.BUILD_VER}}"
+          git commit -m "web release build ${{env.BUILD_VER}}"
           git push origin web-release
