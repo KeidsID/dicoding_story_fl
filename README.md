@@ -13,7 +13,7 @@ Story API: https://story-api.dicoding.dev/v1/
 ### Mandatory
 
 - [x] Auth Pages.
-- [ ] Story Pages.
+- [ ] Stories Page.
 - [ ] Add Story Page.
 - [ ] Advanced Navigation.
 

@@ -55,15 +55,9 @@ jobs:
           name: build-web
           path: ./
 
-      - name: ⚙️ Setup tag name
-        id: setup_tag
-        if: startsWith(github.ref, 'refs/tags/')
-        run: |
-          echo "TAG_NAME={TAG_NAME}" >> "${GITHUB_OUTPUT}"
-
-      - name: 📚 Push build to web-release branch
+      - name: 📚 Push build to "web-release" branch
         env:
-          BUILD_VER: ${{steps.setup_tag.outputs.TAG_NAME}}
+          BUILD_VER: ${{github.ref_name}}
         run: |
           git config --global user.email "keidscode@gmail.com"
           git config --global user.name "KeidsID"
