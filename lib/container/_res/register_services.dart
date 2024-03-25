@@ -7,7 +7,9 @@ void _registerServices() {
     ..registerSingletonAsync(() => SharedPreferences.getInstance());
 
   // internals
-  _locator.registerLazySingleton<AuthRepo>(() {
-    return AuthRepoImpl(client: get(), sharedPreferences: get());
-  });
+  _locator
+    ..registerLazySingleton<AuthRepo>(() {
+      return AuthRepoImpl(client: get(), sharedPreferences: get());
+    })
+    ..registerLazySingleton<StoriesRepo>(() => StoriesRepoImpl(get()));
 }

@@ -1,14 +1,16 @@
-class CommonResponse {
-  const CommonResponse({
-    required this.error,
-    required this.message,
-  });
+import 'package:flutter/foundation.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-  final bool error;
-  final String message;
+part 'common_response.freezed.dart';
+part 'common_response.g.dart';
 
-  factory CommonResponse.fromJson(Map<String, dynamic> json) => CommonResponse(
-        error: json["error"],
-        message: json["message"],
-      );
+@freezed
+class CommonResponse with _$CommonResponse {
+  const factory CommonResponse({
+    required bool error,
+    required String message,
+  }) = _CommonResponse;
+
+  factory CommonResponse.fromJson(Map<String, dynamic> json) =>
+      _$CommonResponseFromJson(json);
 }

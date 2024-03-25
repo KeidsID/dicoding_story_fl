@@ -12,11 +12,15 @@ class GetStoriesCase {
 
   /// Fetch stories from server.
   ///
-  /// - [page], page number. Default is `1`.
-  /// - [size], stories count for each page. Default is `10`.
+  /// - [page], page number. Must be greater than `0`.
+  /// - [size], stories count for each page. Must be greater than `0`.
   /// - [hasCordinate], include location coordinate on the [Story]. Default is
   ///   `false`.
-  Future<List<Story>> execute({int? page, int? size, bool? hasCordinate}) =>
+  Future<List<Story>> execute({
+    int page = 1,
+    int size = 10,
+    bool? hasCordinate,
+  }) =>
       _storiesRepo.fetchStories(
         page: page,
         size: size,
