@@ -59,7 +59,7 @@ jobs:
         id: setup_tag
         if: startsWith(github.ref, 'refs/tags/')
         run: |
-          echo "TAG_NAME=deploy-{TAG_NAME}" >> "${GITHUB_OUTPUT}"
+          echo "TAG_NAME={TAG_NAME}" >> "${GITHUB_OUTPUT}"
 
       - name: 📚 Push build to web-release branch
         env:
