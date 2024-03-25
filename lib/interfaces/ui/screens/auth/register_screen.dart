@@ -82,7 +82,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       hintText: 'John Doe from Dicoding',
                     ),
                   ),
-                  EmailTextField(controller: emailController),
+                  EmailTextField(
+                    controller: emailController,
+                    textInputAction: TextInputAction.next,
+                  ),
                   PasswordTextField(
                     controller: passwordController,
                     onSubmitted: (value) => _doRegister(),

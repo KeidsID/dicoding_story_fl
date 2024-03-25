@@ -72,7 +72,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   const SizedBox(height: 16.0),
 
                   // Inputs
-                  EmailTextField(controller: emailController),
+                  EmailTextField(
+                    controller: emailController,
+                    textInputAction: TextInputAction.next,
+                  ),
                   PasswordTextField(
                     controller: passwordController,
                     onSubmitted: (value) => _doLogin(),
