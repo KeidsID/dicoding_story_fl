@@ -28,7 +28,7 @@ jobs:
 
       - name: 🏗️ Build web release
         run: |
-          flutter build web --release --base-href --web-renderer canvaskit
+          flutter build web --release --web-renderer canvaskit
 
       - name: 📝 Upload build
         uses: actions/upload-artifact@v2
@@ -44,6 +44,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: 📚 Git Checkout "web-release" branch
+        uses: actions/checkout@v3
+        with:
+          ref: web-release
+
       - name: 📝 Download build
         uses: actions/download-artifact@v2
         with:
@@ -56,9 +61,12 @@ jobs:
         run: |
           echo "TAG_NAME=deploy-{TAG_NAME}" >> "${GITHUB_OUTPUT}"
 
-      - name: 📚 Deploy to gh-pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./build
-          tag_name: ${{ steps.setup_tag.outputs.TAG_NAME }}
+      - name: 📚 Push build to web-release branch
+        env:
+          BUILD_VER: ${{steps.setup_tag.outputs.TAG_NAME}}
+        run: |
+          git config --global user.email "keidscode@gmail.com"
+          git config --global user.name "KeidsID"
+          git add .
+          git commit -m "web release build v${{env.BUILD_VER}}"
+          git push origin web-release
