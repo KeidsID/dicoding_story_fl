@@ -1,0 +1,75 @@
+// **************************************************************************
+// GoRouterGenerator
+// **************************************************************************
+
+List<RouteBase> get $appRoutes => [
+      $loginRoute,
+      $storiesRoute,
+    ];
+
+RouteBase get $loginRoute => GoRouteData.$route(
+      path: '/auth',
+      factory: $LoginRouteExtension._fromState,
+      routes: [
+        GoRouteData.$route(
+          path: 'register',
+          factory: $RegisterRouteExtension._fromState,
+        ),
+      ],
+    );
+
+extension $LoginRouteExtension on LoginRoute {
+  static LoginRoute _fromState(GoRouterState state) => const LoginRoute();
+
+  String get location => GoRouteData.$location(
+        '/auth',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+extension $RegisterRouteExtension on RegisterRoute {
+  static RegisterRoute _fromState(GoRouterState state) => const RegisterRoute();
+
+  String get location => GoRouteData.$location(
+        '/auth/register',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $storiesRoute => GoRouteData.$route(
+      path: '/stories',
+      factory: $StoriesRouteExtension._fromState,
+    );
+
+extension $StoriesRouteExtension on StoriesRoute {
+  static StoriesRoute _fromState(GoRouterState state) => const StoriesRoute();
+
+  String get location => GoRouteData.$location(
+        '/stories',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
