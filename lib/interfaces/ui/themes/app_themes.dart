@@ -1,22 +1,65 @@
 import 'package:flutter/material.dart';
+import 'package:flex_color_scheme/flex_color_scheme.dart';
 
 abstract class AppThemes {
-  static ThemeData get light => _getTheme(Brightness.light);
-  static ThemeData get dark => _getTheme(Brightness.dark);
-
   /// Dicoding color.
-  static const _appColor = Color(0xFF2D3E50);
-  static const _useMaterial3 = true;
-  static TextTheme? get _textTheme => null;
+  static const primaryColorSeed = Color(0xFF2D3E50);
 
-  static ThemeData _getTheme(Brightness brightness) {
-    return ThemeData.from(
-      colorScheme: ColorScheme.fromSeed(
-        seedColor: _appColor,
-        brightness: brightness,
-      ),
-      useMaterial3: _useMaterial3,
-      textTheme: _textTheme,
+  static FlexSchemeColor get _flexSchemeColor =>
+      FlexSchemeColor.from(primary: primaryColorSeed);
+
+  static const int _usedColors = 1;
+  static FlexSurfaceMode? get _surfaceMode =>
+      FlexSurfaceMode.highSurfaceLowScaffold;
+
+  /// `0-40`
+  static const int _blendLevel = 10;
+
+  /// Use true black on background for dark theme, and plain white for light
+  /// theme.
+  ///
+  /// Also surface are 5% less blend.
+  static const bool _trueTheme = false;
+
+  static const FlexSubThemesData _subThemesData = FlexSubThemesData(
+    blendOnColors: false,
+    useTextTheme: true,
+    useM2StyleDividerInM3: true,
+    splashType: FlexSplashType.inkRipple,
+    inputDecoratorIsFilled: false,
+    popupMenuSchemeColor: SchemeColor.surface,
+    useInputDecoratorThemeInDialogs: true,
+  );
+
+  static FlexKeyColors? get _keyColors => const FlexKeyColors();
+  static VisualDensity? get _visualDensity => VisualDensity.comfortable;
+  static const bool useMaterial3 = true;
+
+  static ThemeData get light {
+    return FlexThemeData.light(
+      colors: _flexSchemeColor,
+      usedColors: _usedColors,
+      surfaceMode: _surfaceMode,
+      blendLevel: _blendLevel,
+      lightIsWhite: _trueTheme,
+      subThemesData: _subThemesData,
+      keyColors: _keyColors,
+      visualDensity: _visualDensity,
+      useMaterial3: useMaterial3,
+    );
+  }
+
+  static ThemeData get dark {
+    return FlexThemeData.dark(
+      colors: _flexSchemeColor,
+      usedColors: _usedColors,
+      surfaceMode: _surfaceMode,
+      blendLevel: _blendLevel,
+      darkIsTrueBlack: _trueTheme,
+      subThemesData: _subThemesData,
+      keyColors: _keyColors,
+      visualDensity: _visualDensity,
+      useMaterial3: useMaterial3,
     );
   }
 }
