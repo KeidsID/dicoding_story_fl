@@ -1,87 +1,63 @@
 import 'package:flutter/material.dart';
 
+import 'package:dicoding_story_fl/container.dart' as container;
 import 'package:dicoding_story_fl/core/entities.dart';
 import 'package:dicoding_story_fl/core/use_cases.dart';
 
-enum AuthProviderState {
-  /// Asynchronous process running.
-  loading,
-  loggedIn,
-  loggedOut,
-}
-
-class AuthProvider extends ChangeNotifier {
-  AuthProvider({
-    required RegisterCase registerCase,
-    required LoginCase loginCase,
-    required LogoutCase logoutCase,
-    required GetLoginSessionCase getLoginSessionCase,
-  })  : _registerCase = registerCase,
-        _loginCase = loginCase,
-        _logoutCase = logoutCase,
-        _getLoginSessionCase = getLoginSessionCase {
+class AuthProvider extends ValueNotifier<UserCreds?> {
+  AuthProvider([UserCreds? initialValue]) : super(initialValue) {
     _fetchToken();
   }
 
-  final RegisterCase _registerCase;
-  final LoginCase _loginCase;
-  final LogoutCase _logoutCase;
-  final GetLoginSessionCase _getLoginSessionCase;
-
-  AuthProviderState _state = AuthProviderState.loggedOut;
-  UserCreds? _userCreds;
-
-  AuthProviderState get state => _state;
-  UserCreds? get userCreds => _userCreds;
+  bool _isLoading = false;
 
   /// Asynchronous process running.
-  bool get isLoading => state == AuthProviderState.loading;
+  bool get isLoading => _isLoading;
 
-  set _setState(AuthProviderState value) {
-    _state = value;
+  /// Update [isLoading] and notify listeners.
+  set isLoading(bool value) {
+    _isLoading = value;
     notifyListeners();
   }
 
+  @override
+  set value(UserCreds? value) {
+    _isLoading = false;
+    super.value = value;
+  }
+
   Future<void> _fetchToken() async {
-    _setState = AuthProviderState.loading;
+    isLoading = true;
 
-    _userCreds = await _getLoginSessionCase.execute();
-
-    _setState = (_userCreds == null)
-        ? AuthProviderState.loggedOut
-        : AuthProviderState.loggedIn;
+    value = await container.get<GetLoginSessionCase>().execute();
   }
 
   Future<void> login({required String email, required String password}) async {
-    final prevState = state;
-    _setState = AuthProviderState.loading;
+    isLoading = true;
 
     try {
-      await _loginCase.execute(email: email, password: password);
+      await container
+          .get<LoginCase>()
+          .execute(email: email, password: password);
 
       await _fetchToken();
-    } on SimpleException {
-      _setState = prevState;
-      rethrow;
     } catch (err, trace) {
-      _setState = prevState;
+      if (err is SimpleException) rethrow;
+
       throw SimpleException(error: err, trace: trace);
     }
   }
 
   Future<void> logout() async {
-    final prevState = state;
-    _setState = AuthProviderState.loading;
+    isLoading = true;
 
     try {
-      await _logoutCase.execute();
+      await container.get<LogoutCase>().execute();
 
       await _fetchToken();
-    } on SimpleException {
-      _setState = prevState;
-      rethrow;
     } catch (err, trace) {
-      _setState = prevState;
+      if (err is SimpleException) rethrow;
+
       throw SimpleException(error: err, trace: trace);
     }
   }
@@ -93,22 +69,19 @@ class AuthProvider extends ChangeNotifier {
     required String email,
     required String password,
   }) async {
-    final prevState = state;
-    _setState = AuthProviderState.loading;
+    isLoading = true;
 
     try {
-      await _registerCase.execute(
-        username: username,
-        email: email,
-        password: password,
-      );
+      await container.get<RegisterCase>().execute(
+            username: username,
+            email: email,
+            password: password,
+          );
 
       await login(email: email, password: password);
-    } on SimpleException {
-      _setState = prevState;
-      rethrow;
     } catch (err, trace) {
-      _setState = prevState;
+      if (err is SimpleException) rethrow;
+
       throw SimpleException(error: err, trace: trace);
     }
   }

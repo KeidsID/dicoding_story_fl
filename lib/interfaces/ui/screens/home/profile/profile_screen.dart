@@ -13,7 +13,7 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final authProvider = context.watch<AuthProvider>();
-    final userCreds = authProvider.userCreds;
+    final userCreds = authProvider.value;
 
     final colorScheme = context.colorScheme;
     final textTheme = context.textTheme;

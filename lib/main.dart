@@ -1,3 +1,4 @@
+import 'package:dicoding_story_fl/common/constants.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -28,12 +29,13 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider<AuthProvider>.value(value: container.get()),
+        ChangeNotifierProvider.value(value: AuthProvider()),
         ChangeNotifierProvider.value(value: StoriesProvider()),
       ],
-      child: MaterialApp.router(
-        routerConfig: router,
+      builder: (context, _) => MaterialApp.router(
+        routerConfig: router(context),
         debugShowCheckedModeBanner: false,
+        title: appName,
         theme: AppThemes.light,
         darkTheme: AppThemes.dark,
       ),

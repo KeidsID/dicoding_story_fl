@@ -7,8 +7,16 @@ import 'package:dicoding_story_fl/core/use_cases.dart';
 class StoriesProvider extends ValueNotifier<List<Story>?> {
   StoriesProvider([List<Story>? initialValue]) : super(initialValue);
 
+  bool _isLoading = false;
+
   /// Asynchronous process running.
-  bool isLoading = false;
+  bool get isLoading => _isLoading;
+
+  /// Update [isLoading] and notify listeners.
+  set isLoading(bool value) {
+    _isLoading = value;
+    notifyListeners();
+  }
 
   /// Check if [value] is not null.
   bool get hasValue => value != null;
