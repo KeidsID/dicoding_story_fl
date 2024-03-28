@@ -6,7 +6,7 @@ import 'package:dicoding_story_fl/core/use_cases.dart';
 
 class AuthProvider extends ValueNotifier<UserCreds?> {
   AuthProvider([UserCreds? initialValue]) : super(initialValue) {
-    _fetchToken();
+    Future.microtask(() => _fetchToken());
   }
 
   bool _isLoading = false;
