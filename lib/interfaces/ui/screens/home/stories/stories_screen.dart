@@ -26,7 +26,7 @@ class _StoriesScreenState extends State<StoriesScreen> {
     bool? hasCordinate,
   }) async {
     try {
-      final userCreds = context.read<AuthProvider>().userCreds;
+      final userCreds = context.read<AuthProvider>().value;
 
       if (userCreds == null) return;
 
@@ -53,7 +53,7 @@ class _StoriesScreenState extends State<StoriesScreen> {
     return Scaffold(
       appBar: AppBar(title: const Text(appName)),
       body: Builder(builder: (context) {
-        final userCreds = context.watch<AuthProvider>().userCreds;
+        final userCreds = context.watch<AuthProvider>().value;
         final storiesProv = context.watch<StoriesProvider>();
 
         if (storiesProv.isLoading || !storiesProv.hasValue) {
