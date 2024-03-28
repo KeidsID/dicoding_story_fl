@@ -5,7 +5,6 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 
 import 'package:dicoding_story_fl/container.dart' as container;
-import 'package:dicoding_story_fl/interfaces/ui.dart';
 import 'package:dicoding_story_fl/interfaces/ux.dart';
 
 class ProfileScreen extends StatelessWidget {

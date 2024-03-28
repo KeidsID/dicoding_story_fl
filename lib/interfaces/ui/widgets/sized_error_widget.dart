@@ -10,45 +10,53 @@ final class SizedErrorWidget extends SizedBoxBase {
     super.width,
     super.height,
     this.error,
-    this.trace,
+    StackTrace? trace,
     this.action,
-  });
+  }) : _trace = trace;
 
   const SizedErrorWidget.expand({
     super.key,
     this.error,
-    this.trace,
+    StackTrace? trace,
     this.action,
-  }) : super.expand();
+  })  : _trace = trace,
+        super.expand();
 
   const SizedErrorWidget.shrink({
     super.key,
     this.error,
-    this.trace,
+    StackTrace? trace,
     this.action,
-  }) : super.shrink();
+  })  : _trace = trace,
+        super.shrink();
 
   SizedErrorWidget.fromSize({
     super.key,
     Size? size,
     this.error,
-    this.trace,
+    StackTrace? trace,
     this.action,
-  }) : super.fromSize();
+  })  : _trace = trace,
+        super.fromSize();
 
   const SizedErrorWidget.square({
     super.key,
     double? dimension,
     this.error,
-    this.trace,
+    StackTrace? trace,
     this.action,
-  }) : super.square();
+  })  : _trace = trace,
+        super.square();
 
   final Object? error;
-  final StackTrace? trace;
+  final StackTrace? _trace;
+
+  StackTrace? get trace {
+    return error is SimpleException ? (error as SimpleException).trace : _trace;
+  }
 
   /// An action at the bottom.
-  /// 
+  ///
   /// Typically an [ElevatedButton].
   final Widget? action;
 
