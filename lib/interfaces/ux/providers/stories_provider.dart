@@ -4,14 +4,17 @@ import 'package:dicoding_story_fl/container.dart' as container;
 import 'package:dicoding_story_fl/core/entities.dart';
 import 'package:dicoding_story_fl/core/use_cases.dart';
 
-class StoriesProvider extends ValueNotifier<List<Story>> {
-  StoriesProvider([List<Story> initialValue = const []]) : super(initialValue);
+class StoriesProvider extends ValueNotifier<List<Story>?> {
+  StoriesProvider([List<Story>? initialValue]) : super(initialValue);
 
   /// Asynchronous process running.
   bool isLoading = false;
 
+  /// Check if [value] is not null.
+  bool get hasValue => value != null;
+
   @override
-  set value(List<Story> newValue) {
+  set value(List<Story>? newValue) {
     isLoading = false;
     super.value = newValue;
   }

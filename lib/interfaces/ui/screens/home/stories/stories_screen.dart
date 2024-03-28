@@ -1,3 +1,4 @@
+import 'package:dicoding_story_fl/core/entities.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -20,6 +21,8 @@ class _StoriesScreenState extends State<StoriesScreen> {
   int? get size => widget.size;
 
   Future<void> _fetchStories({
+    int? page,
+    int? size,
     bool? hasCordinate,
   }) async {
     try {
@@ -42,7 +45,7 @@ class _StoriesScreenState extends State<StoriesScreen> {
   void initState() {
     super.initState();
 
-    Future.microtask(() => _fetchStories());
+    Future.microtask(() => _fetchStories(page: page, size: size));
   }
 
   @override
@@ -53,15 +56,15 @@ class _StoriesScreenState extends State<StoriesScreen> {
         final userCreds = context.watch<AuthProvider>().userCreds;
         final storiesProv = context.watch<StoriesProvider>();
 
-        final stories = storiesProv.value;
-
-        if (storiesProv.isLoading || stories.isEmpty) {
+        if (storiesProv.isLoading || !storiesProv.hasValue) {
           if (storiesProv.error != null) {
             return SizedErrorWidget.expand(
               error: storiesProv.error,
               trace: storiesProv.trace,
               action: ElevatedButton.icon(
-                onPressed: userCreds == null ? null : () => _fetchStories(),
+                onPressed: userCreds == null
+                    ? null
+                    : () => _fetchStories(page: page, size: size),
                 icon: const Icon(Icons.refresh_outlined),
                 label: const Text('Refresh'),
               ),
@@ -70,6 +73,8 @@ class _StoriesScreenState extends State<StoriesScreen> {
 
           return const Center(child: CircularProgressIndicator());
         }
+
+        final stories = storiesProv.value!;
 
         final pageNavigator = Align(
           alignment: Alignment.center,
@@ -80,22 +85,26 @@ class _StoriesScreenState extends State<StoriesScreen> {
                 onPressed: page == 1 || page == null
                     ? null
                     : () {
+                        final targetPage = (page ?? 1) - 1;
+
                         StoriesRoute(
-                          page: '${(page ?? 1) - 1}',
+                          page: '$targetPage',
                           size: size == null ? null : '$size',
-                        ).go(context);
-                        _fetchStories();
+                        ).go(context); // did't tringger initState
+                        _fetchStories(page: targetPage, size: size);
                       },
                 icon: const Icon(Icons.chevron_left),
               ),
               Text('Page ${page ?? 1}'),
               IconButton(
                 onPressed: () {
+                  final targetPage = (page ?? 1) + 1;
+
                   StoriesRoute(
-                    page: '${(page ?? 1) + 1}',
+                    page: '$targetPage',
                     size: size == null ? null : '$size',
                   ).go(context);
-                  _fetchStories();
+                  _fetchStories(page: targetPage, size: size);
                 },
                 icon: const Icon(Icons.chevron_right),
               ),
@@ -111,21 +120,31 @@ class _StoriesScreenState extends State<StoriesScreen> {
             //
             SliverPadding(
               padding: const EdgeInsets.all(16.0),
-              sliver: SliverGrid.builder(
-                gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                  maxCrossAxisExtent: 400.0,
-                  mainAxisSpacing: 8.0,
-                  crossAxisSpacing: 8.0,
-                ),
-                itemBuilder: (_, index) => StoryCard(
-                  stories[index],
-                  childBuilder: (_, child) => InkWell(
-                    onTap: () {},
-                    child: child,
-                  ),
-                ),
-                itemCount: stories.length,
-              ),
+              sliver: stories.isEmpty
+                  ? SliverToBoxAdapter(
+                      child: SizedErrorWidget(
+                        error: SimpleHttpException(
+                          statusCode: 404,
+                          message: 'No stories found',
+                        ),
+                      ),
+                    )
+                  : SliverGrid.builder(
+                      gridDelegate:
+                          const SliverGridDelegateWithMaxCrossAxisExtent(
+                        maxCrossAxisExtent: 400.0,
+                        mainAxisSpacing: 8.0,
+                        crossAxisSpacing: 8.0,
+                      ),
+                      itemBuilder: (_, index) => StoryCard(
+                        stories[index],
+                        childBuilder: (_, child) => InkWell(
+                          onTap: () {},
+                          child: child,
+                        ),
+                      ),
+                      itemCount: stories.length,
+                    ),
             ),
 
             //
