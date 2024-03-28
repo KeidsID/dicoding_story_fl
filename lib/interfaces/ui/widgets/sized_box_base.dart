@@ -1,19 +1,17 @@
 import 'package:flutter/material.dart';
 
-import 'package:dicoding_story_fl/interfaces/ui.dart';
-
 /// [SizedBox] base class without child.
 ///
 /// Used for easy [SizedBox] constructors implementation on your own widget.
 ///
 /// Note that this class only contain [width] and [height] and didn't build an
-/// actual [SizedBox] when you override the [build].
+/// actual [SizedBox].
 ///
 /// ```dart
 /// @override
 /// Widget build(BuildContext context) {
 ///   // implement like this to make use of this base class.
-///   return SizedBox(
+///   return SizedBox( // or maybe a [Container]
 ///     width: width,
 ///     height: height,
 ///     child: YourWidgetImplementation(),

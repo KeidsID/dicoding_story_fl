@@ -15,7 +15,7 @@ void main() async {
 
     yield LicenseEntryWithLineBreaks(['google_fonts'], rubikLicense);
   });
-  
+
   await container.init();
 
   runApp(const MainApp());
