@@ -4,7 +4,10 @@ void _registerServices() {
   // externals
   _locator
     ..registerSingleton<ChopperClient>(baseClient)
-    ..registerSingletonAsync(() => SharedPreferences.getInstance());
+    ..registerSingletonAsync<SharedPreferences>(() {
+      return SharedPreferences.getInstance();
+    })
+    ..registerSingletonAsync<PackageInfo>(() => PackageInfo.fromPlatform());
 
   // internals
   _locator

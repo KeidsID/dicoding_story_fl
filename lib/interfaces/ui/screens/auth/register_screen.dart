@@ -70,7 +70,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 children: [
                   // Header
                   Text('Register Form', style: context.textTheme.headlineLarge),
-                  const SizedBox(height: 16.0),
+                  const SizedBox(height: 32.0),
 
                   // Inputs
                   TextField(
@@ -82,10 +82,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       hintText: 'John Doe from Dicoding',
                     ),
                   ),
+                  const SizedBox(height: 16.0),
                   EmailTextField(
                     controller: emailController,
                     textInputAction: TextInputAction.next,
                   ),
+                  const SizedBox(height: 16.0),
                   PasswordTextField(
                     controller: passwordController,
                     onSubmitted: (value) => _doRegister(),
