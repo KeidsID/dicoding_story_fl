@@ -69,13 +69,14 @@ class _LoginScreenState extends State<LoginScreen> {
                 children: [
                   // Header
                   Text(appName, style: context.textTheme.headlineLarge),
-                  const SizedBox(height: 16.0),
+                  const SizedBox(height: 32.0),
 
                   // Inputs
                   EmailTextField(
                     controller: emailController,
                     textInputAction: TextInputAction.next,
                   ),
+                  const SizedBox(height: 16.0),
                   PasswordTextField(
                     controller: passwordController,
                     onSubmitted: (value) => _doLogin(),

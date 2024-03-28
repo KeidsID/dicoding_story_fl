@@ -8,6 +8,8 @@ abstract class AppThemes {
   static FlexSchemeColor get _flexSchemeColor =>
       FlexSchemeColor.from(primary: primaryColorSeed);
 
+  // https://rydmike.com/flexcolorscheme/themesplayground-latest/
+
   static const int _usedColors = 1;
   static FlexSurfaceMode? get _surfaceMode =>
       FlexSurfaceMode.highSurfaceLowScaffold;
@@ -35,6 +37,8 @@ abstract class AppThemes {
   static VisualDensity? get _visualDensity => VisualDensity.comfortable;
   static const bool useMaterial3 = true;
 
+  static const String fontFamily = 'Rubik';
+
   static ThemeData get light {
     return FlexThemeData.light(
       colors: _flexSchemeColor,
@@ -46,6 +50,7 @@ abstract class AppThemes {
       keyColors: _keyColors,
       visualDensity: _visualDensity,
       useMaterial3: useMaterial3,
+      fontFamily: fontFamily,
     );
   }
 
@@ -60,6 +65,7 @@ abstract class AppThemes {
       keyColors: _keyColors,
       visualDensity: _visualDensity,
       useMaterial3: useMaterial3,
+      fontFamily: fontFamily,
     );
   }
 }

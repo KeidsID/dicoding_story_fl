@@ -26,8 +26,8 @@ class RawStory with _$RawStory {
     required String description,
     required String photoUrl,
     required String createdAt,
-    String? lat,
-    String? lon,
+    double? lat,
+    double? lon,
   }) = _RawStory;
 
   factory RawStory.fromJson(Map<String, dynamic> json) =>
@@ -42,8 +42,8 @@ class RawStory with _$RawStory {
       description: description,
       photoUrl: photoUrl,
       createdAt: DateTime.tryParse(createdAt) ?? DateTime.now(),
-      lat: double.tryParse(lat ?? ''),
-      lon: double.tryParse(lon ?? ''),
+      lat: lat,
+      lon: lon,
     );
   }
 }
