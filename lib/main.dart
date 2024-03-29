@@ -10,6 +10,8 @@ import 'interfaces/ui.dart';
 import 'interfaces/ux.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
   LicenseRegistry.addLicense(() async* {
     final rubikLicense =
         await rootBundle.loadString(AssetPaths.rubikFontLicense);
