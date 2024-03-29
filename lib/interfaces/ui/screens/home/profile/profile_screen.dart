@@ -1,9 +1,10 @@
-import 'package:dicoding_story_fl/common/constants.dart';
 import 'package:fl_utilities/fl_utilities.dart';
+import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 
+import 'package:dicoding_story_fl/common/constants.dart';
 import 'package:dicoding_story_fl/container.dart' as container;
 import 'package:dicoding_story_fl/interfaces/ux.dart';
 
@@ -48,6 +49,39 @@ class ProfileScreen extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text('Apps', style: textTheme.headlineSmall),
+          ),
+          ListTile(
+            leading: const Icon(Icons.color_lens_outlined),
+            title: const Text('App Theme'),
+            trailing: Builder(builder: (context) {
+              final themeModeProv = context.watch<ThemeModeProvider>();
+
+              final icons = ThemeMode.values.map((e) {
+                return switch (e) {
+                  ThemeMode.system => Icons.settings_outlined,
+                  ThemeMode.light => Icons.light_mode_outlined,
+                  ThemeMode.dark => Icons.dark_mode_outlined,
+                };
+              }).toList();
+
+              return DropdownButton<ThemeMode>(
+                value: themeModeProv.value,
+                items: ThemeMode.values.map((e) {
+                  return DropdownMenuItem(
+                    value: e,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(icons[e.index]),
+                        const SizedBox(width: 8.0),
+                        Text(e.name.capitalize),
+                      ],
+                    ),
+                  );
+                }).toList(),
+                onChanged: (value) => themeModeProv.value = value!,
+              );
+            }),
           ),
           ListTile(
             onTap: () {

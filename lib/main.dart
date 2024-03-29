@@ -32,13 +32,24 @@ class MainApp extends StatelessWidget {
         ChangeNotifierProvider.value(value: AuthProvider()),
         ChangeNotifierProvider.value(value: StoriesProvider()),
       ],
-      builder: (context, _) => MaterialApp.router(
-        routerConfig: router(context),
-        debugShowCheckedModeBanner: false,
-        title: appName,
-        theme: AppThemes.light,
-        darkTheme: AppThemes.dark,
-      ),
+      builder: (context, _) {
+        /// To make sure redirect did'nt triggered on theme changes.
+        final appRouter = router(context);
+
+        return ChangeNotifierProvider.value(
+          value: ThemeModeProvider(),
+          builder: (context, _) {
+            return MaterialApp.router(
+              routerConfig: appRouter,
+              debugShowCheckedModeBanner: false,
+              title: appName,
+              theme: AppThemes.light,
+              darkTheme: AppThemes.dark,
+              themeMode: context.watch<ThemeModeProvider>().value,
+            );
+          },
+        );
+      },
     );
   }
 }
