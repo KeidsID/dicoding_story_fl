@@ -9,6 +9,9 @@ import 'package:dicoding_story_fl/interfaces/ux.dart';
 /// Key that store the [router] state.
 final routerKey = GlobalKey<NavigatorState>();
 
+/// Depend on [AuthProvider].
+///
+/// [routerKey] keeps the [router] state.
 GoRouter router(BuildContext context) => GoRouter(
       navigatorKey: routerKey,
       routes: $appRoutes,
