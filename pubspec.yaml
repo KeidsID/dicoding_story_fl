@@ -46,7 +46,7 @@ flutter:
   uses-material-design: true
 
   assets:
-    # fonts license
+    # licenses
     - assets/fonts/Rubik/OFL.txt
 
   fonts:

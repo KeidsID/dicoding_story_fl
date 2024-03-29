@@ -83,16 +83,11 @@ class ProfileScreen extends StatelessWidget {
               );
             }),
           ),
-          ListTile(
-            onTap: () {
-              showAboutDialog(
-                context: context,
-                applicationName: appName,
-                applicationVersion: 'v${container.get<PackageInfo>().version}',
-              );
-            },
-            leading: const Icon(Icons.info_outline),
-            title: const Text('About App'),
+          AboutListTile(
+            icon: const Icon(Icons.info_outline),
+            applicationName: appName,
+            applicationVersion: 'v${container.get<PackageInfo>().version}',
+            applicationLegalese: appLegalese,
           ),
         ],
       ),
