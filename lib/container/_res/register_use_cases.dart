@@ -9,5 +9,6 @@ void _registerUseCases() {
     ..registerLazySingleton(() => LogoutCase(get()))
 
     // stories
-    ..registerLazySingleton(() => GetStoriesCase(get()));
+    ..registerLazySingleton(() => GetStoriesCase(get()))
+    ..registerLazySingleton(() => GetStoryDetailCase(get()));
 }

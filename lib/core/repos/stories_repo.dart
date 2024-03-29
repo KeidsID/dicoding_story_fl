@@ -7,4 +7,9 @@ abstract interface class StoriesRepo {
     int size = 10,
     bool? hasCordinate,
   });
+
+  Future<StoryDetail> storyDetailById(
+    String id, {
+    required UserCreds userCredentials,
+  });
 }

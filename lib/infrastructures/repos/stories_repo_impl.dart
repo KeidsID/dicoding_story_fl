@@ -35,9 +35,33 @@ class StoriesRepoImpl with OnErrorResponseMixin implements StoriesRepo {
       final resBody = StoriesResponse.fromJson(rawResBody);
 
       return resBody.listStory.map((e) => e.toEntity()).toList();
-    } on SimpleException {
-      rethrow;
     } catch (err, trace) {
+      if (err is SimpleException) rethrow;
+
+      throw SimpleException(error: err, trace: trace);
+    }
+  }
+
+  @override
+  Future<StoryDetail> storyDetailById(
+    String id, {
+    required UserCreds userCredentials,
+  }) async {
+    try {
+      final rawRes = await _storiesApi.getStoryDetail(
+        id,
+        authorization: 'Bearer ${userCredentials.token}',
+      );
+      final rawResBody = rawRes.body;
+
+      if (rawResBody == null) throw onErrorResponse(rawRes);
+
+      final resBody = StoryDetailResponse.fromJson(rawResBody);
+
+      return resBody.story.toEntity();
+    } catch (err, trace) {
+      if (err is SimpleException) rethrow;
+
       throw SimpleException(error: err, trace: trace);
     }
   }
@@ -48,6 +72,8 @@ abstract class StoriesApiService extends ChopperService {
   static StoriesApiService create([ChopperClient? client]) =>
       _$StoriesApiService(client);
 
+  /// Fetch list of stories.
+  ///
   /// Headers:
   ///
   /// - [authorization], `Bearer <token>` format.
@@ -64,5 +90,16 @@ abstract class StoriesApiService extends ChopperService {
     @query int page = 1,
     @query int size = 10,
     @Query('location') int? hasCordinate,
+  });
+
+  /// Fetch story detail by [storyId].
+  ///
+  /// Headers:
+  ///
+  /// - [authorization], `Bearer <token>` format.
+  @Get(path: '/stories/{id}')
+  Future<Response<Map<String, dynamic>>> getStoryDetail(
+    @Path('id') String storyId, {
+    @Header('Authorization') required String authorization,
   });
 }
