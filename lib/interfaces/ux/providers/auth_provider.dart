@@ -6,7 +6,7 @@ import 'package:dicoding_story_fl/core/use_cases.dart';
 
 class AuthProvider extends ValueNotifier<UserCreds?> {
   AuthProvider([UserCreds? initialValue]) : super(initialValue) {
-    Future.microtask(() => _fetchToken());
+    _fetchToken();
   }
 
   bool _isLoading = false;
@@ -23,11 +23,12 @@ class AuthProvider extends ValueNotifier<UserCreds?> {
   @override
   set value(UserCreds? value) {
     _isLoading = false;
+
     super.value = value;
   }
 
   Future<void> _fetchToken() async {
-    isLoading = true;
+    if (!isLoading) isLoading = true;
 
     value = await container.get<GetLoginSessionCase>().execute();
   }
