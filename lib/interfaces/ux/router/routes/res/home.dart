@@ -33,6 +33,20 @@ class StoriesRoute extends GoRouteData {
   }
 }
 
+/// {@template dicoding_story_fl.interfaces.ux.routes.StoryDetailRoute}
+/// `/stories/:id` route.
+/// {@endtemplate}
+class StoryDetailRoute extends GoRouteData {
+  /// {@macro dicoding_story_fl.interfaces.ux.routes.StoryDetailRoute}
+  const StoryDetailRoute(this.id);
+
+  final String id;
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      StoryDetailScreen(id);
+}
+
 /// {@template dicoding_story_fl.interfaces.ux.routes.ProfileRoute}
 /// `/profile` route.
 /// {@endtemplate}

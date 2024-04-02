@@ -1,11 +1,27 @@
+import 'package:dicoding_story_fl/common/constants.dart';
+import 'package:dicoding_story_fl/interfaces/ux/providers/auth_provider.dart';
 import 'package:flutter/foundation.dart';
+import 'package:provider/provider.dart';
 
-import 'package:dicoding_story_fl/container.dart' as container;
 import 'package:dicoding_story_fl/core/entities.dart';
 import 'package:dicoding_story_fl/core/use_cases.dart';
+import 'package:dicoding_story_fl/container.dart' as container;
 
-class StoriesProvider extends ValueNotifier<List<Story>?> {
-  StoriesProvider([List<Story>? initialValue]) : super(initialValue);
+class StoryDetailProvider extends ValueNotifier<StoryDetail?> {
+  StoryDetailProvider({required this.storyId, required this.userCreds})
+      : super(null) {
+    Future.microtask(() async {
+      try {
+        await refresh();
+      } catch (err) {
+        // ignore error on init
+        return;
+      }
+    });
+  }
+
+  final String storyId;
+  final UserCreds userCreds;
 
   bool _isLoading = false;
 
@@ -24,7 +40,7 @@ class StoriesProvider extends ValueNotifier<List<Story>?> {
 
   @protected
   @override
-  set value(List<Story>? newValue) {
+  set value(StoryDetail? newValue) {
     isLoading = false;
     super.value = newValue;
   }
@@ -45,24 +61,15 @@ class StoriesProvider extends ValueNotifier<List<Story>?> {
     notifyListeners();
   }
 
-  /// Fetch stories and set it to [value].
-  Future<void> fetchStories(
-    UserCreds userCreds, {
-    int page = 1,
-    int size = 10,
-    bool? hasCordinate,
-  }) async {
+  /// Refresh [value].
+  Future<void> refresh() async {
+    isLoading = true;
+
     try {
-      isLoading = true;
-
-      final stories = await container.get<GetStoriesCase>().execute(
-            userCreds,
-            page: page,
-            size: size,
-            hasCordinate: hasCordinate,
+      value = await container.get<GetStoryDetailCase>().execute(
+            storyId,
+            userCredentials: userCreds,
           );
-
-      value = stories;
     } catch (err, trace) {
       _setError(err, trace);
       rethrow;

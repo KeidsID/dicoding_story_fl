@@ -1,0 +1,191 @@
+import 'package:dicoding_story_fl/common/constants.dart';
+import 'package:dicoding_story_fl/core/entities.dart';
+import 'package:fl_utilities/fl_utilities.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import 'package:dicoding_story_fl/interfaces/ui.dart';
+import 'package:dicoding_story_fl/interfaces/ux.dart';
+
+class StoryDetailScreen extends StatelessWidget {
+  const StoryDetailScreen(this.storyId, {super.key});
+
+  final String storyId;
+
+  @override
+  Widget build(BuildContext context) {
+    final authProv = context.watch<AuthProvider>();
+
+    return ChangeNotifierProvider.value(
+      value: StoryDetailProvider(
+        storyId: storyId,
+        // won't null becuase router
+        userCreds: authProv.value!,
+      ),
+      builder: (context, _) {
+        final storyDetailProv = context.watch<StoryDetailProvider>();
+
+        if (storyDetailProv.isLoading) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        if (!storyDetailProv.hasValue) {
+          return SizedErrorWidget.expand(
+            error: storyDetailProv.error,
+            trace: storyDetailProv.trace,
+            action: ElevatedButton.icon(
+              onPressed: () => storyDetailProv.refresh(),
+              icon: const Icon(Icons.refresh_outlined),
+              label: const Text('Refresh'),
+            ),
+          );
+        }
+
+        final story = storyDetailProv.value!;
+
+        return LayoutBuilder(builder: (context, constraints) {
+          if (constraints.maxWidth < 720) {
+            return _StoryDetailScreenS(story);
+          }
+
+          return _StoryDetailScreenL(story);
+        });
+      },
+    );
+  }
+}
+
+class _StoryDetailScreenS extends StatelessWidget {
+  const _StoryDetailScreenS(this.story, {super.key});
+
+  final StoryDetail story;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = context.textTheme;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('"${story.owner}" Story'),
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            AspectRatio(
+              aspectRatio: 3 / 2,
+              child: CommonNetworkImage(
+                imageUrl: story.photoUrl,
+                fit: BoxFit.cover,
+              ),
+            ),
+            const Flexible(child: Divider(height: 2.0, thickness: 2.0)),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Wrap(
+                    crossAxisAlignment: WrapCrossAlignment.end,
+                    children: [
+                      Text(
+                        '${story.owner} ',
+                        style: textTheme.headlineMedium,
+                      ),
+                      Text(kDateFormat.format(story.createdAt))
+                          .applyOpacity(opacity: 0.5),
+                    ],
+                  ),
+                  const SizedBox(height: 8.0),
+
+                  //
+                  Text(story.description),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _StoryDetailScreenL extends StatelessWidget {
+  const _StoryDetailScreenL(this.story, {super.key});
+
+  final StoryDetail story;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = context.theme;
+    final textTheme = theme.textTheme;
+
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Card(
+        clipBehavior: Clip.hardEdge,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              flex: 8,
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  CommonNetworkImage(
+                    imageUrl: story.photoUrl,
+                    fit: BoxFit.cover,
+                  ),
+
+                  //
+                  Align(
+                    alignment: Alignment.topLeft,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: IconButton.filledTonal(
+                        icon: const Icon(Icons.arrow_back),
+                        tooltip: MaterialLocalizations.of(context)
+                            .backButtonTooltip,
+                        onPressed: () => Navigator.of(context).maybePop(),
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+            const VerticalDivider(width: 2.0, thickness: 2.0),
+            Flexible(
+              flex: 10,
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Wrap(
+                      crossAxisAlignment: WrapCrossAlignment.end,
+                      children: [
+                        Text(
+                          '${story.owner} ',
+                          style: textTheme.headlineMedium,
+                        ),
+                        Text(kDateFormat.format(story.createdAt))
+                            .applyOpacity(opacity: 0.5),
+                      ],
+                    ),
+                    const SizedBox(height: 8.0),
+
+                    //
+                    Text(story.description),
+                  ],
+                ),
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}

@@ -1,4 +1,5 @@
 import 'package:logger/logger.dart';
+import 'package:intl/intl.dart' as intl;
 
 const appName = 'Dicoding Story';
 const appLegalese = 'MIT License\n\n'
@@ -6,3 +7,6 @@ const appLegalese = 'MIT License\n\n'
 
 /// Use this instead [print] or [debugPrint] for debugging.
 final kLogger = Logger();
+
+/// Commonly used date format for interface.
+final kDateFormat = intl.DateFormat.yMMMMd();

@@ -6,6 +6,7 @@ export 'ui/screens/auth/register_screen.dart';
 export 'ui/screens/home/home_layout.dart';
 export 'ui/screens/home/profile/profile_screen.dart';
 export 'ui/screens/home/stories/stories_screen.dart';
+export 'ui/screens/home/stories/story_detail_screen.dart';
 export 'ui/themes/app_themes.dart';
 export 'ui/widgets/common_network_image.dart';
 export 'ui/widgets/email_text_field.dart';

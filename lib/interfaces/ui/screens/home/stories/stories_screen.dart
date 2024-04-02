@@ -1,5 +1,6 @@
 import 'package:dicoding_story_fl/core/entities.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import 'package:dicoding_story_fl/common/constants.dart';
@@ -21,8 +22,6 @@ class _StoriesScreenState extends State<StoriesScreen> {
   int? get size => widget.size;
 
   Future<void> _fetchStories({
-    int? page,
-    int? size,
     bool? hasCordinate,
   }) async {
     try {
@@ -37,7 +36,7 @@ class _StoriesScreenState extends State<StoriesScreen> {
             hasCordinate: hasCordinate,
           );
     } catch (err, trace) {
-      kLogger.w('Stories Fetch Fail', error: err, stackTrace: trace);
+      kLogger.d('Stories Fetch Fail', error: err, stackTrace: trace);
     }
   }
 
@@ -45,11 +44,23 @@ class _StoriesScreenState extends State<StoriesScreen> {
   void initState() {
     super.initState();
 
-    Future.microtask(() => _fetchStories(page: page, size: size));
+    Future.microtask(() => _fetchStories());
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    Future.microtask(() => _fetchStories());
   }
 
   @override
   Widget build(BuildContext context) {
+    // Trigger [didChangeDependencies] on router queries changes.
+    //
+    // go_router did'nt rebuild widget on router query changes.
+    GoRouterState.of(context);
+
     return Scaffold(
       appBar: AppBar(title: const Text(appName)),
       body: Builder(builder: (context) {
@@ -62,9 +73,7 @@ class _StoriesScreenState extends State<StoriesScreen> {
               error: storiesProv.error,
               trace: storiesProv.trace,
               action: ElevatedButton.icon(
-                onPressed: userCreds == null
-                    ? null
-                    : () => _fetchStories(page: page, size: size),
+                onPressed: userCreds == null ? null : () => _fetchStories(),
                 icon: const Icon(Icons.refresh_outlined),
                 label: const Text('Refresh'),
               ),
@@ -84,28 +93,18 @@ class _StoriesScreenState extends State<StoriesScreen> {
               IconButton(
                 onPressed: page == 1 || page == null
                     ? null
-                    : () {
-                        final targetPage = (page ?? 1) - 1;
-
-                        StoriesRoute(
-                          page: '$targetPage',
+                    : () => StoriesRoute(
+                          page: '${(page ?? 1) - 1}',
                           size: size == null ? null : '$size',
-                        ).go(context); // did't tringger initState
-                        _fetchStories(page: targetPage, size: size);
-                      },
+                        ).go(context),
                 icon: const Icon(Icons.chevron_left),
               ),
               Text('Page ${page ?? 1}'),
               IconButton(
-                onPressed: () {
-                  final targetPage = (page ?? 1) + 1;
-
-                  StoriesRoute(
-                    page: '$targetPage',
-                    size: size == null ? null : '$size',
-                  ).go(context);
-                  _fetchStories(page: targetPage, size: size);
-                },
+                onPressed: () => StoriesRoute(
+                  page: '${(page ?? 1) + 1}',
+                  size: size == null ? null : '$size',
+                ).go(context),
                 icon: const Icon(Icons.chevron_right),
               ),
             ],
@@ -136,14 +135,18 @@ class _StoriesScreenState extends State<StoriesScreen> {
                         mainAxisSpacing: 8.0,
                         crossAxisSpacing: 8.0,
                       ),
-                      itemBuilder: (_, index) => StoryCard(
-                        stories[index],
-                        childBuilder: (_, child) => InkWell(
-                          onTap: () {},
-                          child: child,
-                        ),
-                      ),
                       itemCount: stories.length,
+                      itemBuilder: (context, index) {
+                        final story = stories[index];
+
+                        return StoryCard(
+                          story,
+                          childBuilder: (_, child) => InkWell(
+                            onTap: () => StoryDetailRoute(story.id).go(context),
+                            child: child,
+                          ),
+                        );
+                      },
                     ),
             ),
 

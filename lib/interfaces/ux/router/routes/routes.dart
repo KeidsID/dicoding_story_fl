@@ -24,7 +24,10 @@ class LoginRoute extends GoRouteData {
 }
 
 @TypedShellRoute<HomeShellRoute>(routes: [
-  TypedGoRoute<StoriesRoute>(path: '/stories'),
+  TypedGoRoute<StoriesRoute>(
+    path: '/stories',
+    routes: [TypedGoRoute<StoryDetailRoute>(path: ':id')],
+  ),
   TypedGoRoute<ProfileRoute>(path: '/profile'),
 ])
 @protected

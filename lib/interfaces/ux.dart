@@ -3,6 +3,7 @@ library ux;
 
 export 'ux/providers/auth_provider.dart';
 export 'ux/providers/stories_provider.dart';
+export 'ux/providers/story_detail_provider.dart';
 export 'ux/providers/theme_mode_provider.dart';
 export 'ux/router/router.dart';
 export 'ux/router/routes.dart';

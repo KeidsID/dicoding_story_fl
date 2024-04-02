@@ -12,6 +12,11 @@ dependencies:
   flutter:
     sdk: flutter
 
+  # l10n
+  flutter_localizations:
+    sdk: flutter
+  intl: ^0.18.0
+
   # dart
   chopper: ^7.2.0
   equatable: ^2.0.5

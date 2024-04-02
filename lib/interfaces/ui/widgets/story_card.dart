@@ -1,3 +1,4 @@
+import 'package:dicoding_story_fl/common/constants.dart';
 import 'package:fl_utilities/fl_utilities.dart';
 import 'package:flutter/material.dart';
 
@@ -26,7 +27,10 @@ class StoryCard extends StatelessWidget {
             aspectRatio: 3 / 2,
             child: CommonNetworkImage(
               imageUrl: story.photoUrl,
-              fit: BoxFit.cover,
+              imageBuilder: (_, image) => Ink.image(
+                image: image,
+                fit: BoxFit.cover,
+              ),
             ),
           ),
           const Flexible(child: Divider(height: 2.0, thickness: 2.0)),
@@ -36,17 +40,13 @@ class StoryCard extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text(story.owner, style: textTheme.titleLarge),
-                      const SizedBox(width: 8.0),
-                      Text('${story.createdAt}').applyOpacity(opacity: 0.5),
-                    ],
-                  ),
+                Wrap(
+                  crossAxisAlignment: WrapCrossAlignment.end,
+                  children: [
+                    Text('${story.owner} ', style: textTheme.titleLarge),
+                    Text(kDateFormat.format(story.createdAt))
+                        .applyOpacity(opacity: 0.5),
+                  ],
                 ),
                 const SizedBox(height: 8.0),
 

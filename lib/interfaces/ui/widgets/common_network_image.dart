@@ -6,7 +6,7 @@ class CommonNetworkImage extends CachedNetworkImage {
     super.key,
     required super.imageUrl,
     super.httpHeaders,
-    ImageWidgetBuilder? imageBuilder,
+    super.imageBuilder,
     PlaceholderWidgetBuilder? loadingBuilder,
     super.progressIndicatorBuilder,
     LoadingErrorWidgetBuilder? errorBuilder,
@@ -34,14 +34,6 @@ class CommonNetworkImage extends CachedNetworkImage {
     super.errorListener,
     super.imageRenderMethodForWeb,
   }) : super(
-          imageBuilder: imageBuilder ??
-              (_, image) => Ink.image(
-                    image: image,
-                    width: width,
-                    height: height,
-                    fit: fit,
-                    alignment: alignment,
-                  ),
           placeholder: loadingBuilder ??
               (_, __) =>
                   const Center(child: CircularProgressIndicator.adaptive()),
