@@ -1,5 +1,6 @@
 import 'package:dicoding_story_fl/core/entities.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
@@ -21,6 +22,10 @@ class _StoriesScreenState extends State<StoriesScreen> {
   int? get page => widget.page;
   int? get size => widget.size;
 
+  // prevent "null" on url queries.
+  String? get pageAsQuery => page == null ? null : '$page';
+  String? get sizeAsQuery => size == null ? null : '$size';
+
   Future<void> _fetchStories({
     bool? hasCordinate,
   }) async {
@@ -39,6 +44,8 @@ class _StoriesScreenState extends State<StoriesScreen> {
       kLogger.d('Stories Fetch Fail', error: err, stackTrace: trace);
     }
   }
+
+  final _menuController = MenuController();
 
   @override
   void initState() {
@@ -61,8 +68,81 @@ class _StoriesScreenState extends State<StoriesScreen> {
     // go_router did'nt rebuild widget on router query changes.
     GoRouterState.of(context);
 
+    final pageNavigator = Align(
+      alignment: Alignment.center,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          IconButton(
+            onPressed: page == 1 || page == null
+                ? null
+                : () => StoriesRoute(
+                      page: '${(page ?? 1) - 1}',
+                      size: sizeAsQuery,
+                    ).go(context),
+            icon: const Icon(Icons.chevron_left),
+          ),
+          Text('Page ${page ?? 1}'),
+          IconButton(
+            onPressed: () => StoriesRoute(
+              page: '${(page ?? 1) + 1}',
+              size: sizeAsQuery,
+            ).go(context),
+            icon: const Icon(Icons.chevron_right),
+          ),
+        ],
+      ),
+    );
+
     return Scaffold(
-      appBar: AppBar(title: const Text(appName)),
+      appBar: AppBar(
+        title: const Text(appName),
+        actions: [
+          MenuAnchor(
+            controller: _menuController,
+            menuChildren: [
+              ListTile(title: pageNavigator),
+
+              //
+              ListTile(
+                title: const Text('Story Count'),
+                trailing: SizedBox(
+                  width: 80.0,
+                  child: TextField(
+                    controller: TextEditingController(text: '${size ?? 10}'),
+                    textAlignVertical: TextAlignVertical.center,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                      FilteringTextInputFormatter.singleLineFormatter,
+                    ],
+                    onSubmitted: (String value) {
+                      StoriesRoute(
+                        page: pageAsQuery,
+                        size: switch (value) {
+                          '' => null,
+                          '0' => null,
+
+                          // Parsed to int to remove leading zero ("01" => "1").
+                          _ => '${int.tryParse(value)}',
+                        },
+                      ).go(context);
+
+                      _menuController.close();
+                    },
+                  ),
+                ),
+              ),
+            ],
+            builder: (context, menu, _) {
+              return IconButton(
+                onPressed: () => menu.isOpen ? menu.close() : menu.open(),
+                icon: const Icon(Icons.filter_alt_outlined),
+              );
+            },
+          ),
+        ],
+      ),
       body: Builder(builder: (context) {
         final userCreds = context.watch<AuthProvider>().value;
         final storiesProv = context.watch<StoriesProvider>();
@@ -84,32 +164,6 @@ class _StoriesScreenState extends State<StoriesScreen> {
         }
 
         final stories = storiesProv.value!;
-
-        final pageNavigator = Align(
-          alignment: Alignment.center,
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              IconButton(
-                onPressed: page == 1 || page == null
-                    ? null
-                    : () => StoriesRoute(
-                          page: '${(page ?? 1) - 1}',
-                          size: size == null ? null : '$size',
-                        ).go(context),
-                icon: const Icon(Icons.chevron_left),
-              ),
-              Text('Page ${page ?? 1}'),
-              IconButton(
-                onPressed: () => StoriesRoute(
-                  page: '${(page ?? 1) + 1}',
-                  size: size == null ? null : '$size',
-                ).go(context),
-                icon: const Icon(Icons.chevron_right),
-              ),
-            ],
-          ),
-        );
 
         return CustomScrollView(
           slivers: [

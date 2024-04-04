@@ -56,7 +56,7 @@ class StoryDetailScreen extends StatelessWidget {
 }
 
 class _StoryDetailScreenS extends StatelessWidget {
-  const _StoryDetailScreenS(this.story, {super.key});
+  const _StoryDetailScreenS(this.story);
 
   final StoryDetail story;
 
@@ -113,7 +113,7 @@ class _StoryDetailScreenS extends StatelessWidget {
 }
 
 class _StoryDetailScreenL extends StatelessWidget {
-  const _StoryDetailScreenL(this.story, {super.key});
+  const _StoryDetailScreenL(this.story);
 
   final StoryDetail story;
 

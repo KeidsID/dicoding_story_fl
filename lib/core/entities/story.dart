@@ -37,5 +37,15 @@ class Story extends Equatable {
   final double? lon;
 
   @override
-  List<Object?> get props => [id];
+  List<Object?> get props {
+    return [
+      id,
+      owner,
+      description,
+      photoUrl,
+      createdAt,
+      lat,
+      lon,
+    ];
+  }
 }

@@ -4,6 +4,7 @@
 *.g.dart
 
 # Miscellaneous
+examples/
 *.class
 *.log
 *.pyc

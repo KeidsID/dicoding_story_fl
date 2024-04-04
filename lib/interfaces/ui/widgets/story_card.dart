@@ -53,7 +53,7 @@ class StoryCard extends StatelessWidget {
                 //
                 Text(
                   story.description,
-                  maxLines: 2,
+                  maxLines: 3,
                   overflow: TextOverflow.ellipsis,
                 ),
               ],

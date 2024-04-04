@@ -11,14 +11,14 @@ class StoriesRoute extends GoRouteData {
   /// {@macro dicoding_story_fl.interfaces.ux.routes.StoriesRoute}
   const StoriesRoute({this.page, this.size});
 
-  /// Page number. Must be greater than `0`.
+  /// Page number.
   ///
-  /// Type are string to support web.
+  /// Actual type are [int].
   final String? page;
 
-  /// Stories count for each page. Must be greater than `0`.
+  /// Stories count for each page.
   ///
-  /// Type are string to support web.
+  /// Actual type are [int].
   final String? size;
 
   @override
@@ -26,10 +26,7 @@ class StoriesRoute extends GoRouteData {
     final parsedPage = int.tryParse(page ?? '');
     final parsedSize = int.tryParse(size ?? '');
 
-    return StoriesScreen(
-      page: parsedPage,
-      size: parsedSize,
-    );
+    return StoriesScreen(page: parsedPage, size: parsedSize);
   }
 }
 

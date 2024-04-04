@@ -21,7 +21,7 @@ class UserCreds extends Equatable {
   final String token;
 
   @override
-  List<Object?> get props => [id];
+  List<Object?> get props => [id, name, token];
 
   factory UserCreds.fromCache(Map<String, dynamic> map) =>
       UserCreds(id: map['id'], name: map['name'], token: map['token']);

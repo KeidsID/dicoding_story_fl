@@ -1,4 +1,6 @@
-class SimpleException implements Exception {
+import 'package:equatable/equatable.dart';
+
+class SimpleException extends Equatable implements Exception {
   const SimpleException({
     this.name = 'Internal App Error',
     this.message = 'Sorry for the inconvenience',
@@ -16,9 +18,7 @@ class SimpleException implements Exception {
   final StackTrace? trace;
 
   @override
-  String toString() {
-    return 'SimpleException(name: $name, message: $message, error: $error)';
-  }
+  List<Object?> get props => [name, message, error];
 }
 
 class SimpleHttpException extends SimpleException {
@@ -92,4 +92,7 @@ class SimpleHttpException extends SimpleException {
     510: 'Not Extended',
     511: 'Network Authentication Required',
   };
+
+  @override
+  List<Object?> get props => [...super.props, statusCode];
 }
