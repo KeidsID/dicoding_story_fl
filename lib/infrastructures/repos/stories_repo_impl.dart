@@ -1,4 +1,5 @@
 import 'package:chopper/chopper.dart';
+import 'package:dicoding_story_fl/common/utils.dart';
 
 import 'package:dicoding_story_fl/core/entities.dart';
 import 'package:dicoding_story_fl/core/repos.dart';
@@ -36,9 +37,7 @@ class StoriesRepoImpl with OnErrorResponseMixin implements StoriesRepo {
 
       return resBody.listStory.map((e) => e.toEntity()).toList();
     } catch (err, trace) {
-      if (err is SimpleException) rethrow;
-
-      throw SimpleException(error: err, trace: trace);
+      throw err.toSimpleException(trace);
     }
   }
 
@@ -60,9 +59,7 @@ class StoriesRepoImpl with OnErrorResponseMixin implements StoriesRepo {
 
       return resBody.story.toEntity();
     } catch (err, trace) {
-      if (err is SimpleException) rethrow;
-
-      throw SimpleException(error: err, trace: trace);
+      throw err.toSimpleException(trace);
     }
   }
 }

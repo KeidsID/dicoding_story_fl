@@ -1,31 +1,12 @@
-import 'package:flutter/material.dart';
-
+import 'package:dicoding_story_fl/common/utils.dart';
 import 'package:dicoding_story_fl/container.dart' as container;
 import 'package:dicoding_story_fl/core/entities.dart';
 import 'package:dicoding_story_fl/core/use_cases.dart';
+import 'package:dicoding_story_fl/interfaces/ux.dart';
 
-class AuthProvider extends ValueNotifier<UserCreds?> {
-  AuthProvider([UserCreds? initialValue]) : super(initialValue) {
+final class AuthProvider extends AsyncValueNotifier<UserCreds?> {
+  AuthProvider([super.initialValue]) {
     Future.microtask(() => _fetchToken());
-  }
-
-  bool _isLoading = false;
-
-  /// Asynchronous process running.
-  bool get isLoading => _isLoading;
-
-  /// Update [isLoading] and notify listeners.
-  @protected
-  set isLoading(bool value) {
-    _isLoading = value;
-    notifyListeners();
-  }
-
-  @override
-  set value(UserCreds? value) {
-    _isLoading = false;
-
-    super.value = value;
   }
 
   Future<void> _fetchToken() async {
@@ -44,9 +25,10 @@ class AuthProvider extends ValueNotifier<UserCreds?> {
 
       await _fetchToken();
     } catch (err, trace) {
-      if (err is SimpleException) rethrow;
+      final parsedError = err.toSimpleException(trace);
 
-      throw SimpleException(error: err, trace: trace);
+      setError(parsedError);
+      throw parsedError;
     }
   }
 
@@ -58,9 +40,10 @@ class AuthProvider extends ValueNotifier<UserCreds?> {
 
       await _fetchToken();
     } catch (err, trace) {
-      if (err is SimpleException) rethrow;
+      final parsedError = err.toSimpleException(trace);
 
-      throw SimpleException(error: err, trace: trace);
+      setError(parsedError);
+      throw parsedError;
     }
   }
 
@@ -82,9 +65,10 @@ class AuthProvider extends ValueNotifier<UserCreds?> {
 
       await login(email: email, password: password);
     } catch (err, trace) {
-      if (err is SimpleException) rethrow;
+      final parsedError = err.toSimpleException(trace);
 
-      throw SimpleException(error: err, trace: trace);
+      setError(parsedError);
+      throw parsedError;
     }
   }
 }

@@ -84,7 +84,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   const SizedBox(height: 32.0),
 
                   // Actions
-                  Consumer<AuthProvider>(builder: (context, authProv, child) {
+                  Builder(builder: (context) {
+                    final authProv = context.watch<AuthProvider>();
+
                     if (authProv.isLoading) {
                       return const Center(child: CircularProgressIndicator());
                     }
@@ -99,8 +101,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       const Text('Need an account?'),
-                      Consumer<AuthProvider>(
-                          builder: (context, authProv, child) {
+                      Builder(builder: (context) {
+                        final authProv = context.watch<AuthProvider>();
+
                         return TextButton(
                           onPressed: authProv.isLoading
                               ? null

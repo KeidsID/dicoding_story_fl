@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:chopper/chopper.dart';
+import 'package:dicoding_story_fl/common/utils.dart';
 import 'package:dicoding_story_fl/infrastructures/utils/on_error_response_mixin.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -48,10 +49,8 @@ class AuthRepoImpl with OnErrorResponseMixin implements AuthRepo {
       _cache.setString(_loginCacheKey, jsonEncode(userCreds.toCache()));
 
       return userCreds;
-    } on SimpleException {
-      rethrow;
     } catch (err, trace) {
-      throw SimpleException(error: err, trace: trace);
+      throw err.toSimpleException(trace);
     }
   }
 
@@ -69,10 +68,8 @@ class AuthRepoImpl with OnErrorResponseMixin implements AuthRepo {
       });
 
       if (!rawRes.isSuccessful) throw onErrorResponse(rawRes);
-    } on SimpleException {
-      rethrow;
     } catch (err, trace) {
-      throw SimpleException(error: err, trace: trace);
+      throw err.toSimpleException(trace);
     }
   }
 
@@ -84,11 +81,17 @@ class AuthRepoImpl with OnErrorResponseMixin implements AuthRepo {
 
   @override
   Future<UserCreds?> getLoginSession() async {
-    await _cache.reload();
+    try {
+      await _cache.reload();
 
-    final rawCreds = _cache.getString(_loginCacheKey);
+      final rawCreds = _cache.getString(_loginCacheKey);
 
-    return rawCreds == null ? null : UserCreds.fromCache(jsonDecode(rawCreds));
+      return rawCreds == null
+          ? null
+          : UserCreds.fromCache(jsonDecode(rawCreds));
+    } catch (err, trace) {
+      throw err.toSimpleException(trace);
+    }
   }
 
   @override

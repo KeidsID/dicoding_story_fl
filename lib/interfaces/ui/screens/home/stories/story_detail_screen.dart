@@ -25,11 +25,11 @@ class StoryDetailScreen extends StatelessWidget {
       builder: (context, _) {
         final storyDetailProv = context.watch<StoryDetailProvider>();
 
-        if (storyDetailProv.isLoading) {
-          return const Center(child: CircularProgressIndicator());
-        }
+        const loadingWidget = Center(child: CircularProgressIndicator());
 
-        if (!storyDetailProv.hasValue) {
+        if (storyDetailProv.isLoading) return loadingWidget;
+
+        if (storyDetailProv.isError) {
           return SizedErrorWidget.expand(
             error: storyDetailProv.error,
             trace: storyDetailProv.trace,
@@ -41,7 +41,9 @@ class StoryDetailScreen extends StatelessWidget {
           );
         }
 
-        final story = storyDetailProv.value!;
+        final story = storyDetailProv.value;
+
+        if (story == null) return loadingWidget;
 
         return LayoutBuilder(builder: (context, constraints) {
           if (constraints.maxWidth < 720) {
@@ -146,8 +148,8 @@ class _StoryDetailScreenL extends StatelessWidget {
                       padding: const EdgeInsets.all(8.0),
                       child: IconButton.filledTonal(
                         icon: const Icon(Icons.arrow_back),
-                        tooltip: MaterialLocalizations.of(context)
-                            .backButtonTooltip,
+                        tooltip:
+                            MaterialLocalizations.of(context).backButtonTooltip,
                         onPressed: () => Navigator.of(context).maybePop(),
                       ),
                     ),

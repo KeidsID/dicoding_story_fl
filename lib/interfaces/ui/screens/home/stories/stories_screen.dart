@@ -147,23 +147,23 @@ class _StoriesScreenState extends State<StoriesScreen> {
         final userCreds = context.watch<AuthProvider>().value;
         final storiesProv = context.watch<StoriesProvider>();
 
-        if (storiesProv.isLoading || !storiesProv.hasValue) {
-          if (storiesProv.error != null) {
-            return SizedErrorWidget.expand(
-              error: storiesProv.error,
-              trace: storiesProv.trace,
-              action: ElevatedButton.icon(
-                onPressed: userCreds == null ? null : () => _fetchStories(),
-                icon: const Icon(Icons.refresh_outlined),
-                label: const Text('Refresh'),
-              ),
-            );
-          }
-
+        if (storiesProv.isLoading) {
           return const Center(child: CircularProgressIndicator());
         }
 
-        final stories = storiesProv.value!;
+        if (storiesProv.isError) {
+          return SizedErrorWidget.expand(
+            error: storiesProv.error,
+            trace: storiesProv.trace,
+            action: ElevatedButton.icon(
+              onPressed: userCreds == null ? null : () => _fetchStories(),
+              icon: const Icon(Icons.refresh_outlined),
+              label: const Text('Refresh'),
+            ),
+          );
+        }
+
+        final stories = storiesProv.value;
 
         return CustomScrollView(
           slivers: [
@@ -173,35 +173,38 @@ class _StoriesScreenState extends State<StoriesScreen> {
             //
             SliverPadding(
               padding: const EdgeInsets.all(16.0),
-              sliver: stories.isEmpty
-                  ? SliverToBoxAdapter(
-                      child: SizedErrorWidget(
-                        error: SimpleHttpException(
-                          statusCode: 404,
-                          message: 'No stories found',
-                        ),
-                      ),
-                    )
-                  : SliverGrid.builder(
-                      gridDelegate:
-                          const SliverGridDelegateWithMaxCrossAxisExtent(
-                        maxCrossAxisExtent: 400.0,
-                        mainAxisSpacing: 8.0,
-                        crossAxisSpacing: 8.0,
-                      ),
-                      itemCount: stories.length,
-                      itemBuilder: (context, index) {
-                        final story = stories[index];
-
-                        return StoryCard(
-                          story,
-                          childBuilder: (_, child) => InkWell(
-                            onTap: () => StoryDetailRoute(story.id).go(context),
-                            child: child,
+              sliver: stories == null
+                  ? const SliverToBoxAdapter(child: CircularProgressIndicator())
+                  : stories.isEmpty
+                      ? SliverToBoxAdapter(
+                          child: SizedErrorWidget(
+                            error: SimpleHttpException(
+                              statusCode: 404,
+                              message: 'No stories found',
+                            ),
                           ),
-                        );
-                      },
-                    ),
+                        )
+                      : SliverGrid.builder(
+                          gridDelegate:
+                              const SliverGridDelegateWithMaxCrossAxisExtent(
+                            maxCrossAxisExtent: 400.0,
+                            mainAxisSpacing: 8.0,
+                            crossAxisSpacing: 8.0,
+                          ),
+                          itemCount: stories.length,
+                          itemBuilder: (context, index) {
+                            final story = stories[index];
+
+                            return StoryCard(
+                              story,
+                              childBuilder: (_, child) => InkWell(
+                                onTap: () =>
+                                    StoryDetailRoute(story.id).go(context),
+                                child: child,
+                              ),
+                            );
+                          },
+                        ),
             ),
 
             //

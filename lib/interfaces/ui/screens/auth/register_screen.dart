@@ -95,7 +95,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   const SizedBox(height: 32.0),
 
                   // Actions
-                  Consumer<AuthProvider>(builder: (context, authProv, child) {
+                  Builder(builder: (context) {
+                    final authProv = context.watch<AuthProvider>();
+
                     if (authProv.isLoading) {
                       return const CircularProgressIndicator();
                     }
@@ -110,16 +112,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       const Text('Already have an account?'),
-                      Consumer<AuthProvider>(
-                        builder: (context, authProv, child) {
-                          return TextButton(
-                            onPressed: authProv.isLoading
-                                ? null
-                                : () => const LoginRoute().go(context),
-                            child: const Text('Log in'),
-                          );
-                        },
-                      ),
+                      Builder(builder: (context) {
+                        final authProv = context.watch<AuthProvider>();
+
+                        return TextButton(
+                          onPressed: authProv.isLoading
+                              ? null
+                              : () => const LoginRoute().go(context),
+                          child: const Text('Log in'),
+                        );
+                      }),
                     ],
                   ),
                 ],

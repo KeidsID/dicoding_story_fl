@@ -24,7 +24,7 @@ Story API: https://story-api.dicoding.dev/v1/
 
 - [x] Auth Pages.
 - [x] Stories Page.
-- [ ] Story Detail Page.
+- [x] Story Detail Page.
 - [ ] Add/Post Story Page.
 - [x] Advanced Navigation.
 
