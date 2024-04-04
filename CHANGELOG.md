@@ -1,3 +1,7 @@
+## 0.2.1
+
+- fix: invalid state handling.
+
 ## 0.2.0
 
 - feat: stories page.
