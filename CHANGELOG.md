@@ -1,6 +1,7 @@
-## unreleased
+## 0.2.0
 
 - feat: stories page.
+- feat: story detail page.
 - feat: better UI.
 
 ## 0.1.0

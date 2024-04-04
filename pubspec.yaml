@@ -3,7 +3,7 @@ description:
   Projects from dicoding.com as a practice in advanced navigation, use of media
   (audio, images, and video), and use of maps such as Google Map.
 publish_to: "none"
-version: 0.1.0
+version: 0.2.0
 
 environment:
   sdk: ">=3.0.2 <4.0.0"
