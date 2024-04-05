@@ -1,10 +1,11 @@
-import 'package:dicoding_story_fl/core/entities.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import 'package:dicoding_story_fl/common/constants.dart';
+import 'package:dicoding_story_fl/common/utils.dart';
+import 'package:dicoding_story_fl/core/entities.dart';
 import 'package:dicoding_story_fl/interfaces/ui.dart';
 import 'package:dicoding_story_fl/interfaces/ux.dart';
 
@@ -21,10 +22,6 @@ class StoriesScreen extends StatefulWidget {
 class _StoriesScreenState extends State<StoriesScreen> {
   int? get page => widget.page;
   int? get size => widget.size;
-
-  // prevent "null" on url queries.
-  String? get pageAsQuery => page == null ? null : '$page';
-  String? get sizeAsQuery => size == null ? null : '$size';
 
   Future<void> _fetchStories({
     bool? hasCordinate,
@@ -78,7 +75,7 @@ class _StoriesScreenState extends State<StoriesScreen> {
                 ? null
                 : () => StoriesRoute(
                       page: '${(page ?? 1) - 1}',
-                      size: sizeAsQuery,
+                      size: size.toNullableString(),
                     ).go(context),
             icon: const Icon(Icons.chevron_left),
           ),
@@ -86,7 +83,7 @@ class _StoriesScreenState extends State<StoriesScreen> {
           IconButton(
             onPressed: () => StoriesRoute(
               page: '${(page ?? 1) + 1}',
-              size: sizeAsQuery,
+              size: size.toNullableString(),
             ).go(context),
             icon: const Icon(Icons.chevron_right),
           ),
@@ -118,7 +115,7 @@ class _StoriesScreenState extends State<StoriesScreen> {
                     ],
                     onSubmitted: (String value) {
                       StoriesRoute(
-                        page: pageAsQuery,
+                        page: page.toNullableString(),
                         size: switch (value) {
                           '' => null,
                           '0' => null,

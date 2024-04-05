@@ -7,14 +7,7 @@ import 'package:dicoding_story_fl/interfaces/ux.dart';
 final class StoryDetailProvider extends AsyncValueNotifier<StoryDetail> {
   StoryDetailProvider({required this.storyId, required this.userCreds})
       : super(null) {
-    Future.microtask(() async {
-      try {
-        await refresh();
-      } catch (err) {
-        // ignore error on init
-        return;
-      }
-    });
+    Future.microtask(() => refresh()).then((_) => null);
   }
 
   final String storyId;
