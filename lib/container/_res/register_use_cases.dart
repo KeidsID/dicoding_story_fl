@@ -10,5 +10,6 @@ void _registerUseCases() {
 
     // stories
     ..registerLazySingleton(() => GetStoriesCase(get()))
-    ..registerLazySingleton(() => GetStoryDetailCase(get()));
+    ..registerLazySingleton(() => GetStoryDetailCase(get()))
+    ..registerLazySingleton(() => PostStoryCase(get()));
 }

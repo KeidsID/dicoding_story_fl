@@ -1,27 +1,25 @@
 import 'dart:convert';
 
 import 'package:chopper/chopper.dart';
-import 'package:dicoding_story_fl/common/utils.dart';
-import 'package:dicoding_story_fl/infrastructures/utils/on_error_response_mixin.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:dicoding_story_fl/common/utils.dart';
 import 'package:dicoding_story_fl/core/entities.dart';
 import 'package:dicoding_story_fl/core/repos.dart';
 import 'package:dicoding_story_fl/infrastructures/api/responses.dart';
+import 'package:dicoding_story_fl/infrastructures/utils/on_error_response_mixin.dart';
 
 part 'auth_repo_impl.chopper.dart';
 
 class AuthRepoImpl with OnErrorResponseMixin implements AuthRepo {
-  const AuthRepoImpl({
+  AuthRepoImpl({
     required ChopperClient client,
     required SharedPreferences sharedPreferences,
-  })  : _client = client,
+  })  : _authApi = AuthApiService.create(client),
         _cache = sharedPreferences;
 
-  final ChopperClient _client;
+  final AuthApiService _authApi;
   final SharedPreferences _cache;
-
-  AuthApiService get _authApi => AuthApiService.create(_client);
 
   @override
   Future<UserCreds> login({
@@ -103,6 +101,8 @@ abstract class AuthApiService extends ChopperService {
   static AuthApiService create([ChopperClient? client]) =>
       _$AuthApiService(client);
 
+  /// Register new user.
+  /// 
   /// Valid [body] value:
   ///
   /// ```json
@@ -117,6 +117,8 @@ abstract class AuthApiService extends ChopperService {
     @body required Map<String, dynamic> body,
   });
 
+  /// Login user and retrieve token.
+  /// 
   /// Valid [body] value:
   ///
   /// ```json

@@ -1,6 +1,6 @@
 import 'package:chopper/chopper.dart';
-import 'package:dicoding_story_fl/common/utils.dart';
 
+import 'package:dicoding_story_fl/common/utils.dart';
 import 'package:dicoding_story_fl/core/entities.dart';
 import 'package:dicoding_story_fl/core/repos.dart';
 import 'package:dicoding_story_fl/infrastructures/api/responses.dart';
@@ -9,22 +9,21 @@ import 'package:dicoding_story_fl/infrastructures/utils/on_error_response_mixin.
 part 'stories_repo_impl.chopper.dart';
 
 class StoriesRepoImpl with OnErrorResponseMixin implements StoriesRepo {
-  const StoriesRepoImpl(this._client);
+  StoriesRepoImpl(ChopperClient client)
+      : _storiesApi = StoriesApiService.create(client);
 
-  final ChopperClient _client;
-
-  StoriesApiService get _storiesApi => StoriesApiService.create(_client);
+  final StoriesApiService _storiesApi;
 
   @override
   Future<List<Story>> fetchStories(
-    UserCreds userCredentials, {
+    UserCreds userCreds, {
     int page = 1,
     int size = 10,
     bool? hasCordinate,
   }) async {
     try {
       final rawRes = await _storiesApi.getStories(
-        authorization: 'Bearer ${userCredentials.token}',
+        authorization: 'Bearer ${userCreds.token}',
         page: page,
         size: size,
         hasCordinate: hasCordinate == null ? null : (hasCordinate ? 1 : 0),
@@ -44,12 +43,12 @@ class StoriesRepoImpl with OnErrorResponseMixin implements StoriesRepo {
   @override
   Future<StoryDetail> storyDetailById(
     String id, {
-    required UserCreds userCredentials,
+    required UserCreds userCreds,
   }) async {
     try {
       final rawRes = await _storiesApi.getStoryDetail(
         id,
-        authorization: 'Bearer ${userCredentials.token}',
+        authorization: 'Bearer ${userCreds.token}',
       );
       final rawResBody = rawRes.body;
 
@@ -58,6 +57,30 @@ class StoriesRepoImpl with OnErrorResponseMixin implements StoriesRepo {
       final resBody = StoryDetailResponse.fromJson(rawResBody);
 
       return resBody.story.toEntity();
+    } catch (err, trace) {
+      throw err.toSimpleException(trace);
+    }
+  }
+
+  @override
+  Future<void> postStory(
+    UserCreds userCreds, {
+    required String description,
+    required List<int> imageBytes,
+    double? lat,
+    double? lon,
+  }) async {
+    try {
+      final rawRes = await _storiesApi.postStory(
+        authorization: 'Bearer ${userCreds.token}',
+        description: description,
+        imageBytes: imageBytes,
+        lat: lat,
+        lon: lon,
+      );
+      final rawResBody = rawRes.body;
+
+      if (rawResBody == null) throw onErrorResponse(rawRes);
     } catch (err, trace) {
       throw err.toSimpleException(trace);
     }
@@ -84,6 +107,7 @@ abstract class StoriesApiService extends ChopperService {
   @Get(path: '/stories')
   Future<Response<Map<String, dynamic>>> getStories({
     @Header('Authorization') required String authorization,
+    //
     @query int page = 1,
     @query int size = 10,
     @Query('location') int? hasCordinate,
@@ -98,5 +122,28 @@ abstract class StoriesApiService extends ChopperService {
   Future<Response<Map<String, dynamic>>> getStoryDetail(
     @Path('id') String storyId, {
     @Header('Authorization') required String authorization,
+  });
+
+  /// Post a new story.
+  ///
+  /// Headers:
+  ///
+  /// - [authorization], `Bearer <token>` format.
+  ///
+  /// Request Body (multipart):
+  ///
+  /// - [description], story description.
+  /// - [photo], image bytes.
+  /// - [lat], latitude (optional).
+  /// - [lon], longitude (optional).
+  @Post(path: '/stories')
+  @multipart
+  Future<Response<Map<String, dynamic>>> postStory({
+    @Header('Authorization') required String authorization,
+    //
+    @part required String description,
+    @Part('photo') required List<int> imageBytes,
+    @part double? lat,
+    @part double? lon,
   });
 }
