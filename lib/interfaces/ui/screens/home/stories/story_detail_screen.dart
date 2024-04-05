@@ -57,6 +57,36 @@ class StoryDetailScreen extends StatelessWidget {
   }
 }
 
+/// Expands image on dialog to show image with [BoxFit.contain].
+void _showImageDialog(BuildContext context, ImageProvider<Object> image) {
+  showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          clipBehavior: Clip.hardEdge,
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              Image(image: image, fit: BoxFit.contain),
+              //
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Align(
+                  alignment: Alignment.topRight,
+                  child: IconButton.filledTonal(
+                    icon: const Icon(Icons.close),
+                    tooltip:
+                        MaterialLocalizations.of(context).closeButtonTooltip,
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      });
+}
+
 class _StoryDetailScreenS extends StatelessWidget {
   const _StoryDetailScreenS(this.story);
 
@@ -79,7 +109,12 @@ class _StoryDetailScreenS extends StatelessWidget {
               aspectRatio: 3 / 2,
               child: CommonNetworkImage(
                 imageUrl: story.photoUrl,
-                fit: BoxFit.cover,
+                imageBuilder: (context, image) {
+                  return InkWell(
+                    onTap: () => _showImageDialog(context, image),
+                    child: Ink.image(image: image, fit: BoxFit.cover),
+                  );
+                },
               ),
             ),
             const Flexible(child: Divider(height: 2.0, thickness: 2.0)),
@@ -138,7 +173,12 @@ class _StoryDetailScreenL extends StatelessWidget {
                 children: [
                   CommonNetworkImage(
                     imageUrl: story.photoUrl,
-                    fit: BoxFit.cover,
+                    imageBuilder: (context, image) {
+                      return InkWell(
+                        onTap: () => _showImageDialog(context, image),
+                        child: Ink.image(image: image, fit: BoxFit.cover),
+                      );
+                    },
                   ),
 
                   //

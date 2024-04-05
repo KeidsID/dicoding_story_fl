@@ -1,10 +1,10 @@
-import 'package:dicoding_story_fl/common/constants.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import 'common/asset_paths.dart';
+import 'common/constants.dart';
 import 'container.dart' as container;
 import 'interfaces/ui.dart';
 import 'interfaces/ux.dart';

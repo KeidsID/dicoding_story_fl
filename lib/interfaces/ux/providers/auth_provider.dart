@@ -6,8 +6,13 @@ import 'package:dicoding_story_fl/interfaces/ux.dart';
 
 final class AuthProvider extends AsyncValueNotifier<UserCreds?> {
   AuthProvider([super.initialValue]) {
-    Future.microtask(() => _fetchToken());
+    Future.microtask(() => _fetchToken()).catchError((e) => null);
   }
+
+  /// Logged in state.
+  ///
+  /// Same as [value] is not null.
+  bool get isLoggedIn => !hasValue;
 
   Future<void> _fetchToken() async {
     if (!isLoading) isLoading = true;
