@@ -2,7 +2,7 @@ import '../entities.dart';
 
 abstract interface class StoriesRepo {
   Future<List<Story>> fetchStories(
-    UserCreds userCredentials, {
+    UserCreds userCreds, {
     int page = 1,
     int size = 10,
     bool? hasCordinate,
@@ -10,6 +10,14 @@ abstract interface class StoriesRepo {
 
   Future<StoryDetail> storyDetailById(
     String id, {
-    required UserCreds userCredentials,
+    required UserCreds userCreds,
+  });
+
+  Future<void> postStory(
+    UserCreds userCreds, {
+    required String description,
+    required List<int> imageBytes,
+    double? lat,
+    double? lon,
   });
 }

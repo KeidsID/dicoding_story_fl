@@ -15,5 +15,5 @@ class GetStoryDetailCase {
     String id, {
     required UserCreds userCredentials,
   }) =>
-      _storiesRepo.storyDetailById(id, userCredentials: userCredentials);
+      _storiesRepo.storyDetailById(id, userCreds: userCredentials);
 }
