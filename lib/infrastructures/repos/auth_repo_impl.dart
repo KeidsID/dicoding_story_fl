@@ -102,7 +102,7 @@ abstract class AuthApiService extends ChopperService {
       _$AuthApiService(client);
 
   /// Register new user.
-  /// 
+  ///
   /// Valid [body] value:
   ///
   /// ```json
@@ -113,12 +113,16 @@ abstract class AuthApiService extends ChopperService {
   /// }
   /// ```
   @Post(path: '/register')
+  @FactoryConverter(
+    request: JsonConverter.requestFactory,
+    response: JsonConverter.responseFactory,
+  )
   Future<Response<Map<String, dynamic>>> postRegister({
     @body required Map<String, dynamic> body,
   });
 
   /// Login user and retrieve token.
-  /// 
+  ///
   /// Valid [body] value:
   ///
   /// ```json
@@ -128,6 +132,10 @@ abstract class AuthApiService extends ChopperService {
   /// }
   /// ```
   @Post(path: '/login')
+  @FactoryConverter(
+    request: JsonConverter.requestFactory,
+    response: JsonConverter.responseFactory,
+  )
   Future<Response<Map<String, dynamic>>> postLogin({
     @body required Map<String, dynamic> body,
   });
