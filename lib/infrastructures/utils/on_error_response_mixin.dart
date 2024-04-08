@@ -1,4 +1,5 @@
 import 'package:chopper/chopper.dart';
+import 'package:dicoding_story_fl/common/constants.dart';
 import 'package:dicoding_story_fl/common/utils.dart';
 
 import 'package:dicoding_story_fl/core/entities.dart';
@@ -18,6 +19,9 @@ mixin OnErrorResponseMixin {
       if (error != null) {
         final errorBody =
             CommonResponse.fromJson(error as Map<String, dynamic>);
+
+        kLogger.w('Http Exception Request', error: res.base.request);
+
         return SimpleHttpException(
           statusCode: res.statusCode,
           message: errorBody.message,
