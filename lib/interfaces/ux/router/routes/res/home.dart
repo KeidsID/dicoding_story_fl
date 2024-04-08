@@ -30,8 +30,20 @@ class StoriesRoute extends GoRouteData {
   }
 }
 
+/// {@template dicoding_story_fl.interfaces.ux.routes.PostStoryRoute}
+/// `/stories/post` route.
+/// {@endtemplate}
+class PostStoryRoute extends GoRouteData {
+  /// {@macro dicoding_story_fl.interfaces.ux.routes.PostStoryRoute}
+  const PostStoryRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const PostStoryScreen();
+}
+
 /// {@template dicoding_story_fl.interfaces.ux.routes.StoryDetailRoute}
-/// `/stories/:id` route.
+/// `/stories/view/:id` route.
 /// {@endtemplate}
 class StoryDetailRoute extends GoRouteData {
   /// {@macro dicoding_story_fl.interfaces.ux.routes.StoryDetailRoute}

@@ -32,4 +32,31 @@ final class StoriesProvider extends AsyncValueNotifier<List<Story>> {
       throw parsedError;
     }
   }
+
+  Future<void> postStory(
+    UserCreds userCreds, {
+    required String description,
+    required List<int> imageBytes,
+    double? lat,
+    double? lon,
+  }) async {
+    isLoading = true;
+
+    try {
+      await container.get<PostStoryCase>().execute(
+            userCreds,
+            description: description,
+            imageBytes: imageBytes,
+            lat: lat,
+            lon: lon,
+          );
+
+      await fetchStories(userCreds);
+    } catch (err, trace) {
+      final parsedError = err.toSimpleException(trace);
+
+      setError(parsedError);
+      throw parsedError;
+    }
+  }
 }

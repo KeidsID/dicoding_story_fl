@@ -31,6 +31,8 @@ abstract base class AsyncValueNotifier<T> extends ValueNotifier<T?> {
   bool get isLoading => _isLoading;
   @protected
   set isLoading(bool value) {
+    if (_isLoading == value) return;
+
     _isLoading = value;
     notifyListeners();
   }
