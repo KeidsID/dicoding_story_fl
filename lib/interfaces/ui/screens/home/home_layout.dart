@@ -69,6 +69,12 @@ ValueChanged<int> _onNavItemTap(BuildContext context) {
   };
 }
 
+bool _isStoriesRoute(BuildContext context) {
+  final currentRoute = GoRouterState.of(context).uri.path;
+
+  return currentRoute == const StoriesRoute().location;
+}
+
 class _HomeLayoutS extends HomeLayout {
   const _HomeLayoutS({super.child});
 
@@ -87,6 +93,14 @@ class _HomeLayoutS extends HomeLayout {
         currentIndex: _currentNav(context),
         onTap: _onNavItemTap(context),
       ),
+      floatingActionButton: !_isStoriesRoute(context)
+          ? null
+          : FloatingActionButton(
+              onPressed: () => const PostStoryRoute().go(context),
+              tooltip: 'Post Story',
+              child: const Icon(Icons.add),
+            ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 }
@@ -118,6 +132,13 @@ class _HomeLayoutL extends HomeLayout {
           ),
         ),
       ),
+      floatingActionButton: !_isStoriesRoute(context)
+          ? null
+          : FloatingActionButton.extended(
+              onPressed: () => const PostStoryRoute().go(context),
+              icon: const Icon(Icons.add),
+              label: const Text('Post Story'),
+            ),
     );
   }
 }
