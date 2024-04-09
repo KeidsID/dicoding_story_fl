@@ -30,7 +30,7 @@ final class AuthProvider extends AsyncValueNotifier<UserCreds?> {
 
       await _fetchToken();
     } catch (err, trace) {
-      final parsedError = err.toSimpleException(trace);
+      final parsedError = err.toSimpleException(trace: trace);
 
       setError(parsedError);
       throw parsedError;
@@ -45,7 +45,7 @@ final class AuthProvider extends AsyncValueNotifier<UserCreds?> {
 
       await _fetchToken();
     } catch (err, trace) {
-      final parsedError = err.toSimpleException(trace);
+      final parsedError = err.toSimpleException(trace: trace);
 
       setError(parsedError);
       throw parsedError;
@@ -70,7 +70,7 @@ final class AuthProvider extends AsyncValueNotifier<UserCreds?> {
 
       await login(email: email, password: password);
     } catch (err, trace) {
-      final parsedError = err.toSimpleException(trace);
+      final parsedError = err.toSimpleException(trace: trace);
 
       setError(parsedError);
       throw parsedError;

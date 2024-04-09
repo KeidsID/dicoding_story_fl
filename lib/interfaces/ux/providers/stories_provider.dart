@@ -26,7 +26,7 @@ final class StoriesProvider extends AsyncValueNotifier<List<Story>> {
 
       value = stories;
     } catch (err, trace) {
-      final parsedError = err.toSimpleException(trace);
+      final parsedError = err.toSimpleException(trace: trace);
 
       setError(parsedError);
       throw parsedError;
@@ -55,7 +55,7 @@ final class StoriesProvider extends AsyncValueNotifier<List<Story>> {
 
       await fetchStories(userCreds);
     } catch (err, trace) {
-      final parsedError = err.toSimpleException(trace);
+      final parsedError = err.toSimpleException(trace: trace);
 
       setError(parsedError);
       throw parsedError;
