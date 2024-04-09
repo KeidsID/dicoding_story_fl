@@ -37,6 +37,7 @@ final class StoriesProvider extends AsyncValueNotifier<List<Story>> {
     UserCreds userCreds, {
     required String description,
     required List<int> imageBytes,
+    required String imageFilename,
     double? lat,
     double? lon,
   }) async {
@@ -47,6 +48,7 @@ final class StoriesProvider extends AsyncValueNotifier<List<Story>> {
             userCreds,
             description: description,
             imageBytes: imageBytes,
+            imageFilename: imageFilename,
             lat: lat,
             lon: lon,
           );

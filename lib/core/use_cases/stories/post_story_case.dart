@@ -11,10 +11,13 @@ class PostStoryCase {
   final StoriesRepo _storiesRepo;
 
   /// Post new story.
+  ///
+  /// [imageFilename] must include file extension.
   Future<void> execute(
     UserCreds userCreds, {
     required String description,
     required List<int> imageBytes,
+    required String imageFilename,
     double? lat,
     double? lon,
   }) =>
@@ -22,6 +25,7 @@ class PostStoryCase {
         userCreds,
         description: description,
         imageBytes: imageBytes,
+        imageFilename: imageFilename,
         lat: lat,
         lon: lon,
       );
