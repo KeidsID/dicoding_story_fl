@@ -4,10 +4,17 @@ import 'package:flutter/material.dart';
 /// Extension on nullable [Object].
 extension NullableObjectX on Object? {
   /// Utility to convert [Object] to [SimpleException].
-  SimpleException toSimpleException([StackTrace? trace]) {
+  SimpleException toSimpleException({
+    String? message,
+    StackTrace? trace,
+  }) {
     if (this is SimpleException) return this as SimpleException;
 
-    return SimpleException(error: this, trace: trace);
+    return SimpleException(
+      error: this,
+      message: message ?? 'Sorry for the inconvenience',
+      trace: trace,
+    );
   }
 
   /// Return `null` instead `"null"` string on `null` value.

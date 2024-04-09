@@ -23,7 +23,7 @@ final class StoryDetailProvider extends AsyncValueNotifier<StoryDetail> {
             userCredentials: userCreds,
           );
     } catch (err, trace) {
-      final parsedError = err.toSimpleException(trace);
+      final parsedError = err.toSimpleException(trace: trace);
 
       setError(parsedError);
       throw parsedError;

@@ -27,9 +27,9 @@ mixin OnErrorResponseMixin {
         );
       }
 
-      return res.toSimpleException(StackTrace.current);
+      return res.toSimpleException(trace: StackTrace.current);
     } catch (err, trace) {
-      return err.toSimpleException(trace);
+      return err.toSimpleException(trace: trace);
     }
   }
 }

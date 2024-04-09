@@ -34,7 +34,13 @@ class _PostStoryScreenState extends State<PostStoryScreen> {
 
       setState(() => pickedImage = image);
     } catch (err, trace) {
-      final exception = err.toSimpleException(trace);
+      final exception = err.toSimpleException(
+        message: switch (source) {
+          ImageSource.camera => 'Camera is not available',
+          ImageSource.gallery => "Can't access gallery",
+        },
+        trace: trace,
+      );
 
       kLogger.w(
         'On Pick Image',
@@ -66,7 +72,8 @@ class _PostStoryScreenState extends State<PostStoryScreen> {
     final rawException = response.exception;
 
     if (rawException != null) {
-      final exception = rawException.toSimpleException(StackTrace.current);
+      final exception =
+          rawException.toSimpleException(trace: StackTrace.current);
 
       kLogger.w(
         'Android Retrieve Lost Data',
@@ -137,6 +144,76 @@ class _PostStoryScreenState extends State<PostStoryScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _descriptionController = TextEditingController();
 
+  VoidCallback _onImageTap(BuildContext context) {
+    return () {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text('Replace Image?'),
+            content: const Text('Replace from:'),
+            actions: [
+              TextButton(
+                onPressed: () async {
+                  await _pickImage(context);
+
+                  if (context.mounted) Navigator.maybePop(context);
+                },
+                child: const Text('Gallery'),
+              ),
+              TextButton(
+                onPressed: () async {
+                  await _pickImage(context, source: ImageSource.camera);
+
+                  if (context.mounted) Navigator.maybePop(context);
+                },
+                child: const Text('Camera'),
+              ),
+              //
+              TextButton(
+                onPressed: () => Navigator.maybePop(context),
+                child: const Text('Cancel'),
+              ),
+            ],
+          );
+        },
+      );
+    };
+  }
+
+  VoidCallback _onPostButtonTap(BuildContext context) {
+    return () async {
+      final imageFile = pickedImage;
+
+      if (imageFile == null) return;
+
+      try {
+        if (!(_formKey.currentState?.validate() ?? false)) return;
+
+        await context.read<StoriesProvider>().postStory(
+              context.read<AuthProvider>().value!,
+              description: _descriptionController.text,
+              imageBytes: await imageFile.readAsBytes(),
+              imageFilename: imageFile.name,
+            );
+
+        if (context.mounted) Navigator.maybePop(context);
+      } catch (err, trace) {
+        final exception = err.toSimpleException(trace: trace);
+
+        kLogger.w(
+          'On Post Story',
+          error: exception,
+          stackTrace: exception.trace,
+        );
+
+        context.scaffoldMessenger?.showSnackBar(SnackBar(
+          content: Text(exception.message),
+        ));
+      }
+    };
+  }
+
   Widget get _screenHandler {
     final imageFile = pickedImage;
 
@@ -147,79 +224,13 @@ class _PostStoryScreenState extends State<PostStoryScreen> {
 
       final isLoading = storiesProv.isLoading;
 
-      return _PostStoryForm(_PostStoryFormLayoutDelegate(
+      return _PostStoryForm(_PostStoryFormDelegate(
         imageFile,
-        onImageTap: isLoading
-            ? null
-            : () {
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    return AlertDialog(
-                      title: const Text('Replace Image?'),
-                      content: const Text('Replace from:'),
-                      actions: [
-                        TextButton(
-                          onPressed: () async {
-                            await _pickImage(context);
-
-                            if (context.mounted) Navigator.maybePop(context);
-                          },
-                          child: const Text('Gallery'),
-                        ),
-                        TextButton(
-                          onPressed: () async {
-                            await _pickImage(context,
-                                source: ImageSource.camera);
-
-                            if (context.mounted) Navigator.maybePop(context);
-                          },
-                          child: const Text('Camera'),
-                        ),
-                        //
-                        TextButton(
-                          onPressed: () => Navigator.maybePop(context),
-                          child: const Text('Cancel'),
-                        ),
-                      ],
-                    );
-                  },
-                );
-              },
+        onImageTap: isLoading ? null : _onImageTap(context),
         formKey: _formKey,
         descController: _descriptionController,
         descIsEnabled: !isLoading,
-        onPostButtonTap: isLoading
-            ? null
-            : () async {
-                try {
-                  if (!(_formKey.currentState?.validate() ?? false)) return;
-
-                  final userCreds = context.read<AuthProvider>().value!;
-                  final imageBytes = await imageFile.readAsBytes();
-
-                  await storiesProv.postStory(
-                    userCreds,
-                    description: _descriptionController.text,
-                    imageBytes: imageBytes,
-                    imageFilename: imageFile.name,
-                  );
-
-                  if (context.mounted) Navigator.maybePop(context);
-                } catch (err, trace) {
-                  final exception = err.toSimpleException(trace);
-
-                  kLogger.w(
-                    'On Post Story',
-                    error: exception,
-                    stackTrace: exception.trace,
-                  );
-
-                  context.scaffoldMessenger?.showSnackBar(SnackBar(
-                    content: Text(exception.message),
-                  ));
-                }
-              },
+        onPostButtonTap: isLoading ? null : _onPostButtonTap(context),
       ));
     });
   }
@@ -252,28 +263,27 @@ class _PostStoryScreenState extends State<PostStoryScreen> {
 }
 
 class _PostStoryForm extends StatelessWidget {
-  // ignore: unused_element
-  const _PostStoryForm(this.layoutDelegate, {super.key});
+  const _PostStoryForm(this.delegate);
 
-  final _PostStoryFormLayoutDelegate layoutDelegate;
+  final _PostStoryFormDelegate delegate;
 
   @override
   Widget build(BuildContext context) {
     return Form(
-      key: layoutDelegate.formKey,
+      key: delegate.formKey,
       child: LayoutBuilder(builder: (context, constraints) {
         if (constraints.maxWidth < 720) {
-          return _PostStoryFormS(layoutDelegate);
+          return _PostStoryFormS(delegate);
         }
 
-        return _PostStoryFormL(layoutDelegate);
+        return _PostStoryFormL(delegate);
       }),
     );
   }
 }
 
-class _PostStoryFormLayoutDelegate {
-  const _PostStoryFormLayoutDelegate(
+class _PostStoryFormDelegate {
+  const _PostStoryFormDelegate(
     this.imageFile, {
     this.onImageTap,
     this.formKey,
@@ -293,49 +303,65 @@ class _PostStoryFormLayoutDelegate {
 }
 
 abstract base class _PostStoryFormLayoutBase extends StatelessWidget {
-  const _PostStoryFormLayoutBase(this.layoutDelegate);
+  const _PostStoryFormLayoutBase(this.delegate);
 
-  final _PostStoryFormLayoutDelegate layoutDelegate;
+  final _PostStoryFormDelegate delegate;
 
   Widget get _imageWidget {
     return InkWell(
-      onTap: layoutDelegate.onImageTap,
+      onTap: delegate.onImageTap,
       child: ImageFromXFile(
-        layoutDelegate.imageFile,
+        delegate.imageFile,
         fit: BoxFit.cover,
       ).toInk(),
     );
   }
 
-  String get _dateTimeText => kDateFormat.format(DateTime.now());
+  Widget get _titleSection {
+    return Builder(builder: (context) {
+      final userCreds = context.watch<AuthProvider>().value;
+
+      return Wrap(
+        crossAxisAlignment: WrapCrossAlignment.end,
+        children: [
+          Text(
+            '${userCreds?.name ?? 'Anonymous'} ',
+            style: context.textTheme.headlineMedium,
+          ),
+          Text(kDateFormat.format(DateTime.now())).applyOpacity(opacity: 0.5),
+        ],
+      );
+    });
+  }
 
   TextFormField get _descFormField {
     return TextFormField(
-      controller: layoutDelegate.descController,
-      enabled: layoutDelegate.descIsEnabled,
+      controller: delegate.descController,
+      enabled: delegate.descIsEnabled,
       keyboardType: TextInputType.multiline,
       maxLines: null,
-      decoration: const InputDecoration(
-        hintText: 'Tell your story...',
-      ),
-      validator: (value) {
-        if (value == null || value.isEmpty) return 'Cannot be empty';
+      decoration: const InputDecoration(hintText: 'Tell your story...'),
+      validator: (text) {
+        if (text == null || text.isEmpty) return 'Cannot be empty';
 
         return null;
       },
     );
   }
+
+  Widget get _postButton {
+    return FilledButton(
+      onPressed: delegate.onPostButtonTap,
+      child: const Text('Post Story'),
+    );
+  }
 }
 
 final class _PostStoryFormS extends _PostStoryFormLayoutBase {
-  const _PostStoryFormS(super.layoutDelegate);
+  const _PostStoryFormS(super.delegate);
 
   @override
   Widget build(BuildContext context) {
-    final authProv = context.watch<AuthProvider>();
-
-    final textTheme = context.textTheme;
-
     return SingleChildScrollView(
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -353,28 +379,13 @@ final class _PostStoryFormS extends _PostStoryFormLayoutBase {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Wrap(
-                  crossAxisAlignment: WrapCrossAlignment.end,
-                  children: [
-                    Text(
-                      '${authProv.value?.name ?? 'Anonymous'} ',
-                      style: textTheme.headlineMedium,
-                    ),
-                    Text(_dateTimeText).applyOpacity(opacity: 0.5),
-                  ],
-                ),
+                _titleSection,
                 const SizedBox(height: 16.0),
 
                 //
                 _descFormField,
                 const SizedBox(height: 16.0),
-                Align(
-                  alignment: Alignment.center,
-                  child: FilledButton(
-                    onPressed: layoutDelegate.onPostButtonTap,
-                    child: const Text('Post Story'),
-                  ),
-                ),
+                Align(alignment: Alignment.center, child: _postButton),
               ],
             ),
           ),
@@ -385,15 +396,10 @@ final class _PostStoryFormS extends _PostStoryFormLayoutBase {
 }
 
 final class _PostStoryFormL extends _PostStoryFormLayoutBase {
-  const _PostStoryFormL(super.layoutDelegate);
+  const _PostStoryFormL(super.delegate);
 
   @override
   Widget build(BuildContext context) {
-    final authProv = context.watch<AuthProvider>();
-
-    final theme = context.theme;
-    final textTheme = theme.textTheme;
-
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Card(
@@ -414,28 +420,13 @@ final class _PostStoryFormL extends _PostStoryFormLayoutBase {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Wrap(
-                      crossAxisAlignment: WrapCrossAlignment.end,
-                      children: [
-                        Text(
-                          '${authProv.value?.name ?? 'Anonymous'} ',
-                          style: textTheme.headlineMedium,
-                        ),
-                        Text(_dateTimeText).applyOpacity(opacity: 0.5),
-                      ],
-                    ),
+                    _titleSection,
                     const SizedBox(height: 16.0),
 
                     //
                     _descFormField,
                     const SizedBox(height: 16.0),
-                    Align(
-                      alignment: Alignment.center,
-                      child: FilledButton(
-                        onPressed: layoutDelegate.onPostButtonTap,
-                        child: const Text('Post Story'),
-                      ),
-                    ),
+                    Align(alignment: Alignment.center, child: _postButton),
                   ],
                 ),
               ),

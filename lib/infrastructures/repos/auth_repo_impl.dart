@@ -48,7 +48,7 @@ class AuthRepoImpl with OnErrorResponseMixin implements AuthRepo {
 
       return userCreds;
     } catch (err, trace) {
-      throw err.toSimpleException(trace);
+      throw err.toSimpleException(trace: trace);
     }
   }
 
@@ -67,7 +67,7 @@ class AuthRepoImpl with OnErrorResponseMixin implements AuthRepo {
 
       if (!rawRes.isSuccessful) throw onErrorResponse(rawRes);
     } catch (err, trace) {
-      throw err.toSimpleException(trace);
+      throw err.toSimpleException(trace: trace);
     }
   }
 
@@ -88,7 +88,7 @@ class AuthRepoImpl with OnErrorResponseMixin implements AuthRepo {
           ? null
           : UserCreds.fromCache(jsonDecode(rawCreds));
     } catch (err, trace) {
-      throw err.toSimpleException(trace);
+      throw err.toSimpleException(trace: trace);
     }
   }
 
