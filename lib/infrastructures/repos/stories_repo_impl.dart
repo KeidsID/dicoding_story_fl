@@ -1,7 +1,9 @@
 import 'dart:async';
 
 import 'package:chopper/chopper.dart';
+import 'package:http/http.dart' show MultipartFile;
 
+import 'package:dicoding_story_fl/common/constants.dart';
 import 'package:dicoding_story_fl/common/utils.dart';
 import 'package:dicoding_story_fl/core/entities.dart';
 import 'package:dicoding_story_fl/core/repos.dart';
@@ -69,14 +71,21 @@ class StoriesRepoImpl with OnErrorResponseMixin implements StoriesRepo {
     UserCreds userCreds, {
     required String description,
     required List<int> imageBytes,
+    required String imageFilename,
     double? lat,
     double? lon,
   }) async {
     try {
+      kLogger.d(imageFilename);
+
       final rawRes = await _storiesApi.postStory(
         authorization: 'Bearer ${userCreds.token}',
         description: description,
-        imageBytes: imageBytes,
+        imageFile: MultipartFile.fromBytes(
+          'photo',
+          imageBytes,
+          filename: imageFilename,
+        ),
         lat: lat,
         lon: lon,
       );
@@ -136,10 +145,12 @@ abstract class StoriesApiService extends ChopperService {
   ///
   /// Request Body (multipart):
   ///
-  /// - [description], story description.
-  /// - [photo], image bytes.
-  /// - [lat], latitude (optional).
-  /// - [lon], longitude (optional).
+  /// - [description] - `text`, story description.
+  /// - [imageFile] - `file`, story image (max size 1MB). Use
+  ///   [MultipartFile] from `package:http`. Make sure the
+  ///   [MultipartFile.field] is `"photo"`.
+  /// - [lat] - `float`, latitude (optional).
+  /// - [lon] - `float`, longitude (optional).
   ///
   /// https://story-api.dicoding.dev/v1/#/?id=add-new-story
   @Post(path: '/stories')
@@ -149,7 +160,7 @@ abstract class StoriesApiService extends ChopperService {
     @Header('Authorization') required String authorization,
     //
     @part required String description,
-    @PartFile('photo') required List<int> imageBytes,
+    @PartFile('photo') required MultipartFile imageFile,
     @part double? lat,
     @part double? lon,
   });

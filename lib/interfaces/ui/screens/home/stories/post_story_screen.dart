@@ -1,15 +1,13 @@
-import 'dart:io';
-
-import 'package:dicoding_story_fl/common/constants.dart';
-import 'package:dicoding_story_fl/common/utils.dart';
-import 'package:dicoding_story_fl/core/entities.dart';
-import 'package:dicoding_story_fl/interfaces/ui.dart';
-import 'package:dicoding_story_fl/interfaces/ux.dart';
 import 'package:fl_utilities/fl_utilities.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+
+import 'package:dicoding_story_fl/common/constants.dart';
+import 'package:dicoding_story_fl/common/utils.dart';
+import 'package:dicoding_story_fl/interfaces/ui.dart';
+import 'package:dicoding_story_fl/interfaces/ux.dart';
 
 class PostStoryScreen extends StatefulWidget {
   const PostStoryScreen({super.key});
@@ -204,6 +202,7 @@ class _PostStoryScreenState extends State<PostStoryScreen> {
                     userCreds,
                     description: _descriptionController.text,
                     imageBytes: imageBytes,
+                    imageFilename: imageFile.name,
                   );
 
                   if (context.mounted) Navigator.maybePop(context);
@@ -252,17 +251,11 @@ class _PostStoryScreenState extends State<PostStoryScreen> {
   }
 }
 
-class _PostStoryForm extends StatefulWidget {
+class _PostStoryForm extends StatelessWidget {
+  // ignore: unused_element
   const _PostStoryForm(this.layoutDelegate, {super.key});
 
   final _PostStoryFormLayoutDelegate layoutDelegate;
-
-  @override
-  State<_PostStoryForm> createState() => _PostStoryFormState();
-}
-
-class _PostStoryFormState extends State<_PostStoryForm> {
-  _PostStoryFormLayoutDelegate get layoutDelegate => widget.layoutDelegate;
 
   @override
   Widget build(BuildContext context) {
@@ -300,9 +293,19 @@ class _PostStoryFormLayoutDelegate {
 }
 
 abstract base class _PostStoryFormLayoutBase extends StatelessWidget {
-  const _PostStoryFormLayoutBase(this.layoutDelegate, {super.key});
+  const _PostStoryFormLayoutBase(this.layoutDelegate);
 
   final _PostStoryFormLayoutDelegate layoutDelegate;
+
+  Widget get _imageWidget {
+    return InkWell(
+      onTap: layoutDelegate.onImageTap,
+      child: ImageFromXFile(
+        layoutDelegate.imageFile,
+        fit: BoxFit.cover,
+      ).toInk(),
+    );
+  }
 
   String get _dateTimeText => kDateFormat.format(DateTime.now());
 
@@ -325,7 +328,7 @@ abstract base class _PostStoryFormLayoutBase extends StatelessWidget {
 }
 
 final class _PostStoryFormS extends _PostStoryFormLayoutBase {
-  const _PostStoryFormS(super.layoutDelegate, {super.key});
+  const _PostStoryFormS(super.layoutDelegate);
 
   @override
   Widget build(BuildContext context) {
@@ -338,15 +341,9 @@ final class _PostStoryFormS extends _PostStoryFormLayoutBase {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          InkWell(
-            onTap: layoutDelegate.onImageTap,
-            child: AspectRatio(
-              aspectRatio: 3 / 2,
-              child: ImageFromXFile(
-                layoutDelegate.imageFile,
-                fit: BoxFit.cover,
-              ).toInk(),
-            ),
+          AspectRatio(
+            aspectRatio: 3 / 2,
+            child: _imageWidget,
           ),
           const Divider(height: 2.0, thickness: 2.0),
           //
@@ -388,7 +385,7 @@ final class _PostStoryFormS extends _PostStoryFormLayoutBase {
 }
 
 final class _PostStoryFormL extends _PostStoryFormLayoutBase {
-  const _PostStoryFormL(super.layoutDelegate, {super.key});
+  const _PostStoryFormL(super.layoutDelegate);
 
   @override
   Widget build(BuildContext context) {
@@ -406,13 +403,7 @@ final class _PostStoryFormL extends _PostStoryFormLayoutBase {
           children: [
             Expanded(
               flex: 8,
-              child: InkWell(
-                onTap: layoutDelegate.onImageTap,
-                child: ImageFromXFile(
-                  layoutDelegate.imageFile,
-                  fit: BoxFit.cover,
-                ).toInk(),
-              ),
+              child: _imageWidget,
             ),
             const VerticalDivider(width: 2.0, thickness: 2.0),
             Flexible(

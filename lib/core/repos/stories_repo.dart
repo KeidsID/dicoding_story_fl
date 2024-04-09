@@ -17,6 +17,7 @@ abstract interface class StoriesRepo {
     UserCreds userCreds, {
     required String description,
     required List<int> imageBytes,
+    required String imageFilename,
     double? lat,
     double? lon,
   });

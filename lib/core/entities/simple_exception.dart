@@ -94,5 +94,5 @@ class SimpleHttpException extends SimpleException {
   };
 
   @override
-  List<Object?> get props => [...super.props, statusCode];
+  List<Object?> get props => [statusCode, ...super.props];
 }
