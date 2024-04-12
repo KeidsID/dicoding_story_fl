@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:logger/logger.dart';
 import 'package:intl/intl.dart' as intl;
 
@@ -10,3 +11,16 @@ final kLogger = Logger();
 
 /// Commonly used date format for interface.
 final kDateFormat = intl.DateFormat.yMMMMd();
+
+/// Return `true` if current platform is mobile.
+///
+/// Already web-aware.
+bool get kIsMobile {
+  switch (defaultTargetPlatform) {
+    case TargetPlatform.android:
+    case TargetPlatform.iOS:
+      return true;
+    default:
+      return false;
+  }
+}

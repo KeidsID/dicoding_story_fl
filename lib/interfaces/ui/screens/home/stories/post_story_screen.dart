@@ -1,5 +1,4 @@
 import 'package:fl_utilities/fl_utilities.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -13,159 +12,48 @@ class PostStoryScreen extends StatefulWidget {
   const PostStoryScreen({super.key});
 
   @override
-  State<PostStoryScreen> createState() => _PostStoryScreenState();
+  State<PostStoryScreen> createState() => PostStoryScreenState();
 }
 
-class _PostStoryScreenState extends State<PostStoryScreen> {
-  final ImagePicker _imagePicker = ImagePicker();
-
-  /// Picked image from gallery or camera.
-  XFile? pickedImage;
-
-  Future<void> _pickImage(
-    BuildContext context, {
-    ImageSource source = ImageSource.gallery,
-  }) async {
-    try {
-      final image = await _imagePicker.pickImage(source: source);
-
-      // prevent image from being null when replacing image.
-      if (image == null) return;
-
-      setState(() => pickedImage = image);
-    } catch (err, trace) {
-      final exception = err.toSimpleException(
-        message: switch (source) {
-          ImageSource.camera => 'Camera is not available',
-          ImageSource.gallery => "Can't access gallery",
-        },
-        trace: trace,
-      );
-
-      kLogger.w(
-        'On Pick Image',
-        error: exception,
-        stackTrace: exception.trace,
-      );
-
-      context.scaffoldMessenger?.showSnackBar(SnackBar(
-        content: Text(exception.message),
-      ));
-    }
-  }
-
-  /// `Android` only.
-  ///
-  /// https://pub.dev/packages/image_picker#handling-mainactivity-destruction-on-android
-  Future<void> _retrieveLostData() async {
-    final LostDataResponse response = await _imagePicker.retrieveLostData();
-
-    if (response.isEmpty) return;
-
-    final file = response.file;
-
-    if (file != null) {
-      setState(() => pickedImage = response.file);
-      return;
-    }
-
-    final rawException = response.exception;
-
-    if (rawException != null) {
-      final exception =
-          rawException.toSimpleException(trace: StackTrace.current);
-
-      kLogger.w(
-        'Android Retrieve Lost Data',
-        error: exception,
-        stackTrace: exception.trace,
-      );
-
-      return;
-    }
-  }
-
-  Widget get _onNullImageScreen {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        children: [
-          const Text('Pick image for your story'),
-          const SizedBox(height: 8.0),
-
-          //
-          Expanded(
-            child: Builder(builder: (context) {
-              final labelStyle = context.textTheme.titleMedium;
-
-              return Row(
-                children: [
-                  Card(
-                    clipBehavior: Clip.hardEdge,
-                    child: InkWell(
-                      onTap: () => _pickImage(context),
-                      child: Center(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text('From Gallery', style: labelStyle),
-                            const Icon(Icons.image_outlined),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  //
-                  Card(
-                    clipBehavior: Clip.hardEdge,
-                    child: InkWell(
-                      onTap: () =>
-                          _pickImage(context, source: ImageSource.camera),
-                      child: Center(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text('From Camera', style: labelStyle),
-                            const Icon(Icons.camera_alt_outlined),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ].map((e) => Expanded(child: e)).toList(),
-              );
-            }),
-          ),
-        ],
-      ),
-    );
-  }
-
+class PostStoryScreenState extends State<PostStoryScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _descriptionController = TextEditingController();
 
-  VoidCallback _onImageTap(BuildContext context) {
+  VoidCallback _onRepickImage(BuildContext context) {
     return () {
+      final pickedImageProv = context.read<PickedImageProvider>();
+
       showDialog(
         context: context,
         builder: (context) {
           return AlertDialog(
             title: const Text('Replace Image?'),
-            content: const Text('Replace from:'),
+            content: const Text('From:'),
             actions: [
               TextButton(
                 onPressed: () async {
-                  await _pickImage(context);
+                  final img = await pickedImageProv.pickImage(context);
 
-                  if (context.mounted) Navigator.maybePop(context);
+                  if (img == null) return;
+
+                  if (context.mounted) {
+                    Navigator.maybePop(context);
+                  }
                 },
                 child: const Text('Gallery'),
               ),
               TextButton(
                 onPressed: () async {
-                  await _pickImage(context, source: ImageSource.camera);
+                  final img = await pickedImageProv.pickImage(
+                    context,
+                    source: ImageSource.camera,
+                  );
 
-                  if (context.mounted) Navigator.maybePop(context);
+                  if (img == null) return;
+
+                  if (context.mounted) {
+                    Navigator.maybePop(context);
+                  }
                 },
                 child: const Text('Camera'),
               ),
@@ -183,7 +71,7 @@ class _PostStoryScreenState extends State<PostStoryScreen> {
 
   VoidCallback _onPostButtonTap(BuildContext context) {
     return () async {
-      final imageFile = pickedImage;
+      final imageFile = context.read<PickedImageProvider>().value;
 
       if (imageFile == null) return;
 
@@ -214,27 +102,6 @@ class _PostStoryScreenState extends State<PostStoryScreen> {
     };
   }
 
-  Widget get _screenHandler {
-    final imageFile = pickedImage;
-
-    if (imageFile == null) return _onNullImageScreen;
-
-    return Builder(builder: (context) {
-      final storiesProv = context.watch<StoriesProvider>();
-
-      final isLoading = storiesProv.isLoading;
-
-      return _PostStoryForm(_PostStoryFormDelegate(
-        imageFile,
-        onImageTap: isLoading ? null : _onImageTap(context),
-        formKey: _formKey,
-        descController: _descriptionController,
-        descIsEnabled: !isLoading,
-        onPostButtonTap: isLoading ? null : _onPostButtonTap(context),
-      ));
-    });
-  }
-
   @override
   void dispose() {
     _formKey.currentState?.dispose();
@@ -245,27 +112,101 @@ class _PostStoryScreenState extends State<PostStoryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Post Story')),
-      body: !kIsWeb && defaultTargetPlatform == TargetPlatform.android
-          ? FutureBuilder(
-              future: _retrieveLostData(),
-              builder: (context, snapshot) {
-                return switch (snapshot.connectionState) {
-                  ConnectionState.done => _screenHandler,
-                  _ => _onNullImageScreen,
-                };
-              },
-            )
-          : _screenHandler,
+    return ChangeNotifierProvider.value(
+      value: PickedImageProvider(),
+      child: Scaffold(
+        appBar: AppBar(title: const Text('Post Story')),
+        body: Builder(
+          builder: (context) {
+            final pickedImageProv = context.watch<PickedImageProvider>();
+            final pickedImage = pickedImageProv.value;
+
+            if (pickedImage == null) {
+              return Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  children: [
+                    Text(
+                      'Pick image for your story',
+                      style: context.textTheme.titleMedium,
+                    ),
+                    const SizedBox(height: 8.0),
+
+                    //
+                    Expanded(
+                      child: Builder(builder: (context) {
+                        final labelStyle = context.textTheme.titleMedium;
+
+                        return Row(
+                          children: [
+                            Card(
+                              clipBehavior: Clip.hardEdge,
+                              child: InkWell(
+                                onTap: () => pickedImageProv.pickImage(context),
+                                child: Center(
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text('From Gallery', style: labelStyle),
+                                      const Icon(Icons.image_outlined),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                            //
+                            Card(
+                              clipBehavior: Clip.hardEdge,
+                              child: InkWell(
+                                onTap: () => pickedImageProv.pickImage(
+                                  context,
+                                  source: ImageSource.camera,
+                                ),
+                                child: Center(
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text('From Camera', style: labelStyle),
+                                      const Icon(Icons.camera_alt_outlined),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ].map((e) => Expanded(child: e)).toList(),
+                        );
+                      }),
+                    ),
+                  ],
+                ),
+              );
+            }
+
+            return Builder(builder: (context) {
+              final storiesProv = context.watch<StoriesProvider>();
+
+              final isLoading = storiesProv.isLoading;
+
+              return _PostStoryFormScreen(_PostStoryFormScreenDelegate(
+                pickedImage,
+                onImageTap: isLoading ? null : _onRepickImage(context),
+                formKey: _formKey,
+                descController: _descriptionController,
+                descIsEnabled: !isLoading,
+                onPostButtonTap: isLoading ? null : _onPostButtonTap(context),
+              ));
+            });
+          },
+        ),
+      ),
     );
   }
 }
 
-class _PostStoryForm extends StatelessWidget {
-  const _PostStoryForm(this.delegate);
+class _PostStoryFormScreen extends StatelessWidget {
+  const _PostStoryFormScreen(this.delegate);
 
-  final _PostStoryFormDelegate delegate;
+  final _PostStoryFormScreenDelegate delegate;
 
   @override
   Widget build(BuildContext context) {
@@ -273,17 +214,17 @@ class _PostStoryForm extends StatelessWidget {
       key: delegate.formKey,
       child: LayoutBuilder(builder: (context, constraints) {
         if (constraints.maxWidth < 720) {
-          return _PostStoryFormS(delegate);
+          return _PostStoryFormScreenS(delegate);
         }
 
-        return _PostStoryFormL(delegate);
+        return _PostStoryFormScreenL(delegate);
       }),
     );
   }
 }
 
-class _PostStoryFormDelegate {
-  const _PostStoryFormDelegate(
+class _PostStoryFormScreenDelegate {
+  const _PostStoryFormScreenDelegate(
     this.imageFile, {
     this.onImageTap,
     this.formKey,
@@ -302,10 +243,10 @@ class _PostStoryFormDelegate {
   final VoidCallback? onPostButtonTap;
 }
 
-abstract base class _PostStoryFormLayoutBase extends StatelessWidget {
-  const _PostStoryFormLayoutBase(this.delegate);
+abstract base class _PostStoryFormScreenLayoutBase extends StatelessWidget {
+  const _PostStoryFormScreenLayoutBase(this.delegate);
 
-  final _PostStoryFormDelegate delegate;
+  final _PostStoryFormScreenDelegate delegate;
 
   Widget get _imageWidget {
     return InkWell(
@@ -357,8 +298,8 @@ abstract base class _PostStoryFormLayoutBase extends StatelessWidget {
   }
 }
 
-final class _PostStoryFormS extends _PostStoryFormLayoutBase {
-  const _PostStoryFormS(super.delegate);
+final class _PostStoryFormScreenS extends _PostStoryFormScreenLayoutBase {
+  const _PostStoryFormScreenS(super.delegate);
 
   @override
   Widget build(BuildContext context) {
@@ -395,8 +336,8 @@ final class _PostStoryFormS extends _PostStoryFormLayoutBase {
   }
 }
 
-final class _PostStoryFormL extends _PostStoryFormLayoutBase {
-  const _PostStoryFormL(super.delegate);
+final class _PostStoryFormScreenL extends _PostStoryFormScreenLayoutBase {
+  const _PostStoryFormScreenL(super.delegate);
 
   @override
   Widget build(BuildContext context) {

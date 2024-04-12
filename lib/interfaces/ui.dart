@@ -10,6 +10,7 @@ export 'ui/screens/home/stories/stories_screen.dart';
 export 'ui/screens/home/stories/story_detail_screen.dart';
 export 'ui/themes/app_themes.dart';
 export 'ui/widgets/common_network_image.dart';
+export 'ui/widgets/custom_camera.dart';
 export 'ui/widgets/email_text_field.dart';
 export 'ui/widgets/image_from_x_file.dart';
 export 'ui/widgets/password_text_field.dart';
