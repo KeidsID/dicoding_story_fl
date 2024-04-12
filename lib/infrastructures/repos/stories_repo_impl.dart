@@ -40,7 +40,7 @@ class StoriesRepoImpl with OnErrorResponseMixin implements StoriesRepo {
 
       return resBody.listStory.map((e) => e.toEntity()).toList();
     } catch (err, trace) {
-      throw err.toSimpleException(trace:trace);
+      throw err.toSimpleException(trace: trace);
     }
   }
 
@@ -62,7 +62,7 @@ class StoriesRepoImpl with OnErrorResponseMixin implements StoriesRepo {
 
       return resBody.story.toEntity();
     } catch (err, trace) {
-      throw err.toSimpleException(trace:trace);
+      throw err.toSimpleException(trace: trace);
     }
   }
 
@@ -93,7 +93,7 @@ class StoriesRepoImpl with OnErrorResponseMixin implements StoriesRepo {
 
       if (rawResBody == null) throw onErrorResponse(rawRes);
     } catch (err, trace) {
-      throw err.toSimpleException(trace:trace);
+      throw err.toSimpleException(trace: trace);
     }
   }
 }
