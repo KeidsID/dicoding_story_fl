@@ -6,19 +6,19 @@ import 'package:dicoding_story_fl/core/entities.dart';
 import 'package:dicoding_story_fl/interfaces/ui.dart';
 
 class StoryCard extends StatelessWidget {
-  const StoryCard(this.story, {super.key, this.childBuilder});
+  const StoryCard(this.story, {super.key, this.onTap});
 
   final Story story;
 
-  /// In case you want wrap the card child with other widget. Such as [InkWell]
-  /// to create a tap action on card.
-  final Widget Function(BuildContext context, Widget child)? childBuilder;
+  /// Called when the user taps this card.
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     final textTheme = context.textTheme;
 
     final child = SingleChildScrollView(
+      physics: kIsMobile ? const NeverScrollableScrollPhysics() : null,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -53,7 +53,7 @@ class StoryCard extends StatelessWidget {
                 //
                 Text(
                   story.description,
-                  maxLines: 3,
+                  maxLines: 4,
                   overflow: TextOverflow.ellipsis,
                 ),
               ],
@@ -65,7 +65,7 @@ class StoryCard extends StatelessWidget {
 
     return Card(
       clipBehavior: Clip.hardEdge,
-      child: childBuilder?.call(context, child) ?? child,
+      child: InkWell(onTap: onTap, child: child),
     );
   }
 }

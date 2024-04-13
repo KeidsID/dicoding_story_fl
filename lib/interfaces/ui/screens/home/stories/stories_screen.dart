@@ -194,11 +194,8 @@ class _StoriesScreenState extends State<StoriesScreen> {
 
                             return StoryCard(
                               story,
-                              childBuilder: (_, child) => InkWell(
-                                onTap: () =>
-                                    StoryDetailRoute(story.id).go(context),
-                                child: child,
-                              ),
+                              onTap: () =>
+                                  StoryDetailRoute(story.id).go(context),
                             );
                           },
                         ),
