@@ -39,7 +39,10 @@ class PostStoryRoute extends GoRouteData {
 
   @override
   Widget build(BuildContext context, GoRouterState state) =>
-      const PostStoryScreen();
+      ChangeNotifierProvider.value(
+        value: PickedImageProvider(),
+        child: const PostStoryScreen(),
+      );
 }
 
 /// {@template dicoding_story_fl.interfaces.ux.routes.StoryDetailRoute}
