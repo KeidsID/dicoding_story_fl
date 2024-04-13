@@ -5,8 +5,8 @@ import 'package:image_picker/image_picker.dart';
 
 import 'package:dicoding_story_fl/common/constants.dart';
 import 'package:dicoding_story_fl/common/utils.dart';
-import 'package:dicoding_story_fl/interfaces/ux.dart';
 import 'package:dicoding_story_fl/interfaces/ui.dart';
+import 'package:dicoding_story_fl/interfaces/ux.dart';
 
 /// {@template dicoding_story_fl.interfaces.ux.providers.PickedImageProvider}
 /// Picked image from gallery or camera and store it in [value].
@@ -120,10 +120,10 @@ class _CustomCamDialog extends StatefulWidget {
   const _CustomCamDialog();
 
   @override
-  State<_CustomCamDialog> createState() => __CustomCamDialogState();
+  State<_CustomCamDialog> createState() => _CustomCamDialogState();
 }
 
-class __CustomCamDialogState extends State<_CustomCamDialog> {
+class _CustomCamDialogState extends State<_CustomCamDialog> {
   final Future<List<CameraDescription>> _cameras = availableCameras();
 
   @override
@@ -153,6 +153,9 @@ class __CustomCamDialogState extends State<_CustomCamDialog> {
                           )
                         : CustomCamera(
                             snapshot.data ?? [],
+                            delegate: const CustomCameraDelegate(
+                              enableAudio: false,
+                            ),
                             onAcceptResult: (result) =>
                                 Navigator.of(context).maybePop(result),
                           ),

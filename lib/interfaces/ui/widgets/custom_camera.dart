@@ -2,6 +2,7 @@ import 'package:camera/camera.dart';
 import 'package:equatable/equatable.dart';
 import 'package:fl_utilities/fl_utilities.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:dicoding_story_fl/common/constants.dart';
@@ -98,14 +99,32 @@ class CustomCameraState extends State<CustomCamera>
   /// Initialize it with [setCamController] method.
   CameraController? get camController => _camController;
 
-  /// Indicate if [camController] is initialized and ready to use.
+  /// [CameraDescription] from [camController].
+  CameraDescription? get selectedCam => camController?.description;
+
+  /// Indicates [camController] is initialized and ready to use.
   bool get isCamInitialized => camController?.value.isInitialized ?? false;
+
+  /// Indicates [camController] is switching camera. Don't misinterpret this as
+  /// a condition that the camera has been switched.
+  ///
+  /// Triggered by [setCamController] method.
+  bool isSwitchingCam = false;
+
+  Object? _error;
+  StackTrace? _trace;
+
+  /// Error that may occur when initializing camera.
+  Object? get error => _error;
+
+  /// [error] trace.
+  StackTrace? get trace => _trace;
 
   /// Set [camController]. Will [setState] if [mounted].
   ///
   /// If [camera] already used, then won't do anything.
   Future<void> setCamController(CameraDescription camera) async {
-    if (camController?.description == camera) return;
+    if (selectedCam == camera && error == null) return;
 
     final newController = CameraController(
       camera,
@@ -114,10 +133,31 @@ class CustomCameraState extends State<CustomCamera>
       imageFormatGroup: delegate.imageFormatGroup,
     );
 
+    void initProcess() {
+      isSwitchingCam = true;
+      _error = null;
+      _trace = null;
+    }
+
+    (mounted) ? setState(initProcess) : initProcess();
+
     try {
+      // for debugging camera switching
+      if (kDebugMode) await Future.delayed(const Duration(seconds: 1));
+
       await camController?.dispose();
       await newController.initialize();
+
+      void postProcess() {
+        _camController = newController;
+        isSwitchingCam = false;
+      }
+
+      (mounted) ? setState(postProcess) : postProcess();
     } catch (err, trace) {
+      // dispose [newController] on error.
+      newController.dispose();
+
       late final String? msg;
 
       if (err is CameraException) {
@@ -131,17 +171,16 @@ class CustomCameraState extends State<CustomCamera>
         error: exception,
         stackTrace: exception.trace,
       );
-    }
 
-    if (mounted) {
-      setState(() => _camController = newController);
-    } else {
-      _camController = newController;
+      void postProcess() {
+        isSwitchingCam = true;
+        _error = exception;
+        _trace = exception.trace;
+      }
+
+      (mounted) ? setState(postProcess) : postProcess();
     }
   }
-
-  /// [CameraDescription] from [camController].
-  CameraDescription? get selectedCam => camController?.description;
 
   /// File result from camera capture/recording.
   ///
@@ -265,20 +304,20 @@ class CustomCameraState extends State<CustomCamera>
             children: [
               Expanded(
                 child: Container(
-                  clipBehavior: Clip.hardEdge,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16.0),
-                  ),
-                  child: isCamInitialized
-                      ? CameraPreview(camController!)
-                      : Center(
-                          child: cameras.isEmpty
-                              ? Text(
-                                  'Camera Not Found',
-                                  style: textTheme.headlineMedium,
-                                )
-                              : const CircularProgressIndicator(),
-                        ),
+                  height: double.infinity,
+                  color: theme.scaffoldBackgroundColor,
+                  child: isCamInitialized && !isSwitchingCam
+                      ? camController?.buildPreview()
+                      : error != null
+                          ? SizedErrorWidget.expand(error: error, trace: trace)
+                          : Center(
+                              child: cameras.isEmpty
+                                  ? Text(
+                                      'Camera Not Found',
+                                      style: textTheme.headlineMedium,
+                                    )
+                                  : const CircularProgressIndicator(),
+                            ),
                 ),
               ),
               //
