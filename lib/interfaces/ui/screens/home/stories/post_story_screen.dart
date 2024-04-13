@@ -112,92 +112,89 @@ class PostStoryScreenState extends State<PostStoryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider.value(
-      value: PickedImageProvider(),
-      child: Scaffold(
-        appBar: AppBar(title: const Text('Post Story')),
-        body: Builder(
-          builder: (context) {
-            final pickedImageProv = context.watch<PickedImageProvider>();
-            final pickedImage = pickedImageProv.value;
+    return Scaffold(
+      appBar: AppBar(title: const Text('Post Story')),
+      body: Builder(
+        builder: (context) {
+          final pickedImageProv = context.watch<PickedImageProvider>();
+          final pickedImage = pickedImageProv.value;
 
-            if (pickedImage == null) {
-              return Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  children: [
-                    Text(
-                      'Pick image for your story',
-                      style: context.textTheme.titleMedium,
-                    ),
-                    const SizedBox(height: 8.0),
+          if (pickedImage == null) {
+            return Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                children: [
+                  Text(
+                    'Pick image for your story',
+                    style: context.textTheme.titleMedium,
+                  ),
+                  const SizedBox(height: 8.0),
 
-                    //
-                    Expanded(
-                      child: Builder(builder: (context) {
-                        final labelStyle = context.textTheme.titleMedium;
+                  //
+                  Expanded(
+                    child: Builder(builder: (context) {
+                      final labelStyle = context.textTheme.titleMedium;
 
-                        return Row(
-                          children: [
-                            Card(
-                              clipBehavior: Clip.hardEdge,
-                              child: InkWell(
-                                onTap: () => pickedImageProv.pickImage(context),
-                                child: Center(
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Text('From Gallery', style: labelStyle),
-                                      const Icon(Icons.image_outlined),
-                                    ],
-                                  ),
+                      return Row(
+                        children: [
+                          Card(
+                            clipBehavior: Clip.hardEdge,
+                            child: InkWell(
+                              onTap: () => pickedImageProv.pickImage(context),
+                              child: Center(
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text('From Gallery', style: labelStyle),
+                                    const Icon(Icons.image_outlined),
+                                  ],
                                 ),
                               ),
                             ),
-                            //
-                            Card(
-                              clipBehavior: Clip.hardEdge,
-                              child: InkWell(
-                                onTap: () => pickedImageProv.pickImage(
-                                  context,
-                                  source: ImageSource.camera,
-                                ),
-                                child: Center(
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Text('From Camera', style: labelStyle),
-                                      const Icon(Icons.camera_alt_outlined),
-                                    ],
-                                  ),
+                          ),
+                          //
+                          Card(
+                            clipBehavior: Clip.hardEdge,
+                            child: InkWell(
+                              onTap: () => pickedImageProv.pickImage(
+                                context,
+                                source: ImageSource.camera,
+                              ),
+                              child: Center(
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text('From Camera', style: labelStyle),
+                                    const Icon(Icons.camera_alt_outlined),
+                                  ],
                                 ),
                               ),
                             ),
-                          ].map((e) => Expanded(child: e)).toList(),
-                        );
-                      }),
-                    ),
-                  ],
-                ),
-              );
-            }
+                          ),
+                        ].map((e) => Expanded(child: e)).toList(),
+                      );
+                    }),
+                  ),
+                ],
+              ),
+            );
+          }
 
-            return Builder(builder: (context) {
-              final storiesProv = context.watch<StoriesProvider>();
+          return Builder(builder: (context) {
+            final storiesProv = context.watch<StoriesProvider>();
 
-              final isLoading = storiesProv.isLoading;
+            final isLoading = storiesProv.isLoading;
 
-              return _PostStoryFormScreen(_PostStoryFormScreenDelegate(
-                pickedImage,
-                onImageTap: isLoading ? null : _onRepickImage(context),
-                formKey: _formKey,
-                descController: _descriptionController,
-                descIsEnabled: !isLoading,
-                onPostButtonTap: isLoading ? null : _onPostButtonTap(context),
-              ));
-            });
-          },
-        ),
+            return _PostStoryFormScreen(_PostStoryFormScreenDelegate(
+              pickedImage,
+              onImageTap: isLoading ? null : _onRepickImage(context),
+              formKey: _formKey,
+              descController: _descriptionController,
+              descIsEnabled: !isLoading,
+              onPostButtonTap: isLoading ? null : _onPostButtonTap(context),
+            ));
+          });
+        },
       ),
     );
   }
