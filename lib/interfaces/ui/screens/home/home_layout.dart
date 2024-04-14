@@ -3,19 +3,30 @@ import 'package:flutter/material.dart';
 import 'package:dicoding_story_fl/interfaces/ux.dart';
 import 'package:go_router/go_router.dart';
 
-class HomeLayout extends StatelessWidget {
+class HomeLayout extends StatefulWidget {
   const HomeLayout({super.key, this.child});
 
   final Widget? child;
 
   @override
+  State<HomeLayout> createState() => _HomeLayoutState();
+}
+
+class _HomeLayoutState extends State<HomeLayout> {
+  bool isExtended = true;
+
+  @override
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (_, constraints) {
       if (constraints.maxWidth < 600) {
-        return _HomeLayoutS(child: child);
+        return _HomeLayoutS(child: widget.child);
       }
 
-      return _HomeLayoutL(child: child);
+      return _HomeLayoutL(
+        isExtended: isExtended,
+        onTrailingTap: () => setState(() => isExtended = !isExtended),
+        child: widget.child,
+      );
     });
   }
 }
@@ -75,8 +86,10 @@ bool _isStoriesRoute(BuildContext context) {
   return currentRoute == const StoriesRoute().location;
 }
 
-class _HomeLayoutS extends HomeLayout {
-  const _HomeLayoutS({super.child});
+class _HomeLayoutS extends StatelessWidget {
+  const _HomeLayoutS({this.child});
+
+  final Widget? child;
 
   @override
   Widget build(BuildContext context) {
@@ -105,8 +118,18 @@ class _HomeLayoutS extends HomeLayout {
   }
 }
 
-class _HomeLayoutL extends HomeLayout {
-  const _HomeLayoutL({super.child});
+class _HomeLayoutL extends StatelessWidget {
+  const _HomeLayoutL({
+    this.isExtended = true,
+    this.onTrailingTap,
+    this.child,
+  });
+
+  final bool isExtended;
+
+  final VoidCallback? onTrailingTap;
+
+  final Widget? child;
 
   @override
   Widget build(BuildContext context) {
@@ -116,6 +139,7 @@ class _HomeLayoutL extends HomeLayout {
           child: Row(
             children: [
               NavigationRail(
+                extended: isExtended,
                 selectedIndex: _currentNav(context),
                 destinations: _navs.map((e) {
                   return NavigationRailDestination(
@@ -125,6 +149,20 @@ class _HomeLayoutL extends HomeLayout {
                   );
                 }).toList(),
                 onDestinationSelected: _onNavItemTap(context),
+                trailing: Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      IconButton(
+                        tooltip: isExtended ? 'Shrink' : 'Expand',
+                        onPressed: onTrailingTap,
+                        icon: Icon(
+                          isExtended ? Icons.chevron_left : Icons.chevron_right,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
               const VerticalDivider(width: 2.0, thickness: 2.0),
               Expanded(child: child ?? const SizedBox()),

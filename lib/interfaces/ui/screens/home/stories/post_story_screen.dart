@@ -126,7 +126,7 @@ class PostStoryScreenState extends State<PostStoryScreen> {
                 children: [
                   Text(
                     'Pick image for your story',
-                    style: context.textTheme.titleMedium,
+                    style: context.textTheme.headlineMedium,
                   ),
                   const SizedBox(height: 8.0),
 
@@ -134,6 +134,7 @@ class PostStoryScreenState extends State<PostStoryScreen> {
                   Expanded(
                     child: Builder(builder: (context) {
                       final labelStyle = context.textTheme.titleMedium;
+                      const iconSize = 32.0;
 
                       return Row(
                         children: [
@@ -146,7 +147,10 @@ class PostStoryScreenState extends State<PostStoryScreen> {
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     Text('From Gallery', style: labelStyle),
-                                    const Icon(Icons.image_outlined),
+                                    const Icon(
+                                      Icons.image_outlined,
+                                      size: iconSize,
+                                    ),
                                   ],
                                 ),
                               ),
@@ -165,7 +169,10 @@ class PostStoryScreenState extends State<PostStoryScreen> {
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     Text('From Camera', style: labelStyle),
-                                    const Icon(Icons.camera_alt_outlined),
+                                    const Icon(
+                                      Icons.camera_alt_outlined,
+                                      size: iconSize,
+                                    ),
                                   ],
                                 ),
                               ),

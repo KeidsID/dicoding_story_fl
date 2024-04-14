@@ -133,8 +133,9 @@ class _StoriesScreenState extends State<StoriesScreen> {
             ],
             builder: (context, menu, _) {
               return IconButton(
+                tooltip: 'More Options',
                 onPressed: () => menu.isOpen ? menu.close() : menu.open(),
-                icon: const Icon(Icons.filter_alt_outlined),
+                icon: const Icon(Icons.more_vert),
               );
             },
           ),
