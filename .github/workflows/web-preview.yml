@@ -28,7 +28,9 @@ jobs:
         run: flutter pub get
 
       - name: ⚙️ Setup environment
-        run: dart run build_runner build -d
+        run: |
+          dart run build_runner build -d
+          flutter gen-l10n
 
       - name: 🏗️ Build web profile
         run: |
