@@ -13,10 +13,11 @@ class ThemeModeProvider extends ValueNotifier<ThemeMode> {
   static const cacheKey = 'theme_mode';
 
   @override
-  set value(ThemeMode newValue) {
-    Future.microtask(() => _cache.setInt(cacheKey, newValue.index));
+  set value(ThemeMode value) {
+    Future.microtask(() => _cache.setInt(cacheKey, value.index))
+        .then((_) => null);
 
-    super.value = newValue;
+    super.value = value;
   }
 
   static ThemeMode _getCache() {

@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'common/asset_paths.dart';
 import 'common/constants.dart';
 import 'container.dart' as container;
+import 'interfaces/app_l10n.dart';
 import 'interfaces/ui.dart';
 import 'interfaces/ux.dart';
 
@@ -38,16 +39,24 @@ class MainApp extends StatelessWidget {
         /// To make sure redirect did'nt triggered on theme changes.
         final appRouter = router(context);
 
-        return ChangeNotifierProvider.value(
-          value: ThemeModeProvider(),
+        return MultiProvider(
+          providers: [
+            ChangeNotifierProvider.value(value: ThemeModeProvider()),
+            ChangeNotifierProvider.value(value: LocaleProvider()),
+          ],
           builder: (context, _) {
             return MaterialApp.router(
               routerConfig: appRouter,
-              debugShowCheckedModeBanner: false,
               title: appName,
+              debugShowCheckedModeBanner: false,
+              //
               theme: AppThemes.light,
               darkTheme: AppThemes.dark,
               themeMode: context.watch<ThemeModeProvider>().value,
+              //
+              localizationsDelegates: AppL10n.localizationsDelegates,
+              supportedLocales: AppL10n.supportedLocales,
+              locale: context.watch<LocaleProvider>().value,
             );
           },
         );

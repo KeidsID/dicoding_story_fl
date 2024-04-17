@@ -1,7 +1,9 @@
 # Generated files
+*.g.dart
 *.chopper.dart
 *.freezed.dart
-*.g.dart
+**/l10n/gen/**
+!**/l10n/gen/untranslated.txt
 
 # Miscellaneous
 examples/

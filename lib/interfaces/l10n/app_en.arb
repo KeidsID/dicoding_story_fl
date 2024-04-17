@@ -1,0 +1,61 @@
+{
+  "@@locale": "en",
+  "alreadyHaveAnAccount": "Already have an account",
+  "appTheme": "App Theme",
+  "camera": "Camera",
+  "flThemeMode": "{themeModeName, select, other{Device Settings} light{Light} dark{Dark}}",
+  "@flThemeMode": {
+    "description": "Flutter [ThemeMode] enum localization. Provide [ThemeMode.name] on [themeModeName] argument.",
+    "placeholders": {
+      "themeModeName": {
+        "type": "String"
+      }
+    }
+  },
+  "from": "From",
+  "fromCamera": "From Camera",
+  "fromGallery": "From Gallery",
+  "gallery": "Gallery",
+  "language": "Language",
+  "login": "Log In",
+  "logout": "Log Out",
+  "needAnAccount": "Need an account",
+  "other": "{count, plural, =1{Other} other{Others}}",
+  "@other": {
+    "description": "{@template l10n.simplePluralWord}\nSet [count] to `1` for the singular form. \nOtherwise, return the plural form.\n{@endtemplate}",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "pageAbbr": "Page",
+  "@pageAbbr": {
+    "description": "May abbreviate \"Page\" word on other locale."
+  },
+  "personStory": "\"{person}\" Story",
+  "@personStory": {
+    "placeholders": {
+      "person": {
+        "type": "String"
+      }
+    }
+  },
+  "pickAnImageForYourStory": "Pick an image for your Story",
+  "postStory": "Post Story",
+  "profile": "Profile",
+  "register": "Register",
+  "registerForm": "Register Form",
+  "replaceImage": "Replace image",
+  "storyCounts": "Story {count, plural, =1{Count} other{Counts}}",
+  "@storyCounts": {
+    "description": "{@macro l10n.simplePluralWord}",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "tellUsYourStory": "Tell us your story",
+  "yourProfile": "Your Profile"
+}

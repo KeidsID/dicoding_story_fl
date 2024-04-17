@@ -1,0 +1,28 @@
+{
+  "@@locale": "id",
+  "alreadyHaveAnAccount": "Sudah punya akun",
+  "appTheme": "Tema Aplikasi",
+  "camera": "Kamera",
+  "flThemeMode": "{themeModeName, select, other{Pengaturan Perangkat} light{Terang} dark{Gelap}}",
+  "from": "Dari",
+  "fromCamera": "Dari Camera",
+  "fromGallery": "Dari Gallery",
+  "gallery": "Galeri",
+  "language": "Bahasa",
+  "login": "Masuk",
+  "logout": "Keluar",
+  "needAnAccount": "Butuh akun",
+  "other": "{count,plural, =1{Lainnya} other{Lainnya}}",
+  "pageAbbr": "Hal",
+  "personStory": "Cerita \"{person}\"",
+  "pickAnImageForYourStory": "Pilih gambar untuk cerita Anda",
+  "postStory": "Buat Cerita",
+  "profile": "Profil",
+  "register": "Daftar",
+  "registerForm": "Form Pendaftaran",
+  "replaceImage": "Ganti gambar",
+
+  "storyCounts": "{count, plural, =1{Jumlah} other{Jumlah}} Cerita",
+  "tellUsYourStory": "Ceritakan cerita Anda",
+  "yourProfile": "Profil Anda"
+}
