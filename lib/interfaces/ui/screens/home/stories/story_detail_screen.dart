@@ -1,9 +1,11 @@
-import 'package:dicoding_story_fl/common/constants.dart';
-import 'package:dicoding_story_fl/core/entities.dart';
 import 'package:fl_utilities/fl_utilities.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
+import 'package:dicoding_story_fl/common/constants.dart';
+import 'package:dicoding_story_fl/core/entities.dart';
+import 'package:dicoding_story_fl/interfaces/app_l10n.dart';
 import 'package:dicoding_story_fl/interfaces/ui.dart';
 import 'package:dicoding_story_fl/interfaces/ux.dart';
 
@@ -77,7 +79,7 @@ void _showImageDialog(BuildContext context, ImageProvider<Object> image) {
                     icon: const Icon(Icons.close),
                     tooltip:
                         MaterialLocalizations.of(context).closeButtonTooltip,
-                    onPressed: () => Navigator.of(context).pop(),
+                    onPressed: () => context.pop(),
                   ),
                 ),
               ),
@@ -98,7 +100,7 @@ class _StoryDetailScreenS extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('"${story.owner}" Story'),
+        title: Text(AppL10n.of(context)!.personStory(story.owner)),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -190,7 +192,7 @@ class _StoryDetailScreenL extends StatelessWidget {
                         icon: const Icon(Icons.arrow_back),
                         tooltip:
                             MaterialLocalizations.of(context).backButtonTooltip,
-                        onPressed: () => Navigator.of(context).maybePop(),
+                        onPressed: () => context.pop(),
                       ),
                     ),
                   )

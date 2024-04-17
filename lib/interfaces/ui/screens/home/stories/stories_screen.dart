@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:dicoding_story_fl/common/constants.dart';
 import 'package:dicoding_story_fl/common/utils.dart';
 import 'package:dicoding_story_fl/core/entities.dart';
+import 'package:dicoding_story_fl/interfaces/app_l10n.dart';
 import 'package:dicoding_story_fl/interfaces/ui.dart';
 import 'package:dicoding_story_fl/interfaces/ux.dart';
 
@@ -65,6 +66,8 @@ class _StoriesScreenState extends State<StoriesScreen> {
     // go_router did'nt rebuild widget on router query changes.
     GoRouterState.of(context);
 
+    final appL10n = AppL10n.of(context)!;
+
     final pageNavigator = Align(
       alignment: Alignment.center,
       child: Row(
@@ -79,7 +82,7 @@ class _StoriesScreenState extends State<StoriesScreen> {
                     ).go(context),
             icon: const Icon(Icons.chevron_left),
           ),
-          Text('Page ${page ?? 1}'),
+          Text('${appL10n.pageAbbr} ${page ?? 1}'),
           IconButton(
             onPressed: () => StoriesRoute(
               page: '${(page ?? 1) + 1}',
@@ -102,7 +105,7 @@ class _StoriesScreenState extends State<StoriesScreen> {
 
               //
               ListTile(
-                title: const Text('Story Count'),
+                title: Text(appL10n.storyCounts(size ?? 10)),
                 trailing: SizedBox(
                   width: 80.0,
                   child: TextField(

@@ -1,14 +1,13 @@
-import 'package:dicoding_story_fl/interfaces/ui.dart';
-import 'package:flutter/material.dart';
 import 'package:fl_utilities/fl_utilities.dart';
+import 'package:flutter/material.dart';
 
 import 'package:dicoding_story_fl/core/entities.dart';
 
-final class SizedErrorWidget extends SizedBoxBase {
+final class SizedErrorWidget extends StatelessWidget {
   const SizedErrorWidget({
     super.key,
-    super.width,
-    super.height,
+    this.width,
+    this.height,
     this.error,
     StackTrace? trace,
     this.action,
@@ -20,7 +19,8 @@ final class SizedErrorWidget extends SizedBoxBase {
     StackTrace? trace,
     this.action,
   })  : _trace = trace,
-        super.expand();
+        width = double.infinity,
+        height = double.infinity;
 
   const SizedErrorWidget.shrink({
     super.key,
@@ -28,7 +28,8 @@ final class SizedErrorWidget extends SizedBoxBase {
     StackTrace? trace,
     this.action,
   })  : _trace = trace,
-        super.shrink();
+        width = 0.0,
+        height = 0.0;
 
   SizedErrorWidget.fromSize({
     super.key,
@@ -37,7 +38,8 @@ final class SizedErrorWidget extends SizedBoxBase {
     StackTrace? trace,
     this.action,
   })  : _trace = trace,
-        super.fromSize();
+        width = size?.width,
+        height = size?.height;
 
   const SizedErrorWidget.square({
     super.key,
@@ -46,7 +48,11 @@ final class SizedErrorWidget extends SizedBoxBase {
     StackTrace? trace,
     this.action,
   })  : _trace = trace,
-        super.square();
+        width = dimension,
+        height = dimension;
+
+  final double? width;
+  final double? height;
 
   final Object? error;
   final StackTrace? _trace;

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-
-import 'package:dicoding_story_fl/interfaces/ux.dart';
 import 'package:go_router/go_router.dart';
+
+import 'package:dicoding_story_fl/interfaces/app_l10n.dart';
+import 'package:dicoding_story_fl/interfaces/ux.dart';
 
 class HomeLayout extends StatefulWidget {
   const HomeLayout({super.key, this.child});
@@ -43,18 +44,22 @@ class _NavBarItemDelegate {
   final Icon? activeIcon;
 }
 
-const _navs = [
-  _NavBarItemDelegate(
-    icon: Icon(Icons.home_outlined),
-    label: 'Home',
-    activeIcon: Icon(Icons.home),
-  ),
-  _NavBarItemDelegate(
-    icon: Icon(Icons.person_outlined),
-    label: 'Profile',
-    activeIcon: Icon(Icons.person),
-  ),
-];
+List<_NavBarItemDelegate> _navs(BuildContext context) {
+  final appL10n = AppL10n.of(context)!;
+
+  return [
+    const _NavBarItemDelegate(
+      icon: Icon(Icons.home_outlined),
+      label: 'Home',
+      activeIcon: Icon(Icons.home),
+    ),
+    _NavBarItemDelegate(
+      icon: const Icon(Icons.person_outlined),
+      label: appL10n.profile,
+      activeIcon: const Icon(Icons.person),
+    ),
+  ];
+}
 
 int _currentNav(BuildContext context) {
   final currentRoute = GoRouterState.of(context).uri.path;
@@ -96,7 +101,7 @@ class _HomeLayoutS extends StatelessWidget {
     return Scaffold(
       body: SafeArea(child: child ?? const SizedBox.shrink()),
       bottomNavigationBar: BottomNavigationBar(
-        items: _navs.map((e) {
+        items: _navs(context).map((e) {
           return BottomNavigationBarItem(
             icon: e.icon,
             activeIcon: e.activeIcon,
@@ -110,7 +115,7 @@ class _HomeLayoutS extends StatelessWidget {
           ? null
           : FloatingActionButton(
               onPressed: () => const PostStoryRoute().go(context),
-              tooltip: 'Post Story',
+              tooltip: AppL10n.of(context)!.postStory,
               child: const Icon(Icons.add),
             ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
@@ -141,7 +146,7 @@ class _HomeLayoutL extends StatelessWidget {
               NavigationRail(
                 extended: isExtended,
                 selectedIndex: _currentNav(context),
-                destinations: _navs.map((e) {
+                destinations: _navs(context).map((e) {
                   return NavigationRailDestination(
                     icon: e.icon,
                     label: Text(e.label),
@@ -175,7 +180,7 @@ class _HomeLayoutL extends StatelessWidget {
           : FloatingActionButton.extended(
               onPressed: () => const PostStoryRoute().go(context),
               icon: const Icon(Icons.add),
-              label: const Text('Post Story'),
+              label: Text(AppL10n.of(context)!.postStory),
             ),
     );
   }

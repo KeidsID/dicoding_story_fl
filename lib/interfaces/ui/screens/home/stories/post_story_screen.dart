@@ -1,10 +1,13 @@
 import 'package:fl_utilities/fl_utilities.dart';
+import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 import 'package:dicoding_story_fl/common/constants.dart';
 import 'package:dicoding_story_fl/common/utils.dart';
+import 'package:dicoding_story_fl/interfaces/app_l10n.dart';
 import 'package:dicoding_story_fl/interfaces/ui.dart';
 import 'package:dicoding_story_fl/interfaces/ux.dart';
 
@@ -20,15 +23,17 @@ class PostStoryScreenState extends State<PostStoryScreen> {
   final TextEditingController _descriptionController = TextEditingController();
 
   VoidCallback _onRepickImage(BuildContext context) {
-    return () {
+    return () async {
       final pickedImageProv = context.read<PickedImageProvider>();
 
-      showDialog(
+      await showDialog(
         context: context,
         builder: (context) {
+          final appL10n = AppL10n.of(context)!;
+
           return AlertDialog(
-            title: const Text('Replace Image?'),
-            content: const Text('From:'),
+            title: Text('${appL10n.replaceImage}?'),
+            content: Text('${appL10n.from}:'),
             actions: [
               TextButton(
                 onPressed: () async {
@@ -36,11 +41,9 @@ class PostStoryScreenState extends State<PostStoryScreen> {
 
                   if (img == null) return;
 
-                  if (context.mounted) {
-                    Navigator.maybePop(context);
-                  }
+                  if (context.mounted) context.pop();
                 },
-                child: const Text('Gallery'),
+                child: Text(appL10n.gallery),
               ),
               TextButton(
                 onPressed: () async {
@@ -51,16 +54,18 @@ class PostStoryScreenState extends State<PostStoryScreen> {
 
                   if (img == null) return;
 
-                  if (context.mounted) {
-                    Navigator.maybePop(context);
-                  }
+                  if (context.mounted) context.pop();
                 },
-                child: const Text('Camera'),
+                child: Text(appL10n.camera),
               ),
               //
               TextButton(
-                onPressed: () => Navigator.maybePop(context),
-                child: const Text('Cancel'),
+                onPressed: () => context.pop(),
+                child: Text(
+                  MaterialLocalizations.of(context)
+                      .cancelButtonLabel
+                      .capitalize,
+                ),
               ),
             ],
           );
@@ -85,7 +90,7 @@ class PostStoryScreenState extends State<PostStoryScreen> {
               imageFilename: imageFile.name,
             );
 
-        if (context.mounted) Navigator.maybePop(context);
+        if (context.mounted) context.pop();
       } catch (err, trace) {
         final exception = err.toSimpleException(trace: trace);
 
@@ -112,8 +117,10 @@ class PostStoryScreenState extends State<PostStoryScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final appL10n = AppL10n.of(context)!;
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Post Story')),
+      appBar: AppBar(title: Text(appL10n.postStory)),
       body: Builder(
         builder: (context) {
           final pickedImageProv = context.watch<PickedImageProvider>();
@@ -125,7 +132,7 @@ class PostStoryScreenState extends State<PostStoryScreen> {
               child: Column(
                 children: [
                   Text(
-                    'Pick image for your story',
+                    appL10n.pickAnImageForYourStory,
                     style: context.textTheme.headlineMedium,
                   ),
                   const SizedBox(height: 8.0),
@@ -146,7 +153,8 @@ class PostStoryScreenState extends State<PostStoryScreen> {
                                 child: Column(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    Text('From Gallery', style: labelStyle),
+                                    Text(appL10n.fromGallery,
+                                        style: labelStyle),
                                     const Icon(
                                       Icons.image_outlined,
                                       size: iconSize,
@@ -168,7 +176,7 @@ class PostStoryScreenState extends State<PostStoryScreen> {
                                 child: Column(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    Text('From Camera', style: labelStyle),
+                                    Text(appL10n.fromCamera, style: labelStyle),
                                     const Icon(
                                       Icons.camera_alt_outlined,
                                       size: iconSize,
@@ -279,25 +287,30 @@ abstract base class _PostStoryFormScreenLayoutBase extends StatelessWidget {
     });
   }
 
-  TextFormField get _descFormField {
-    return TextFormField(
-      controller: delegate.descController,
-      enabled: delegate.descIsEnabled,
-      keyboardType: TextInputType.multiline,
-      maxLines: null,
-      decoration: const InputDecoration(hintText: 'Tell your story...'),
-      validator: (text) {
-        if (text == null || text.isEmpty) return 'Cannot be empty';
+  Widget get _descFormField {
+    return Builder(builder: (context) {
+      final appL10n = AppL10n.of(context)!;
 
-        return null;
-      },
-    );
+      return TextFormField(
+        controller: delegate.descController,
+        enabled: delegate.descIsEnabled,
+        keyboardType: TextInputType.multiline,
+        maxLines: null,
+        decoration: InputDecoration(hintText: '${appL10n.tellUsYourStory}...'),
+        validator: (text) {
+          if (text == null || text.isEmpty) return 'Cannot be empty';
+
+          return null;
+        },
+      );
+    });
   }
 
   Widget get _postButton {
     return FilledButton(
       onPressed: delegate.onPostButtonTap,
-      child: const Text('Post Story'),
+      child:
+          Builder(builder: (context) => Text(AppL10n.of(context)!.postStory)),
     );
   }
 }

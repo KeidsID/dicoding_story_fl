@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 import 'package:dicoding_story_fl/common/constants.dart';
 import 'package:dicoding_story_fl/core/entities.dart';
+import 'package:dicoding_story_fl/interfaces/app_l10n.dart';
 import 'package:dicoding_story_fl/interfaces/ui.dart';
 import 'package:dicoding_story_fl/interfaces/ux.dart';
 
@@ -56,6 +57,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final appL10n = AppL10n.of(context)!;
+
     return Scaffold(
       body: SafeArea(
         child: Center(
@@ -93,14 +96,14 @@ class _LoginScreenState extends State<LoginScreen> {
 
                     return FilledButton(
                       onPressed: () => _doLogin(),
-                      child: const Text('Log in'),
+                      child: Text(appL10n.login),
                     );
                   }),
                   const SizedBox(height: 8.0),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text('Need an account?'),
+                      Text(appL10n.needAnAccount),
                       Builder(builder: (context) {
                         final authProv = context.watch<AuthProvider>();
 
@@ -108,7 +111,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           onPressed: authProv.isLoading
                               ? null
                               : () => const RegisterRoute().go(context),
-                          child: const Text('Register'),
+                          child: Text(appL10n.register),
                         );
                       }),
                     ],

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:dicoding_story_fl/core/entities.dart';
+import 'package:dicoding_story_fl/interfaces/app_l10n.dart';
 import 'package:dicoding_story_fl/interfaces/ui.dart';
 import 'package:dicoding_story_fl/interfaces/ux.dart';
 
@@ -57,6 +58,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final appL10n = AppL10n.of(context)!;
+
     return Scaffold(
       body: SafeArea(
         child: Center(
@@ -69,7 +72,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   // Header
-                  Text('Register Form', style: context.textTheme.headlineLarge),
+                  Text(
+                    appL10n.registerForm,
+                    style: context.textTheme.headlineLarge,
+                  ),
                   const SizedBox(height: 32.0),
 
                   // Inputs
@@ -78,8 +84,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     keyboardType: TextInputType.name,
                     textInputAction: TextInputAction.next,
                     decoration: const InputDecoration(
-                      label: Text('Name'),
-                      hintText: 'John Doe from Dicoding',
+                      label: Text('Username'),
+                      hintText: 'John Doe',
                     ),
                   ),
                   const SizedBox(height: 16.0),
@@ -104,14 +110,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                     return FilledButton(
                       onPressed: () => _doRegister(),
-                      child: const Text('Register'),
+                      child: Text(appL10n.register),
                     );
                   }),
                   const SizedBox(height: 8.0),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text('Already have an account?'),
+                      Text(appL10n.alreadyHaveAnAccount),
                       Builder(builder: (context) {
                         final authProv = context.watch<AuthProvider>();
 
@@ -119,7 +125,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           onPressed: authProv.isLoading
                               ? null
                               : () => const LoginRoute().go(context),
-                          child: const Text('Log in'),
+                          child: Text(appL10n.login),
                         );
                       }),
                     ],

@@ -14,6 +14,5 @@ export 'ui/widgets/custom_camera.dart';
 export 'ui/widgets/email_text_field.dart';
 export 'ui/widgets/image_from_x_file.dart';
 export 'ui/widgets/password_text_field.dart';
-export 'ui/widgets/sized_box_base.dart';
 export 'ui/widgets/sized_error_widget.dart';
 export 'ui/widgets/story_card.dart';
