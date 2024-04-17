@@ -1,3 +1,7 @@
+## v1.1.0+1
+
+- feat: add "Bahasa Indonesia" localization.
+
 ## v1.0.0+1
 
 - feat: post story.
