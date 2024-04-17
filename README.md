@@ -30,7 +30,7 @@ Story API: https://story-api.dicoding.dev/v1/
 
 ### Optional
 
-- [ ] Localization.
+- [x] Localization.
 
 ## Project Structure
 
