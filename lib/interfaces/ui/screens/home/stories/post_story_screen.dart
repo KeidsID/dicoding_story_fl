@@ -41,7 +41,7 @@ class PostStoryScreenState extends State<PostStoryScreen> {
 
                   if (img == null) return;
 
-                  if (context.mounted) context.pop();
+                  if (context.mounted) Navigator.maybePop(context);
                 },
                 child: Text(appL10n.gallery),
               ),
@@ -54,13 +54,13 @@ class PostStoryScreenState extends State<PostStoryScreen> {
 
                   if (img == null) return;
 
-                  if (context.mounted) context.pop();
+                  if (context.mounted) Navigator.maybePop(context);
                 },
                 child: Text(appL10n.camera),
               ),
               //
               TextButton(
-                onPressed: () => context.pop(),
+                onPressed: () => Navigator.maybePop(context),
                 child: Text(
                   MaterialLocalizations.of(context)
                       .cancelButtonLabel
@@ -83,8 +83,10 @@ class PostStoryScreenState extends State<PostStoryScreen> {
       try {
         if (!(_formKey.currentState?.validate() ?? false)) return;
 
+        final userCreds = context.read<AuthProvider>().value!;
+
         await context.read<StoriesProvider>().postStory(
-              context.read<AuthProvider>().value!,
+              userCreds,
               description: _descriptionController.text,
               imageBytes: await imageFile.readAsBytes(),
               imageFilename: imageFile.name,
@@ -100,9 +102,11 @@ class PostStoryScreenState extends State<PostStoryScreen> {
           stackTrace: exception.trace,
         );
 
-        context.scaffoldMessenger?.showSnackBar(SnackBar(
-          content: Text(exception.message),
-        ));
+        if (context.mounted) {
+          context.scaffoldMessenger?.showSnackBar(SnackBar(
+            content: Text(exception.message),
+          ));
+        }
       }
     };
   }

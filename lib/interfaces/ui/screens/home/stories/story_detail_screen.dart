@@ -79,7 +79,7 @@ void _showImageDialog(BuildContext context, ImageProvider<Object> image) {
                     icon: const Icon(Icons.close),
                     tooltip:
                         MaterialLocalizations.of(context).closeButtonTooltip,
-                    onPressed: () => context.pop(),
+                    onPressed: () => Navigator.maybePop(context),
                   ),
                 ),
               ),
