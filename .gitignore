@@ -51,3 +51,6 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 .vercel
+
+# FVM Version Cache
+.fvm/
