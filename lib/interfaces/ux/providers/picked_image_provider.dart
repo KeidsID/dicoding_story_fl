@@ -1,7 +1,6 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
 import 'package:dicoding_story_fl/common/constants.dart';
@@ -157,7 +156,9 @@ class _CustomCamDialogState extends State<_CustomCamDialog> {
                             delegate: const CustomCameraDelegate(
                               enableAudio: false,
                             ),
-                            onAcceptResult: (result) => context.pop(result),
+                            onAcceptResult: (result) {
+                              Navigator.maybePop(context, result);
+                            },
                           ),
               ),
             ],

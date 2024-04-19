@@ -113,10 +113,6 @@ abstract class AuthApiService extends ChopperService {
   /// }
   /// ```
   @Post(path: '/register')
-  @FactoryConverter(
-    request: JsonConverter.requestFactory,
-    response: JsonConverter.responseFactory,
-  )
   Future<Response<Map<String, dynamic>>> postRegister({
     @body required Map<String, dynamic> body,
   });
@@ -132,10 +128,6 @@ abstract class AuthApiService extends ChopperService {
   /// }
   /// ```
   @Post(path: '/login')
-  @FactoryConverter(
-    request: JsonConverter.requestFactory,
-    response: JsonConverter.responseFactory,
-  )
   Future<Response<Map<String, dynamic>>> postLogin({
     @body required Map<String, dynamic> body,
   });

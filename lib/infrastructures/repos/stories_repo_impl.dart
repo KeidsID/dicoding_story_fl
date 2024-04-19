@@ -116,7 +116,6 @@ abstract class StoriesApiService extends ChopperService {
   /// - [hasCordinate], include location coordinate on returned stories. Valid
   ///   value are `1` for true and `0` for false, default is `0`.
   @Get(path: '/stories')
-  @FactoryConverter(response: JsonConverter.responseFactory)
   Future<Response<Map<String, dynamic>>> getStories({
     @Header('Authorization') required String authorization,
     //
@@ -131,7 +130,6 @@ abstract class StoriesApiService extends ChopperService {
   ///
   /// - [authorization], `Bearer <token>` format.
   @Get(path: '/stories/{id}')
-  @FactoryConverter(response: JsonConverter.responseFactory)
   Future<Response<Map<String, dynamic>>> getStoryDetail(
     @Path('id') String storyId, {
     @Header('Authorization') required String authorization,
@@ -155,7 +153,6 @@ abstract class StoriesApiService extends ChopperService {
   /// https://story-api.dicoding.dev/v1/#/?id=add-new-story
   @Post(path: '/stories')
   @multipart
-  @FactoryConverter(response: JsonConverter.responseFactory)
   Future<Response<Map<String, dynamic>>> postStory({
     @Header('Authorization') required String authorization,
     //
