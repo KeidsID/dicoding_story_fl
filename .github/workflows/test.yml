@@ -40,6 +40,7 @@ jobs:
         run: |
           dart run build_runner build -d
           flutter gen-l10n
+          dart format lib/interfaces/l10n/gen
 
       - name: ✨ Check Formatting
         run: dart format lib --line-length 80 --set-exit-if-changed
