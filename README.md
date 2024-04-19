@@ -4,8 +4,8 @@
 
 # dicoding_story_fl
 
-![Dart version](https://img.shields.io/badge/SDK-^3.0.2-red?style=flat&logo=dart&logoColor=2cb8f7&labelColor=333333&color=01579b)
-![Flutter](https://img.shields.io/badge/SDK-^3.10.2-red?style=flat&logo=flutter&logoColor=2cb8f7&labelColor=333333&color=01579b)
+![Dart version](https://img.shields.io/badge/SDK-^3.3.0-red?style=flat&logo=dart&logoColor=2cb8f7&labelColor=333333&color=01579b)
+![Flutter](https://img.shields.io/badge/SDK-^3.19.2-red?style=flat&logo=flutter&logoColor=2cb8f7&labelColor=333333&color=01579b)
 
 [![Test](https://github.com/KeidsID/dicoding_story_fl/actions/workflows/test.yml/badge.svg)](https://github.com/KeidsID/dicoding_story_fl/actions/workflows/test.yml)
 [![Web Preview](https://github.com/KeidsID/dicoding_story_fl/actions/workflows/web-preview.yml/badge.svg)][web-preview]

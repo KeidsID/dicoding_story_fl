@@ -1,3 +1,9 @@
+## v1.1.1+2
+
+- build: upgrade flutter sdk to v3.19.2
+- fix: fix invalid dialog pop
+- fix: fix internet permissions (android, macos)
+
 ## v1.1.0+1
 
 - feat: add "Bahasa Indonesia" localization.
