@@ -49,7 +49,7 @@ abstract base class AsyncValueNotifier<T> extends ValueNotifier<T?> {
   @override
   set value(T? newValue) {
     _isError = false;
-    isLoading = false;
+    _isLoading = false;
     super.value = newValue;
   }
 
@@ -70,7 +70,6 @@ abstract base class AsyncValueNotifier<T> extends ValueNotifier<T?> {
     _isError = true;
     _error = err;
     _trace = err is SimpleException ? err.trace : stackTrace;
-    _isLoading = false;
-    notifyListeners();
+    isLoading = false;
   }
 }

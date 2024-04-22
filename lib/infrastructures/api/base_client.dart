@@ -8,5 +8,5 @@ final baseClient = ChopperClient(
   errorConverter: const JsonConverter(),
   interceptors: !kDebugMode
       ? null
-      : [HttpLoggingInterceptor(level: Level.body, logger: chopperLogger)],
+      : [HttpLoggingInterceptor(level: Level.basic, logger: chopperLogger)],
 );

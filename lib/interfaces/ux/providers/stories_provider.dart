@@ -5,26 +5,42 @@ import 'package:dicoding_story_fl/core/use_cases.dart';
 import 'package:dicoding_story_fl/interfaces/ux.dart';
 
 final class StoriesProvider extends AsyncValueNotifier<List<Story>> {
-  StoriesProvider([super.initialValue]);
+  StoriesProvider({this.storiesCount = 10}) : super([]);
+
+  /// Count of stories to fetch.
+  final int storiesCount;
+
+  int _page = 1;
+  bool _isLatestPage = false;
+
+  /// Next page to fetch.
+  int get page => _page;
+
+  /// Check if it's latest fetched page.
+  ///
+  /// [fetchStories] won't fetch if it's `true`.
+  bool get isLatestPage => _isLatestPage;
 
   /// Fetch stories and set it to [value].
-  Future<void> fetchStories(
-    UserCreds userCreds, {
-    int page = 1,
-    int size = 10,
-    bool? hasCordinate,
-  }) async {
+  ///
+  /// May throw a [SimpleException].
+  Future<void> fetchStories(UserCreds userCreds) async {
+    if (isLatestPage || isLoading) return;
+
     isLoading = true;
 
     try {
-      final stories = await container.get<GetStoriesCase>().execute(
-            userCreds,
-            page: page,
-            size: size,
-            hasCordinate: hasCordinate,
-          );
+      final stories = await container
+          .get<GetStoriesCase>()
+          .execute(userCreds, page: page, size: storiesCount);
 
-      value = stories;
+      if (stories.length < storiesCount) {
+        _isLatestPage = true;
+      } else {
+        _page++;
+      }
+
+      value = [...value!, ...stories];
     } catch (err, trace) {
       final parsedError = err.toSimpleException(trace: trace);
 
@@ -33,6 +49,18 @@ final class StoriesProvider extends AsyncValueNotifier<List<Story>> {
     }
   }
 
+  /// Reset provider to initial state. Then do [fetchStories] again.
+  Future<void> refresh(UserCreds userCreds) async {
+    _page = 1;
+    _isLatestPage = false;
+    value = [];
+
+    await fetchStories(userCreds);
+  }
+
+  /// Post a new story, then call [refresh].
+  ///
+  /// May throw a [SimpleException].
   Future<void> postStory(
     UserCreds userCreds, {
     required String description,
@@ -53,7 +81,7 @@ final class StoriesProvider extends AsyncValueNotifier<List<Story>> {
             lon: lon,
           );
 
-      await fetchStories(userCreds);
+      await refresh(userCreds);
     } catch (err, trace) {
       final parsedError = err.toSimpleException(trace: trace);
 
