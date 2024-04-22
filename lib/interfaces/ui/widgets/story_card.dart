@@ -17,49 +17,53 @@ class StoryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = context.textTheme;
 
-    final child = SingleChildScrollView(
-      physics: kIsMobile ? const NeverScrollableScrollPhysics() : null,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          AspectRatio(
-            aspectRatio: 3 / 2,
-            child: CommonNetworkImage(
-              imageUrl: story.photoUrl,
-              imageBuilder: (_, image) => Ink.image(
-                image: image,
-                fit: BoxFit.cover,
+    final child = ScrollConfiguration(
+      behavior: context.scrollBehavior.copyWith(
+        dragDevices: {} // Disable drag. Only accept mouse scroll
+      ),
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            AspectRatio(
+              aspectRatio: 3 / 2,
+              child: CommonNetworkImage(
+                imageUrl: story.photoUrl,
+                imageBuilder: (_, image) => Ink.image(
+                  image: image,
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
-          ),
-          const Flexible(child: Divider(height: 2.0, thickness: 2.0)),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Wrap(
-                  crossAxisAlignment: WrapCrossAlignment.end,
-                  children: [
-                    Text('${story.owner} ', style: textTheme.titleLarge),
-                    Text(kDateFormat.format(story.createdAt))
-                        .applyOpacity(opacity: 0.5),
-                  ],
-                ),
-                const SizedBox(height: 8.0),
-
-                //
-                Text(
-                  story.description,
-                  maxLines: 4,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-            ),
-          )
-        ],
+            const Flexible(child: Divider(height: 2.0, thickness: 2.0)),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Wrap(
+                    crossAxisAlignment: WrapCrossAlignment.end,
+                    children: [
+                      Text('${story.owner} ', style: textTheme.titleLarge),
+                      Text(kDateFormat.format(story.createdAt))
+                          .applyOpacity(opacity: 0.5),
+                    ],
+                  ),
+                  const SizedBox(height: 8.0),
+      
+                  //
+                  Text(
+                    story.description,
+                    maxLines: 4,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            )
+          ],
+        ),
       ),
     );
 
