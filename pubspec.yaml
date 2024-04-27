@@ -17,6 +17,11 @@ dependencies:
     sdk: flutter
   intl: ^0.18.1
 
+  # media
+  camera: ^0.10.5+9
+  camera_windows: ^0.2.2
+  image_picker: ^1.1.0
+
   # dart
   chopper: ^7.4.0
   equatable: ^2.0.5
@@ -35,23 +40,22 @@ dependencies:
   package_info_plus: ^4.2.0
   provider: ^6.1.2
   shared_preferences: ^2.2.3
-
-  # media
-  camera: ^0.10.5+9
-  camera_windows: ^0.2.2
-  image_picker: ^1.1.0
+  url_launcher: ^6.2.6
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^2.0.3
 
+  # native build
+  icons_launcher: ^2.1.7
+
   # build
   build_runner: ^2.4.9
   build_verify: ^3.1.0
   chopper_generator: ^7.4.0
-  go_router_builder: ^2.5.1
   freezed: ^2.5.2
+  go_router_builder: ^2.5.1
   json_serializable: ^6.7.1
 
 flutter:
@@ -59,6 +63,9 @@ flutter:
   # generate: true
 
   assets:
+    # assets
+    - assets/images/res/
+
     # licenses
     - assets/fonts/Rubik/OFL.txt
 

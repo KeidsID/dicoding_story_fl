@@ -1,9 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 
-import 'common/asset_paths.dart';
+import 'common/assets.dart';
 import 'common/constants.dart';
 import 'container.dart' as container;
 import 'interfaces/app_l10n.dart';
@@ -14,10 +15,10 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   LicenseRegistry.addLicense(() async* {
-    final rubikLicense =
-        await rootBundle.loadString(AssetPaths.rubikFontLicense);
-
-    yield LicenseEntryWithLineBreaks(['google_fonts'], rubikLicense);
+    yield LicenseEntryWithLineBreaks(
+      ['google_fonts'],
+      await rootBundle.rubikFontLicense(),
+    );
   });
 
   await container.init();
@@ -34,6 +35,7 @@ class MainApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider.value(value: AuthProvider()),
         ChangeNotifierProvider.value(value: StoriesProvider()),
+        Provider.value(value: container.get<PackageInfo>()),
       ],
       builder: (context, _) {
         /// To make sure redirect did'nt triggered on theme changes.
@@ -47,7 +49,7 @@ class MainApp extends StatelessWidget {
           builder: (context, _) {
             return MaterialApp.router(
               routerConfig: appRouter,
-              title: appName,
+              title: kAppName,
               debugShowCheckedModeBanner: false,
               //
               theme: AppThemes.light,

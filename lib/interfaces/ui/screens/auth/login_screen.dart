@@ -71,7 +71,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   // Header
-                  Text(appName, style: context.textTheme.headlineLarge),
+                  Text(kAppName, style: context.textTheme.headlineLarge),
                   const SizedBox(height: 32.0),
 
                   // Inputs

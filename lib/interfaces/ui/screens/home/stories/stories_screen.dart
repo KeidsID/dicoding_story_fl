@@ -50,7 +50,7 @@ class _StoriesScreenState extends State<StoriesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text(appName)),
+      appBar: AppBar(title: const Text(kAppName)),
       body: Builder(builder: (context) {
         final storiesProv = context.watch<StoriesProvider>();
 

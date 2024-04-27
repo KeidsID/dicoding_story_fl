@@ -12,47 +12,48 @@ final routerKey = GlobalKey<NavigatorState>();
 /// Depend on [AuthProvider].
 ///
 /// [routerKey] keeps the [router] state.
-GoRouter router(BuildContext context) => GoRouter(
-      navigatorKey: routerKey,
-      routes: $appRoutes,
-      initialLocation: const LoginRoute().location,
-      debugLogDiagnostics: true,
-      errorBuilder: (context, state) {
-        return Scaffold(
-          body: SizedErrorWidget.expand(
-            error: SimpleHttpException(
-              statusCode: 404,
-              message: 'No route found for "${state.uri.path}"',
-            ),
-            action: Builder(builder: (context) {
-              return ElevatedButton.icon(
-                onPressed: () => const StoriesRoute().go(context),
-                icon: const Icon(Icons.home_outlined),
-                label: const Text('Back to Home'),
-              );
-            }),
+GoRouter router(BuildContext context) {
+  return GoRouter(
+    navigatorKey: routerKey,
+    routes: $appRoutes,
+    initialLocation: const LoginRoute().location,
+    debugLogDiagnostics: true,
+    errorBuilder: (context, state) {
+      return Scaffold(
+        body: SizedErrorWidget.expand(
+          error: SimpleHttpException(
+            statusCode: 404,
+            message: 'No route found for "${state.uri.path}"',
           ),
-        );
-      },
-      refreshListenable: context.read<AuthProvider>(),
-      redirect: (context, state) {
-        final currentRoute = state.uri.path;
-        final authProv = context.read<AuthProvider>();
+          action: Builder(builder: (context) {
+            return ElevatedButton.icon(
+              onPressed: () => const StoriesRoute().go(context),
+              icon: const Icon(Icons.home_outlined),
+              label: const Text('Back to Home'),
+            );
+          }),
+        ),
+      );
+    },
+    refreshListenable: context.read<AuthProvider>(),
+    redirect: (context, state) {
+      final currentRoute = state.uri.path;
+      final authProv = context.read<AuthProvider>();
 
-        if (authProv.isLoading) return null;
+      if (authProv.isLoading) return null;
 
-        final isLoggedIn = authProv.value != null;
-        final isAuthRoute =
-            currentRoute.startsWith(const LoginRoute().location);
+      final isLoggedIn = authProv.value != null;
+      final isAuthRoute = currentRoute.startsWith(const LoginRoute().location);
 
-        if (isAuthRoute) {
-          if (isLoggedIn) return const StoriesRoute().location;
-
-          return null;
-        }
-
-        if (!isLoggedIn) return const LoginRoute().location;
+      if (isAuthRoute) {
+        if (isLoggedIn) return const StoriesRoute().location;
 
         return null;
-      },
-    );
+      }
+
+      if (!isLoggedIn) return const LoginRoute().location;
+
+      return null;
+    },
+  );
+}

@@ -1,11 +1,9 @@
 import 'package:fl_utilities/fl_utilities.dart';
 import 'package:flutter/material.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 
-import 'package:dicoding_story_fl/common/constants.dart';
-import 'package:dicoding_story_fl/container.dart' as container;
 import 'package:dicoding_story_fl/interfaces/app_l10n.dart';
+import 'package:dicoding_story_fl/interfaces/ui.dart';
 import 'package:dicoding_story_fl/interfaces/ux.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -117,12 +115,7 @@ class ProfileScreen extends StatelessWidget {
               );
             }),
           ),
-          AboutListTile(
-            icon: const Icon(Icons.info_outline),
-            applicationName: appName,
-            applicationVersion: 'v${container.get<PackageInfo>().version}',
-            applicationLegalese: appLegalese,
-          ),
+          const AppAboutListTile(),
         ],
       ),
     );

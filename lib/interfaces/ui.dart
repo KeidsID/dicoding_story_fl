@@ -9,6 +9,7 @@ export 'ui/screens/home/stories/post_story_screen.dart';
 export 'ui/screens/home/stories/stories_screen.dart';
 export 'ui/screens/home/stories/story_detail_screen.dart';
 export 'ui/themes/app_themes.dart';
+export 'ui/widgets/app_about_list_tile.dart';
 export 'ui/widgets/common_network_image.dart';
 export 'ui/widgets/custom_camera.dart';
 export 'ui/widgets/email_text_field.dart';
