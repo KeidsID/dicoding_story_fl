@@ -13,7 +13,6 @@
   "logout": "Keluar",
   "needAnAccount": "Butuh akun",
   "other": "{count,plural, =1{Lainnya} other{Lainnya}}",
-  "pageAbbr": "Hal",
   "personStory": "Cerita \"{person}\"",
   "pickAnImageForYourStory": "Pilih gambar untuk cerita Anda",
   "postStory": "Buat Cerita",
@@ -21,8 +20,6 @@
   "register": "Daftar",
   "registerForm": "Form Pendaftaran",
   "replaceImage": "Ganti gambar",
-
-  "storyCounts": "{count, plural, =1{Jumlah} other{Jumlah}} Cerita",
   "tellUsYourStory": "Ceritakan cerita Anda",
   "yourProfile": "Profil Anda"
 }

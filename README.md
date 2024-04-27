@@ -18,20 +18,6 @@ Google Maps.
 
 Story API: https://story-api.dicoding.dev/v1/
 
-## TODO
-
-### Mandatory
-
-- [x] Auth Pages.
-- [x] Stories Page.
-- [x] Story Detail Page.
-- [x] Add/Post Story Page.
-- [x] Advanced Navigation.
-
-### Optional
-
-- [x] Localization.
-
 ## Project Structure
 
 This project use

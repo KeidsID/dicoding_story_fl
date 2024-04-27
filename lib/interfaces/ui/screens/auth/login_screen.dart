@@ -103,7 +103,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(appL10n.needAnAccount),
+                      Text('${appL10n.needAnAccount}?'),
                       Builder(builder: (context) {
                         final authProv = context.watch<AuthProvider>();
 

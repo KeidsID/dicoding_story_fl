@@ -117,7 +117,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(appL10n.alreadyHaveAnAccount),
+                      Text('${appL10n.alreadyHaveAnAccount}?'),
                       Builder(builder: (context) {
                         final authProv = context.watch<AuthProvider>();
 

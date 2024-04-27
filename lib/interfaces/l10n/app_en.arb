@@ -29,10 +29,6 @@
       }
     }
   },
-  "pageAbbr": "Page",
-  "@pageAbbr": {
-    "description": "May abbreviate \"Page\" word on other locale."
-  },
   "personStory": "\"{person}\" Story",
   "@personStory": {
     "placeholders": {
@@ -47,15 +43,6 @@
   "register": "Register",
   "registerForm": "Register Form",
   "replaceImage": "Replace image",
-  "storyCounts": "Story {count, plural, =1{Count} other{Counts}}",
-  "@storyCounts": {
-    "description": "{@macro l10n.simplePluralWord}",
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
   "tellUsYourStory": "Tell us your story",
   "yourProfile": "Your Profile"
 }
