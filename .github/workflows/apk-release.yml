@@ -29,7 +29,7 @@ jobs:
           flutter gen-l10n
           mkdir secrets
           echo "${{ secrets.ANDROID_RELEASE_KEY_BASE64 }}" | base64 --decode > secrets/android-release-key.jks
-          echo "${{ secrets.ANDROID_KEY_PROPS }}" > android/key.properties
+          echo "${{ secrets.ANDROID_KEY_PROPS_BASE64 }}" | base64 --decode > android/key.properties
 
       - name: 🏗️ Build APK release
         run: flutter build apk --release
