@@ -1,3 +1,8 @@
+## v1.2.0+3
+
+- feat(ux): infinite scrolling
+- build: update app icon and display name
+
 ## v1.1.1+2
 
 - build: upgrade flutter sdk to v3.19.2

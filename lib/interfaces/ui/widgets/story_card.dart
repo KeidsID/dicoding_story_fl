@@ -19,7 +19,7 @@ class StoryCard extends StatelessWidget {
 
     final child = ScrollConfiguration(
       behavior: context.scrollBehavior.copyWith(
-        dragDevices: {} // Disable drag. Only accept mouse scroll
+        dragDevices: {}, // Disable drag. Only accept mouse scroll
       ),
       child: SingleChildScrollView(
         child: Column(
@@ -52,7 +52,7 @@ class StoryCard extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 8.0),
-      
+
                   //
                   Text(
                     story.description,

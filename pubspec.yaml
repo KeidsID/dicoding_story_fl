@@ -1,9 +1,7 @@
 name: dicoding_story_fl
-description:
-  Projects from dicoding.com as a practice in advanced navigation, use of media
-  (audio, images, and video), and use of maps such as Google Map.
+description: Simple media social app for dicoding.com final project.
 publish_to: "none"
-version: 1.1.1+2
+version: 1.2.0+3
 
 environment:
   sdk: ">=3.3.0 <4.0.0"
