@@ -27,7 +27,8 @@ jobs:
         run: |
           dart run build_runner build -d
           flutter gen-l10n
-          echo "${{ secrets.ANDROID_RELEASE_KEY_BASE64 }}" | base64 -d > secrets/android-release-key.jks
+          mkdir secrets
+          echo "${{ secrets.ANDROID_RELEASE_KEY_BASE64 }}" | base64 --decode > secrets/android-release-key.jks
           echo "${{ secrets.ANDROID_KEY_PROPS }}" > android/key.properties
 
       - name: 🏗️ Build APK release
