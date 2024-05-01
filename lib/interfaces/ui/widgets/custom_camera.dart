@@ -145,8 +145,8 @@ class CustomCameraState extends State<CustomCamera>
       // for debugging camera switching
       if (kDebugMode) await Future.delayed(const Duration(seconds: 1));
 
-      await camController?.dispose();
       await newController.initialize();
+      await camController?.dispose();
 
       void postProcess() {
         _camController = newController;
@@ -173,7 +173,7 @@ class CustomCameraState extends State<CustomCamera>
       );
 
       void postProcess() {
-        isSwitchingCam = true;
+        isSwitchingCam = false;
         _error = exception;
         _trace = exception.trace;
       }

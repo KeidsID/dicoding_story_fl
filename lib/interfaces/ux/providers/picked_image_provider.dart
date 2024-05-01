@@ -44,6 +44,8 @@ final class PickedImageProvider extends AsyncValueNotifier<XFile?> {
         builder: (_) => const _CustomCamDialog(),
       );
 
+      if (dialogResult == null) return null;
+
       value = dialogResult;
 
       return dialogResult;
