@@ -5,8 +5,11 @@
 **/l10n/gen/**
 !**/l10n/gen/untranslated.txt
 
-# Miscellaneous
+# secrets
+*.env
 secrets/
+
+# Miscellaneous
 examples/
 *.class
 *.log
