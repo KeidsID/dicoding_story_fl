@@ -15,18 +15,18 @@ class GetStoriesCase {
   /// - [userCredentials], user credentials needed to fetch stories.
   /// - [page], page number. Must be greater than `0`.
   /// - [size], stories count for each page. Must be greater than `0`.
-  /// - [hasCordinate], include location coordinate on the [Story]. Default is
+  /// - [includeLocation], include location coordinate on the [Story]. Default is
   ///   `false`.
   Future<List<Story>> execute(
     UserCreds userCredentials, {
     int page = 1,
     int size = 10,
-    bool? hasCordinate,
+    bool includeLocation = false,
   }) =>
       _storiesRepo.fetchStories(
         userCredentials,
         page: page,
         size: size,
-        hasCordinate: hasCordinate,
+        includeLocation: includeLocation,
       );
 }

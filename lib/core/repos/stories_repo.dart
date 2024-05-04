@@ -5,7 +5,7 @@ abstract interface class StoriesRepo {
     UserCreds userCreds, {
     int page = 1,
     int size = 10,
-    bool? hasCordinate,
+    bool includeLocation = false,
   });
 
   Future<StoryDetail> storyDetailById(

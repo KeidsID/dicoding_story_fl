@@ -30,10 +30,10 @@ class Story extends Equatable {
   /// Date and time this story was posted.
   final DateTime createdAt;
 
-  /// [lat] (Latitude) unit used for geographic coordinate.
+  /// Latitude unit used for geographic coordinate.
   final double? lat;
 
-  /// [lon] (Longitude) unit used for geographic coordinate.
+  /// Longitude unit used for geographic coordinate.
   final double? lon;
 
   @override
@@ -44,8 +44,10 @@ class Story extends Equatable {
       description,
       photoUrl,
       createdAt,
-      lat,
-      lon,
+      hasLocation,
     ];
   }
+
+  /// Returns `true` if the story has location coordinate.
+  bool get hasLocation => lat != null && lon != null;
 }
