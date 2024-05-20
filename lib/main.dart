@@ -7,7 +7,7 @@ import 'package:provider/provider.dart';
 
 import 'common/assets.dart';
 import 'common/constants.dart';
-import 'common/env.dart';
+import 'common/envs.dart';
 import 'container.dart' as container;
 import 'interfaces/app_l10n.dart';
 import 'interfaces/ui.dart';
@@ -25,7 +25,7 @@ void main() async {
 
   await container.init();
 
-  if (Env.isNoHashUrl) usePathUrlStrategy();
+  if (Envs.isNoHashUrl) usePathUrlStrategy();
 
   runApp(const MainApp());
 }
