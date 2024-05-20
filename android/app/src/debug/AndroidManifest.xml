@@ -5,7 +5,9 @@
     -->
     <uses-permission android:name="android.permission.INTERNET" />
 
-    <!-- Feel free to modified this Gmaps API key with your own key -->
+    <!-- Feel free to modified this Gmaps API key with your own key 
+        if you want to run this project in debug mode.
+    -->
     <meta-data android:name="com.google.android.geo.API_KEY"
         android:value="AIzaSyBT_mGuD0z_5bwzM6u3Dqyd2S7-A8Q85Vw" />
 </manifest>

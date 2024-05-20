@@ -1,5 +1,7 @@
 import 'package:equatable/equatable.dart';
 
+import 'package:dicoding_story_fl/core/entities.dart';
+
 /// {@template dicoding_story_fl.core.entities.Story}
 /// Story summary posted by user.
 /// {@endtemplate}
@@ -11,8 +13,7 @@ class Story extends Equatable {
     required this.description,
     required this.photoUrl,
     required this.createdAt,
-    this.lat,
-    this.lon,
+    this.location,
   });
 
   /// Unique identifier.
@@ -30,24 +31,11 @@ class Story extends Equatable {
   /// Date and time this story was posted.
   final DateTime createdAt;
 
-  /// Latitude unit used for geographic coordinate.
-  final double? lat;
-
-  /// Longitude unit used for geographic coordinate.
-  final double? lon;
+  /// Geographic coordinate of the story location (if available).
+  final LocationCore? location;
 
   @override
   List<Object?> get props {
-    return [
-      id,
-      owner,
-      description,
-      photoUrl,
-      createdAt,
-      hasLocation,
-    ];
+    return [id, owner, description, photoUrl, createdAt, location];
   }
-
-  /// Returns `true` if the story has location coordinate.
-  bool get hasLocation => lat != null && lon != null;
 }

@@ -7,7 +7,6 @@ class StoryDetail extends Story {
     required super.description,
     required super.photoUrl,
     required super.createdAt,
-    super.lat,
-    super.lon,
+    super.location,
   });
 }

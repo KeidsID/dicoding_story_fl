@@ -1,6 +1,8 @@
 import '../entities.dart';
 
 abstract interface class StoriesRepo {
+  const StoriesRepo();
+
   Future<List<Story>> fetchStories(
     UserCreds userCreds, {
     int page = 1,

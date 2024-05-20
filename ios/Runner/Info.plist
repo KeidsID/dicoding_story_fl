@@ -7,12 +7,21 @@
 			<string>en</string>
 			<string>id</string>
 		</array>
+
+		<key>NSLocationWhenInUseUsageDescription</key>
+		<string>For post story purpose</string>
+		<key>NSLocationAlwaysUsageDescription</key>
+		<string>For post story purpose</string>
+		<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+		<string>For post story purpose</string>
+
 		<key>NSPhotoLibraryUsageDescription</key>
 		<string>For post story purpose</string>
 		<key>NSCameraUsageDescription</key>
 		<string>For post story purpose</string>
 		<key>NSMicrophoneUsageDescription</key>
 		<string>For post story purpose</string>
+
 		<key>CFBundleDevelopmentRegion</key>
 		<string>$(DEVELOPMENT_LANGUAGE)</string>
 		<key>CFBundleDisplayName</key>
