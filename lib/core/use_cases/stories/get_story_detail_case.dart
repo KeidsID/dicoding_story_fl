@@ -33,7 +33,7 @@ class GetStoryDetailCase {
     try {
       final place = await _gMapsRepo.reverseGeocoding(location);
 
-      return raw.copyWith(place: place);
+      return raw.copyWith(location: location.applyPlace(place));
     } catch (err, trace) {
       kLogger.w(
         'GetStoryDetailCase reverse geocoding',

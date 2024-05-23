@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 
 import 'package:dicoding_story_fl/common/constants.dart';
 import 'package:dicoding_story_fl/common/utils.dart';
+import 'package:dicoding_story_fl/core/entities.dart';
 import 'package:dicoding_story_fl/interfaces/app_l10n.dart';
 import 'package:dicoding_story_fl/interfaces/ui.dart';
 import 'package:dicoding_story_fl/interfaces/ux.dart';
@@ -21,6 +22,8 @@ class PostStoryScreen extends StatefulWidget {
 class PostStoryScreenState extends State<PostStoryScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _descriptionController = TextEditingController();
+
+  LocationCore? _location;
 
   VoidCallback _onRepickImage(BuildContext context) {
     return () async {
@@ -90,6 +93,8 @@ class PostStoryScreenState extends State<PostStoryScreen> {
               description: _descriptionController.text,
               imageBytes: await imageFile.readAsBytes(),
               imageFilename: imageFile.name,
+              lat: _location?.lat,
+              lon: _location?.lon,
             );
 
         if (context.mounted) context.pop();
@@ -210,6 +215,7 @@ class PostStoryScreenState extends State<PostStoryScreen> {
               formKey: _formKey,
               descController: _descriptionController,
               descIsEnabled: !isLoading,
+              address: _location?.address,
               onPostButtonTap: isLoading ? null : _onPostButtonTap(context),
             ));
           });
@@ -246,6 +252,8 @@ class _PostStoryFormScreenDelegate {
     this.formKey,
     this.descController,
     this.descIsEnabled,
+    this.address,
+    this.onAddressTap,
     this.onPostButtonTap,
   });
 
@@ -255,6 +263,9 @@ class _PostStoryFormScreenDelegate {
   final Key? formKey;
   final TextEditingController? descController;
   final bool? descIsEnabled;
+
+  final String? address;
+  final VoidCallback? onAddressTap;
 
   final VoidCallback? onPostButtonTap;
 }
@@ -342,6 +353,12 @@ final class _PostStoryFormScreenS extends _PostStoryFormScreenLayoutBase {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _titleSection,
+                AddressSection(
+                  delegate.address ?? 'No location',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  onTap: delegate.onAddressTap,
+                ),
                 const SizedBox(height: 16.0),
 
                 //
@@ -383,6 +400,12 @@ final class _PostStoryFormScreenL extends _PostStoryFormScreenLayoutBase {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     _titleSection,
+                    AddressSection(
+                      delegate.address ?? 'No location',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      onTap: delegate.onAddressTap,
+                    ),
                     const SizedBox(height: 16.0),
 
                     //

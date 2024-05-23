@@ -8,7 +8,6 @@ class StoryDetail extends Story {
     required super.photoUrl,
     required super.createdAt,
     super.location,
-    super.place,
   });
 
   @override
@@ -19,7 +18,6 @@ class StoryDetail extends Story {
     String? photoUrl,
     DateTime? createdAt,
     LocationCore? location,
-    PlaceCore? place,
   }) {
     return StoryDetail(
       id: id ?? this.id,
@@ -28,7 +26,6 @@ class StoryDetail extends Story {
       photoUrl: photoUrl ?? this.photoUrl,
       createdAt: createdAt ?? this.createdAt,
       location: location ?? this.location,
-      place: place ?? this.place,
     );
   }
 }

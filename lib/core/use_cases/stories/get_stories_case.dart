@@ -43,7 +43,7 @@ class GetStoriesCase {
         if (location != null) {
           final place = await _gMapsRepo.reverseGeocoding(location);
 
-          return e.copyWith(place: place);
+          return e.copyWith(location: location.applyPlace(place));
         }
 
         return e;

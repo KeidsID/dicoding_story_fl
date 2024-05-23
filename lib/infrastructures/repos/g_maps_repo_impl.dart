@@ -32,32 +32,30 @@ class GMapsRepoImpl implements GMapsRepo {
 
     if (!isEnabled) {
       isEnabled = await loc.requestService();
+
       if (!isEnabled) {
-        return;
+        throw const SimpleException(
+          name: 'Location Service Disabled',
+          message: 'Please enable location service',
+        );
       }
-    }
-
-    if (permissionStatus == PermissionStatus.denied) {
-      permissionStatus = await loc.requestPermission();
-      if (permissionStatus != PermissionStatus.granted) {
-        return;
-      }
-    }
-
-    if (!isEnabled) {
-      throw const SimpleException(
-        name: 'Location Service Disabled',
-        message: 'Please enable location service',
-      );
     }
 
     switch (permissionStatus) {
       case PermissionStatus.denied:
       case PermissionStatus.deniedForever:
-        throw const SimpleException(
-          name: 'Permission Denied',
-          message: 'Please grant permission to access location',
-        );
+        permissionStatus = await loc.requestPermission();
+
+        switch (permissionStatus) {
+          case PermissionStatus.denied:
+          case PermissionStatus.deniedForever:
+            throw const SimpleException(
+              name: 'Permission Denied',
+              message: 'Please grant permission to access location',
+            );
+          default:
+        }
+        break;
       default:
     }
   }

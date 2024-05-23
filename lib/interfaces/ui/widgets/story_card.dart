@@ -53,11 +53,11 @@ class StoryCard extends StatelessWidget {
                   ),
 
                   //
-                  ...story.address == null
+                  ...story.location == null
                       ? []
                       : [
                           AddressSection(
-                            story.address ?? '',
+                            story.location!.address,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
