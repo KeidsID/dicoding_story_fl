@@ -30,9 +30,12 @@ final class StoriesProvider extends AsyncValueNotifier<List<Story>> {
     isLoading = true;
 
     try {
-      final stories = await container
-          .get<GetStoriesCase>()
-          .execute(userCreds, page: page, size: storiesCount);
+      final stories = await container.get<GetStoriesCase>().execute(
+            userCreds,
+            page: page,
+            size: storiesCount,
+            includeLocation: true,
+          );
 
       if (stories.length < storiesCount) {
         _isLatestPage = true;

@@ -26,7 +26,7 @@ class ProfileScreen extends StatelessWidget {
         children: [
           Text(appL10n.profile, style: textTheme.headlineSmall),
           ListTile(
-            leading: const Icon(Icons.person),
+            leading: const Icon(Icons.person_outline),
             title: Text(userCreds?.name ?? 'Anonymous'),
           ),
           ListTile(

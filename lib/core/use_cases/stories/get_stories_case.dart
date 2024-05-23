@@ -1,3 +1,4 @@
+import 'package:dicoding_story_fl/common/constants.dart';
 import 'package:dicoding_story_fl/core/entities.dart';
 import 'package:dicoding_story_fl/core/repos.dart';
 
@@ -6,9 +7,14 @@ import 'package:dicoding_story_fl/core/repos.dart';
 /// {@endtemplate}
 class GetStoriesCase {
   /// {@macro dicoding_story_fl.domain.use_cases.stories.GetStoriesCase}
-  const GetStoriesCase(this._storiesRepo);
+  const GetStoriesCase({
+    required StoriesRepo storiesRepo,
+    required GMapsRepo gMapsRepo,
+  })  : _storiesRepo = storiesRepo,
+        _gMapsRepo = gMapsRepo;
 
   final StoriesRepo _storiesRepo;
+  final GMapsRepo _gMapsRepo;
 
   /// Fetch stories from server.
   ///
@@ -22,11 +28,34 @@ class GetStoriesCase {
     int page = 1,
     int size = 10,
     bool includeLocation = false,
-  }) =>
-      _storiesRepo.fetchStories(
-        userCredentials,
-        page: page,
-        size: size,
-        includeLocation: includeLocation,
-      );
+  }) async {
+    final raws = await _storiesRepo.fetchStories(
+      userCredentials,
+      page: page,
+      size: size,
+      includeLocation: includeLocation,
+    );
+
+    return await Future.wait(raws.map((e) async {
+      final location = e.location;
+
+      try {
+        if (location != null) {
+          final place = await _gMapsRepo.reverseGeocoding(location);
+
+          return e.copyWith(place: place);
+        }
+
+        return e;
+      } catch (err, trace) {
+        kLogger.w(
+          'GetStoriesCase reverse geocoding',
+          error: err,
+          stackTrace: trace,
+        );
+
+        return e;
+      }
+    }));
+  }
 }

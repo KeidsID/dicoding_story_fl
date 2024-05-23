@@ -1,7 +1,7 @@
-import 'package:dicoding_story_fl/common/constants.dart';
 import 'package:fl_utilities/fl_utilities.dart';
 import 'package:flutter/material.dart';
 
+import 'package:dicoding_story_fl/common/constants.dart';
 import 'package:dicoding_story_fl/core/entities.dart';
 import 'package:dicoding_story_fl/interfaces/ui.dart';
 
@@ -51,12 +51,23 @@ class StoryCard extends StatelessWidget {
                           .applyOpacity(opacity: 0.5),
                     ],
                   ),
+
+                  //
+                  ...story.address == null
+                      ? []
+                      : [
+                          AddressSection(
+                            story.address ?? '',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
                   const SizedBox(height: 8.0),
 
                   //
                   Text(
                     story.description,
-                    maxLines: 4,
+                    maxLines: 3,
                     overflow: TextOverflow.ellipsis,
                   ),
                 ],

@@ -9,6 +9,7 @@ export 'ui/screens/home/stories/post_story_screen.dart';
 export 'ui/screens/home/stories/stories_screen.dart';
 export 'ui/screens/home/stories/story_detail_screen.dart';
 export 'ui/themes/app_themes.dart';
+export 'ui/widgets/address_section.dart';
 export 'ui/widgets/app_about_list_tile.dart';
 export 'ui/widgets/common_network_image.dart';
 export 'ui/widgets/custom_camera.dart';
@@ -17,3 +18,4 @@ export 'ui/widgets/image_from_x_file.dart';
 export 'ui/widgets/password_text_field.dart';
 export 'ui/widgets/sized_error_widget.dart';
 export 'ui/widgets/story_card.dart';
+

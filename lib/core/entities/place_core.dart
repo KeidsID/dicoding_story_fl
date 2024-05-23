@@ -12,5 +12,5 @@ class PlaceCore extends Equatable {
   final String? displayName;
 
   @override
-  List<Object?> get props => [address, displayName];
+  List<Object?> get props => [id, address, displayName];
 }

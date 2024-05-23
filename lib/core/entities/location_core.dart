@@ -12,7 +12,10 @@ class LocationCore extends Equatable {
 
   /// Longitude unit used for geographic coordinate.
   final double lon;
-  
+
   @override
   List<Object?> get props => [lat, lon];
+
+  /// Use this for UI display instead of [toString].
+  String toUIString() => '$lat, $lon';
 }

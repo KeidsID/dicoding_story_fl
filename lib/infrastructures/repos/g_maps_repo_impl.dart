@@ -1,20 +1,25 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_google_maps_webservices/geocoding.dart'
     as geocoding_lib;
-import 'package:flutter_google_maps_webservices/places.dart' as places;
 import 'package:location/location.dart';
+import 'package:flutter_google_maps_webservices/places.dart' as places;
 
+import 'package:dicoding_story_fl/common/envs.dart';
 import 'package:dicoding_story_fl/core/entities.dart';
 import 'package:dicoding_story_fl/core/repos.dart';
 
 class GMapsRepoImpl implements GMapsRepo {
+  const GMapsRepoImpl();
+
   String get apiKey {
+    if (kDebugMode) return Envs.debugGMapsApiKey;
+
     if (kIsWeb) return 'AIzaSyDXOqR3ycqGwIrYHWb61EzHyKCMR4vX9x8';
 
     return switch (defaultTargetPlatform) {
       TargetPlatform.android => 'AIzaSyBT_mGuD0z_5bwzM6u3Dqyd2S7-A8Q85Vw',
       TargetPlatform.iOS => 'AIzaSyAZD6mFtNivM4GQ1Yf27Ikgf1bIH0UeZs4',
-      _ => 'invalid',
+      _ => 'invalid-platform',
     };
   }
 
@@ -118,6 +123,8 @@ class GMapsRepoImpl implements GMapsRepo {
 
   @override
   Future<PlaceCore> reverseGeocoding(LocationCore location) async {
+    // TODO: Cache with location as key
+
     final api = geocoding_lib.GoogleMapsGeocoding(apiKey: apiKey);
 
     final res = await api.searchByLocation(geocoding_lib.Location(

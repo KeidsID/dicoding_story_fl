@@ -14,6 +14,7 @@ class Story extends Equatable {
     required this.photoUrl,
     required this.createdAt,
     this.location,
+    this.place,
   });
 
   /// Unique identifier.
@@ -34,8 +35,36 @@ class Story extends Equatable {
   /// Geographic coordinate of the story location (if available).
   final LocationCore? location;
 
+  /// Location detail if [location] is reverse geocoded.
+  final PlaceCore? place;
+
+  /// The address of the story.
+  /// 
+  /// Either [place] or [location].
+  String? get address => place?.address ?? location?.toUIString();
+
   @override
   List<Object?> get props {
-    return [id, owner, description, photoUrl, createdAt, location];
+    return [id, owner, description, photoUrl, createdAt, location, place];
+  }
+
+  Story copyWith({
+    String? id,
+    String? owner,
+    String? description,
+    String? photoUrl,
+    DateTime? createdAt,
+    LocationCore? location,
+    PlaceCore? place,
+  }) {
+    return Story(
+      id: id ?? this.id,
+      owner: owner ?? this.owner,
+      description: description ?? this.description,
+      photoUrl: photoUrl ?? this.photoUrl,
+      createdAt: createdAt ?? this.createdAt,
+      location: location ?? this.location,
+      place: place ?? this.place,
+    );
   }
 }

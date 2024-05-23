@@ -21,7 +21,7 @@ class StoryDetailScreen extends StatelessWidget {
     return ChangeNotifierProvider.value(
       value: StoryDetailProvider(
         storyId: storyId,
-        // won't null becuase router
+        // won't null, filtered by router
         userCreds: authProv.value!,
       ),
       builder: (context, _) {
@@ -137,6 +137,17 @@ class _StoryDetailScreenS extends StatelessWidget {
                           .applyOpacity(opacity: 0.5),
                     ],
                   ),
+
+                  //
+                  ...story.address == null
+                      ? []
+                      : [
+                          AddressSection(
+                            story.address ?? '',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
                   const SizedBox(height: 8.0),
 
                   //
@@ -219,6 +230,17 @@ class _StoryDetailScreenL extends StatelessWidget {
                             .applyOpacity(opacity: 0.5),
                       ],
                     ),
+
+                    //
+                    ...story.address == null
+                        ? []
+                        : [
+                            AddressSection(
+                              story.address ?? '',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
                     const SizedBox(height: 8.0),
 
                     //
