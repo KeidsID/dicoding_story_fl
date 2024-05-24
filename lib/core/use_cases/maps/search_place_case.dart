@@ -6,6 +6,6 @@ class SearchPlaceCase {
 
   final GMapsRepo _mapsRepo;
 
-   Future<List<PlaceCore>> execute(String query) =>
+  Future<List<LocationCore>> execute(String query) =>
       _mapsRepo.searchPlace(query);
-}
+} 

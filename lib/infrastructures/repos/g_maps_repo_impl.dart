@@ -70,7 +70,7 @@ class GMapsRepoImpl implements GMapsRepo {
   }
 
   @override
-  Future<List<PlaceCore>> searchPlace(String query) async {
+  Future<List<LocationCore>> searchPlace(String query) async {
     final api = places.GoogleMapsPlaces(apiKey: apiKey);
 
     final res = await api.searchByText(query);
@@ -88,10 +88,14 @@ class GMapsRepoImpl implements GMapsRepo {
     }
 
     return res.results.map((e) {
-      return PlaceCore(
-        e.placeId,
-        address: e.formattedAddress,
-        displayName: e.name,
+      return LocationCore(
+        e.geometry?.location.lat ?? 0.0,
+        e.geometry?.location.lng ?? 0.0,
+        placeDetail: PlaceCore(
+          e.placeId,
+          address: e.formattedAddress,
+          displayName: e.name,
+        ),
       );
     }).toList();
   }
@@ -114,15 +118,21 @@ class GMapsRepoImpl implements GMapsRepo {
       );
     }
 
-    final result = res.results.first.geometry.location;
+    final result = res.results.first;
+    final geoResult = result.geometry.location;
 
-    return LocationCore(result.lat, result.lng);
+    return LocationCore(
+      geoResult.lat,
+      geoResult.lng,
+      placeDetail: PlaceCore(
+        result.placeId,
+        address: result.formattedAddress,
+      ),
+    );
   }
 
   @override
-  Future<PlaceCore> reverseGeocoding(LocationCore location) async {
-    // TODO: Cache with location as key
-
+  Future<LocationCore> reverseGeocoding(LocationCore location) async {
     final api = geocoding_lib.GoogleMapsGeocoding(apiKey: apiKey);
 
     final res = await api.searchByLocation(geocoding_lib.Location(
@@ -144,6 +154,10 @@ class GMapsRepoImpl implements GMapsRepo {
 
     final result = res.results.first;
 
-    return PlaceCore(result.placeId, address: result.formattedAddress);
+    return LocationCore(
+      result.geometry.location.lat,
+      result.geometry.location.lng,
+      placeDetail: PlaceCore(result.placeId, address: result.formattedAddress),
+    );
   }
 }

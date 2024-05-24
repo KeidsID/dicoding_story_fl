@@ -37,16 +37,12 @@ class GetStoriesCase {
     );
 
     return await Future.wait(raws.map((e) async {
-      final location = e.location;
+      final loc = e.location;
+
+      if (loc == null) return e;
 
       try {
-        if (location != null) {
-          final place = await _gMapsRepo.reverseGeocoding(location);
-
-          return e.copyWith(location: location.applyPlace(place));
-        }
-
-        return e;
+        return e.copyWith(location: await _gMapsRepo.reverseGeocoding(loc));
       } catch (err, trace) {
         kLogger.w(
           'GetStoriesCase reverse geocoding',

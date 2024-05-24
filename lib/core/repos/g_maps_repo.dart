@@ -9,7 +9,7 @@ abstract interface class GMapsRepo {
   Future<LocationCore> getLocation();
 
   /// Search place by query.
-  Future<List<PlaceCore>> searchPlace(String query);
+  Future<List<LocationCore>> searchPlace(String query);
 
   /// Converts the address into latitude and longitude coordinates.
   ///
@@ -18,5 +18,5 @@ abstract interface class GMapsRepo {
   Future<LocationCore> geocoding(String address);
 
   /// Converts the latitude and longitude coordinates into an address.
-  Future<PlaceCore> reverseGeocoding(LocationCore location);
+  Future<LocationCore> reverseGeocoding(LocationCore location);
 }

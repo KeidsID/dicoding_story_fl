@@ -6,5 +6,5 @@ class ReverseGeocodingCase {
 
   final GMapsRepo _mapsRepo;
 
-  Future<PlaceCore> execute(LocationCore location) => _mapsRepo.reverseGeocoding(location);
+  Future<LocationCore> execute(LocationCore location) => _mapsRepo.reverseGeocoding(location);
 }

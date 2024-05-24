@@ -48,5 +48,5 @@ pattern:
     - `ui/`, contains UI code (what end users see). Such as widgets and pages.
     - `ux/`, contains UX code (app behaviour). Such as router and states.
 
-  - `container.dart`, container for locating a dependencies. Act as adpater
+  - `container.dart`, container for locating a dependencies. Act as adapter
     between core and infrastructures.

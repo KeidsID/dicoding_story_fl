@@ -11,6 +11,7 @@ void _registerUseCases() {
     // maps
     ..registerLazySingleton(() => GeocodingCase(get()))
     ..registerLazySingleton(() => GetLocationCase(get()))
+    ..registerLazySingleton(() => ReverseGeocodingCase(get()))
     ..registerLazySingleton(() => SearchPlaceCase(get()))
 
     // stories

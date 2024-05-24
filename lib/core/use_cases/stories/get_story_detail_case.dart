@@ -26,14 +26,12 @@ class GetStoryDetailCase {
       userCreds: userCredentials,
     );
 
-    final location = raw.location;
+    final loc = raw.location;
 
-    if (location == null) return raw;
+    if (loc == null) return raw;
 
     try {
-      final place = await _gMapsRepo.reverseGeocoding(location);
-
-      return raw.copyWith(location: location.applyPlace(place));
+      return raw.copyWith(location: await _gMapsRepo.reverseGeocoding(loc));
     } catch (err, trace) {
       kLogger.w(
         'GetStoryDetailCase reverse geocoding',
