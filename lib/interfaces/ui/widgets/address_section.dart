@@ -27,9 +27,11 @@ class AddressSection extends StatelessWidget {
             child: Icon(Icons.place_outlined),
             alignment: PlaceholderAlignment.middle,
           ),
-          TextSpan(text: ' $address'),
+          TextSpan(
+            text: ' $address',
+            recognizer: TapGestureRecognizer()..onTap = onTap,
+          ),
         ],
-        recognizer: TapGestureRecognizer()..onTap = onTap,
       ),
       // textAlign: TextAlign.center,
       maxLines: maxLines,

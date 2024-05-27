@@ -14,6 +14,7 @@ export 'ui/widgets/app_about_list_tile.dart';
 export 'ui/widgets/common_network_image.dart';
 export 'ui/widgets/custom_camera.dart';
 export 'ui/widgets/email_text_field.dart';
+export 'ui/widgets/get_location_dialog.dart';
 export 'ui/widgets/image_from_x_file.dart';
 export 'ui/widgets/password_text_field.dart';
 export 'ui/widgets/sized_error_widget.dart';

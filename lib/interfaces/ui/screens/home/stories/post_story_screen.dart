@@ -77,6 +77,19 @@ class PostStoryScreenState extends State<PostStoryScreen> {
     };
   }
 
+  VoidCallback _onSetLocation(BuildContext context) {
+    return () async {
+      final loc = await showDialog<LocationCore?>(
+        context: context,
+        builder: (_) => const GetLocationDialog(),
+      );
+
+      if (loc == null) return;
+
+      setState(() => _location = loc);
+    };
+  }
+
   VoidCallback _onPostButtonTap(BuildContext context) {
     return () async {
       final imageFile = context.read<PickedImageProvider>().value;
@@ -85,6 +98,14 @@ class PostStoryScreenState extends State<PostStoryScreen> {
 
       try {
         if (!(_formKey.currentState?.validate() ?? false)) return;
+
+        if (_location == null) {
+          context.scaffoldMessenger?.showSnackBar(const SnackBar(
+            content: Text('Location is required'),
+          ));
+
+          return;
+        }
 
         final userCreds = context.read<AuthProvider>().value!;
 
@@ -216,6 +237,7 @@ class PostStoryScreenState extends State<PostStoryScreen> {
               descController: _descriptionController,
               descIsEnabled: !isLoading,
               address: _location?.address,
+              onAddressTap: _onSetLocation(context),
               onPostButtonTap: isLoading ? null : _onPostButtonTap(context),
             ));
           });
@@ -354,7 +376,7 @@ final class _PostStoryFormScreenS extends _PostStoryFormScreenLayoutBase {
               children: [
                 _titleSection,
                 AddressSection(
-                  delegate.address ?? 'No location',
+                  delegate.address ?? 'Set location',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   onTap: delegate.onAddressTap,
@@ -401,7 +423,7 @@ final class _PostStoryFormScreenL extends _PostStoryFormScreenLayoutBase {
                   children: [
                     _titleSection,
                     AddressSection(
-                      delegate.address ?? 'No location',
+                      delegate.address ?? 'Set location',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       onTap: delegate.onAddressTap,

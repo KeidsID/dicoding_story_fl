@@ -14,6 +14,6 @@ void _registerServices() {
     ..registerLazySingleton<AuthRepo>(() {
       return AuthRepoImpl(client: get(), sharedPreferences: get());
     })
-    ..registerLazySingleton<GMapsRepo>(() => const GMapsRepoImpl())
+    ..registerLazySingleton<GMapsRepo>(() => GMapsRepoImpl())
     ..registerLazySingleton<StoriesRepo>(() => StoriesRepoImpl(get()));
 }
