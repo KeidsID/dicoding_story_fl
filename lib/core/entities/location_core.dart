@@ -18,9 +18,20 @@ class LocationCore extends Equatable {
   @override
   List<Object?> get props => [lat, lon, placeDetail];
 
-  /// Get address from [placeDetail]. If not available, return [lat], and [lon]
-  /// as address.
-  String get address => placeDetail?.address ?? '$lat, $lon';
+  String get latlng => '$lat, $lon';
+
+  /// Get display name from [placeDetail].
+  ///
+  /// If `null`, return [address].
+  String get displayName => placeDetail?.displayName ?? address;
+
+  /// Similar to [displayName], but this getter may return `null`.
+  String? get displayNameOrNull => placeDetail?.displayName;
+
+  /// Get address from [placeDetail].
+  ///
+  /// If `null`, return [latlng].
+  String get address => placeDetail?.address ?? latlng;
 
   /// Copy current instance with modified [placeDetail].
   LocationCore applyPlace(PlaceCore? place) {

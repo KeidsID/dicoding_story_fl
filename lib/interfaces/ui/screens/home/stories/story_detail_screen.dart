@@ -139,15 +139,13 @@ class _StoryDetailScreenS extends StatelessWidget {
                   ),
 
                   //
-                  ...story.location == null
-                      ? []
-                      : [
-                          AddressSection(
-                            story.location!.address,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ],
+                  if (story.location != null)
+                    AddressSection(
+                      story.location!.displayName,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+
                   const SizedBox(height: 16.0),
 
                   //
@@ -232,15 +230,13 @@ class _StoryDetailScreenL extends StatelessWidget {
                     ),
 
                     //
-                    ...story.location == null
-                        ? []
-                        : [
-                            AddressSection(
-                              story.location!.address,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ],
+                    if (story.location != null)
+                      AddressSection(
+                        story.location!.displayName,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+
                     const SizedBox(height: 16.0),
 
                     //

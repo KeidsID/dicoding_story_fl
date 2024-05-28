@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "name": "myappname",
+  "name": "dicoding_story_fl",
   "rewrites": [
     {"source": "/:a*", "destination": "/"}
   ]

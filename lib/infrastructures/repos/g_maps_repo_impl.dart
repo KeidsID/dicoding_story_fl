@@ -1,21 +1,21 @@
+import 'dart:async';
+
 import 'package:chopper/chopper.dart';
-import 'package:dicoding_story_fl/common/utils.dart';
-import 'package:dicoding_story_fl/infrastructures/utils/on_error_response_mixin.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_google_maps_webservices/geocoding.dart';
 import 'package:location/location.dart' as loc_lib;
 
 import 'package:dicoding_story_fl/common/envs.dart';
+import 'package:dicoding_story_fl/common/utils.dart';
 import 'package:dicoding_story_fl/core/entities.dart';
 import 'package:dicoding_story_fl/core/repos.dart';
 import 'package:dicoding_story_fl/infrastructures/api/responses.dart';
+import 'package:dicoding_story_fl/infrastructures/utils/on_error_response_mixin.dart';
 
 part 'g_maps_repo_impl.chopper.dart';
 
 class GMapsRepoImpl with OnErrorResponseMixin implements GMapsRepo {
-  GMapsRepoImpl()
-      : _newPlacesApi =
-            GMapsNewPlacesApiService.create(GMapsNewPlacesApiClient());
+  GMapsRepoImpl() : _newPlacesApi = GMapsNewPlacesApiService.create();
 
   final GMapsNewPlacesApiService _newPlacesApi;
 
@@ -33,13 +33,13 @@ class GMapsRepoImpl with OnErrorResponseMixin implements GMapsRepo {
 
   /// Request for location service. May throw exception if not granted.
   Future<void> _requestLocService() async {
-    final loc = loc_lib.Location.instance;
+    final location = loc_lib.Location.instance;
 
-    bool isEnabled = await loc.serviceEnabled();
-    loc_lib.PermissionStatus permissionStatus = await loc.hasPermission();
+    bool isEnabled = await location.serviceEnabled();
+    loc_lib.PermissionStatus permissionStatus = await location.hasPermission();
 
     if (!isEnabled) {
-      isEnabled = await loc.requestService();
+      isEnabled = await location.requestService();
 
       if (!isEnabled) {
         throw const SimpleException(
@@ -52,7 +52,7 @@ class GMapsRepoImpl with OnErrorResponseMixin implements GMapsRepo {
     switch (permissionStatus) {
       case loc_lib.PermissionStatus.denied:
       case loc_lib.PermissionStatus.deniedForever:
-        permissionStatus = await loc.requestPermission();
+        permissionStatus = await location.requestPermission();
 
         switch (permissionStatus) {
           case loc_lib.PermissionStatus.denied:
@@ -78,13 +78,18 @@ class GMapsRepoImpl with OnErrorResponseMixin implements GMapsRepo {
   }
 
   @override
-  Future<List<LocationCore>> searchPlace(String query) async {
+  Future<List<LocationCore>> searchPlace(
+    String query, {
+    String? languageCode,
+  }) async {
     try {
       final rawRes = await _newPlacesApi.textSearch(
-        apiKey: apiKey,
         fieldMask: 'places.id,places.displayName,'
             'places.location,places.formattedAddress',
-        body: {'textQuery': query},
+        body: {
+          'textQuery': query,
+          if (languageCode?.isNotEmpty ?? false) 'languageCode': languageCode,
+        },
       );
       final rawResBody = rawRes.body;
 
@@ -115,10 +120,9 @@ class GMapsRepoImpl with OnErrorResponseMixin implements GMapsRepo {
   }
 
   @override
-  Future<LocationCore> geocoding(String address) async {
+  Future<LocationCore> geocoding(String address, {String? languageCode}) async {
     final api = GoogleMapsGeocoding(apiKey: apiKey);
-
-    final res = await api.searchByAddress(address);
+    final res = await api.searchByAddress(address, language: languageCode);
 
     if (!(res.status == GoogleResponseStatus.okay)) {
       final code = res.status == GoogleResponseStatus.notFound ? 404 : 500;
@@ -139,38 +143,57 @@ class GMapsRepoImpl with OnErrorResponseMixin implements GMapsRepo {
       geoResult.lng,
       placeDetail: PlaceCore(
         result.placeId,
-        address: result.formattedAddress,
+        address: address,
       ),
     );
   }
 
   @override
-  Future<LocationCore> reverseGeocoding(LocationCore location) async {
-    final api = GoogleMapsGeocoding(apiKey: apiKey);
-
-    final res = await api.searchByLocation(Location(
-      lat: location.lat,
-      lng: location.lon,
-    ));
-
-    if (!(res.status == GoogleResponseStatus.okay)) {
-      final code = res.status == GoogleResponseStatus.notFound ? 404 : 500;
-
-      throw SimpleHttpException(
-        statusCode: code,
-        message: res.errorMessage ?? 'Something went wrong',
-        error: res,
-        trace: StackTrace.current,
+  Future<LocationCore> reverseGeocoding(
+    double latitude,
+    double longitude, {
+    bool includeDisplayName = false,
+    String? languageCode,
+  }) async {
+    try {
+      final api = GoogleMapsGeocoding(apiKey: apiKey);
+      final res = await api.searchByLocation(
+        Location(lat: latitude, lng: longitude),
+        language: languageCode,
       );
+
+      if (!(res.status == GoogleResponseStatus.okay)) {
+        final code = res.status == GoogleResponseStatus.notFound ? 404 : 500;
+
+        throw SimpleHttpException(
+          statusCode: code,
+          message: res.errorMessage ?? 'Something went wrong',
+          error: res,
+          trace: StackTrace.current,
+        );
+      }
+
+      final result = res.results.first;
+
+      final displayNameRes = includeDisplayName
+          ? await _newPlacesApi.placeDetails(
+              result.placeId,
+              fieldMask: 'displayName',
+            )
+          : null;
+
+      return LocationCore(
+        result.geometry.location.lat,
+        result.geometry.location.lng,
+        placeDetail: PlaceCore(
+          result.placeId,
+          address: result.formattedAddress,
+          displayName: displayNameRes?.body?['displayName']['text'],
+        ),
+      );
+    } catch (err, trace) {
+      throw err.toSimpleException(trace: trace);
     }
-
-    final result = res.results.first;
-
-    return LocationCore(
-      result.geometry.location.lat,
-      result.geometry.location.lng,
-      placeDetail: PlaceCore(result.placeId, address: result.formattedAddress),
-    );
   }
 }
 
@@ -183,20 +206,37 @@ final class GMapsNewPlacesApiClient extends ChopperClient {
           baseUrl: Uri.tryParse('https://places.googleapis.com/v1'),
           converter: const JsonConverter(),
           errorConverter: const JsonConverter(),
-          interceptors: !kDebugMode
-              ? []
-              : [
-                  HttpLoggingInterceptor(
-                      level: Level.basic, logger: chopperLogger)
-                ],
+          interceptors: [
+            GMapsApiKeyInterceptor(),
+            if (kDebugMode)
+              HttpLoggingInterceptor(
+                level: Level.basic,
+                logger: chopperLogger,
+              ),
+          ],
         );
+}
+
+class GMapsApiKeyInterceptor implements Interceptor {
+  @override
+  FutureOr<Response<BodyType>> intercept<BodyType>(Chain<BodyType> chain) {
+    return chain.proceed(applyHeader(
+      chain.request,
+      'X-Goog-Api-Key',
+      GMapsRepoImpl.apiKey,
+    ));
+  }
 }
 
 /// [create] the service with [GMapsNewPlacesApiClient].
 @chopperApi
-abstract class GMapsNewPlacesApiService extends ChopperService {
-  static GMapsNewPlacesApiService create([ChopperClient? client]) =>
-      _$GMapsNewPlacesApiService(client);
+abstract base class GMapsNewPlacesApiService extends ChopperService {
+  GMapsNewPlacesApiService();
+
+  /// Create a [GMapsNewPlacesApiService] instance with
+  /// a [GMapsNewPlacesApiClient].
+  factory GMapsNewPlacesApiService.create() =>
+      _$GMapsNewPlacesApiService(GMapsNewPlacesApiClient());
 
   /// A [Text Search (New)](https://developers.google.com/maps/documentation/places/web-service/text-search)
   /// Returns information about a set of places based on a string — for example
@@ -204,10 +244,10 @@ abstract class GMapsNewPlacesApiService extends ChopperService {
   /// The service responds with a list of places matching the text string and
   /// any location bias that has been set.
   ///
-  /// Headers:
+  /// ## Headers:
   ///
-  /// - String, [apiKey] : An API key that gives you access to Places API.
-  /// - Comma-separated string, [fieldMask] :
+  /// {@template gMapsNewPlacesApi.headers.fieldMask}
+  /// - **[fieldMask], required, comma-separated string**
   ///
   ///   Specify the list of fields to return in the response by creating a
   ///   response field mask.
@@ -219,15 +259,17 @@ abstract class GMapsNewPlacesApiService extends ChopperService {
   ///   Specify a comma-separated list of place data types to return. For
   ///   example, to retrieve the display name and the address of the place.
   ///
-  ///   `places.displayName,places.formattedAddress`
-  ///
   ///   Specify `*` to retrieve all fields. Not recommended because of the large
   ///   amount of data that can be returned.
   ///
-  ///   Read docs here for more field mask options:
-  ///   https://developers.google.com/maps/documentation/places/web-service/text-search#fieldmask
+  ///   Here's the Place object reference to mask:
+  ///   https://developers.google.com/maps/documentation/places/web-service/reference/rest/v1/places#resource:-place
+  /// {@endtemplate}
   ///
-  /// [body] representation:
+  ///   Example:
+  ///   `places.displayName,places.formattedAddress`
+  ///
+  /// ## [body] representation:
   ///
   /// ```json
   /// {
@@ -238,13 +280,37 @@ abstract class GMapsNewPlacesApiService extends ChopperService {
   /// }
   /// ```
   ///
-  /// Visit [`places.searchText` reference](https://developers.google.com/maps/documentation/places/web-service/reference/rest/v1/places/searchText)
-  /// for more details about [body].
+  /// - `textQuery`, query to search.
+  /// - `languageCode`, specify language for the response.
+  /// - `pageSize`, number of places to return.
+  /// - `pageToken`, token to fetch the next page (retrive from response).
   ///
+  /// For more details about [body], visit
+  /// https://developers.google.com/maps/documentation/places/web-service/reference/rest/v1/places/searchText
   @Post(path: '/places:searchText')
   Future<Response<Map<String, dynamic>>> textSearch({
-    @Header('X-Goog-Api-Key') required String apiKey,
     @Header('X-Goog-FieldMask') required String fieldMask,
     @body required Map<String, dynamic> body,
+  });
+
+  /// Place Details (New) request returns more comprehensive information about
+  /// the indicated place such as its complete address, phone number, user
+  /// rating and reviews.
+  ///
+  /// ## Headers:
+  ///
+  /// {@macro gMapsNewPlacesApi.headers.fieldMask}
+  ///
+  ///   Example:
+  ///   `displayName,formattedAddress`
+  ///
+  /// ## Query parameters:
+  ///
+  /// - [languageCode], specify language for the response.
+  @Get(path: '/places/{placeId}')
+  Future<Response<Map<String, dynamic>>> placeDetails(
+    @path String placeId, {
+    @Header('X-Goog-FieldMask') required String fieldMask,
+    @query String? languageCode,
   });
 }

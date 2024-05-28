@@ -6,7 +6,8 @@ final baseClient = ChopperClient(
   baseUrl: Uri.tryParse('https://story-api.dicoding.dev/v1'),
   converter: const JsonConverter(),
   errorConverter: const JsonConverter(),
-  interceptors: !kDebugMode
-      ? []
-      : [HttpLoggingInterceptor(level: Level.basic, logger: chopperLogger)],
+  interceptors: [
+    if (kDebugMode)
+      HttpLoggingInterceptor(level: Level.basic, logger: chopperLogger)
+  ],
 );

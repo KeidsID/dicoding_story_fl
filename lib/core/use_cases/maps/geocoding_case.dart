@@ -6,5 +6,6 @@ class GeocodingCase {
 
   final GMapsRepo _mapsRepo;
 
-  Future<LocationCore> execute(String address) => _mapsRepo.geocoding(address);
+  Future<LocationCore> execute(String address, {String? languageCode}) =>
+      _mapsRepo.geocoding(address, languageCode: languageCode);
 }

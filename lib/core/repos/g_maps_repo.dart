@@ -9,14 +9,28 @@ abstract interface class GMapsRepo {
   Future<LocationCore> getLocation();
 
   /// Search place by query.
-  Future<List<LocationCore>> searchPlace(String query);
+  ///
+  /// - [languageCode], sepcifies the language to return on the place detail
+  Future<List<LocationCore>> searchPlace(
+    String query, {
+    String? languageCode,
+  });
 
   /// Converts the address into latitude and longitude coordinates.
   ///
   /// - [address], the street address or [plus code](https://plus.codes/) that
   ///   you want to geocode.
-  Future<LocationCore> geocoding(String address);
+  /// - [languageCode], sepcifies the language to return on the place detail.
+  Future<LocationCore> geocoding(String address, {String? languageCode});
 
   /// Converts the latitude and longitude coordinates into an address.
-  Future<LocationCore> reverseGeocoding(LocationCore location);
+  ///
+  /// - [includeDisplayName], whether to include the place's name on the result.
+  /// - [languageCode], specifies the language to return on the place detail.
+  Future<LocationCore> reverseGeocoding(
+    double latitude,
+    double longitude, {
+    bool includeDisplayName = false,
+    String? languageCode,
+  });
 }

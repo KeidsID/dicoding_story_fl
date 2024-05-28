@@ -42,7 +42,13 @@ class GetStoriesCase {
       if (loc == null) return e;
 
       try {
-        return e.copyWith(location: await _gMapsRepo.reverseGeocoding(loc));
+        return e.copyWith(
+          location: await _gMapsRepo.reverseGeocoding(
+            loc.lat,
+            loc.lon,
+            includeDisplayName: true,
+          ),
+        );
       } catch (err, trace) {
         kLogger.w(
           'GetStoriesCase reverse geocoding',

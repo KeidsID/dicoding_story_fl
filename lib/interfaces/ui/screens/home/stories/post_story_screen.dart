@@ -236,7 +236,7 @@ class PostStoryScreenState extends State<PostStoryScreen> {
               formKey: _formKey,
               descController: _descriptionController,
               descIsEnabled: !isLoading,
-              address: _location?.address,
+              address: _location?.displayName,
               onAddressTap: _onSetLocation(context),
               onPostButtonTap: isLoading ? null : _onPostButtonTap(context),
             ));
@@ -324,6 +324,15 @@ abstract base class _PostStoryFormScreenLayoutBase extends StatelessWidget {
     });
   }
 
+  Widget get _addressSection {
+    return AddressSection(
+      delegate.address ?? 'Set location',
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
+      onTap: delegate.onAddressTap,
+    );
+  }
+
   Widget get _descFormField {
     return Builder(builder: (context) {
       final appL10n = AppL10n.of(context)!;
@@ -375,12 +384,7 @@ final class _PostStoryFormScreenS extends _PostStoryFormScreenLayoutBase {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _titleSection,
-                AddressSection(
-                  delegate.address ?? 'Set location',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  onTap: delegate.onAddressTap,
-                ),
+                _addressSection,
                 const SizedBox(height: 16.0),
 
                 //
@@ -422,12 +426,7 @@ final class _PostStoryFormScreenL extends _PostStoryFormScreenLayoutBase {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     _titleSection,
-                    AddressSection(
-                      delegate.address ?? 'Set location',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      onTap: delegate.onAddressTap,
-                    ),
+                    _addressSection,
                     const SizedBox(height: 16.0),
 
                     //

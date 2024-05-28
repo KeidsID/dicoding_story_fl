@@ -6,5 +6,16 @@ class ReverseGeocodingCase {
 
   final GMapsRepo _mapsRepo;
 
-  Future<LocationCore> execute(LocationCore location) => _mapsRepo.reverseGeocoding(location);
+  Future<LocationCore> execute(
+    double latitude,
+    double longitude, {
+    bool includeDisplayName = false,
+    String? languageCode,
+  }) =>
+      _mapsRepo.reverseGeocoding(
+        latitude,
+        longitude,
+        includeDisplayName: includeDisplayName,
+        languageCode: languageCode,
+      );
 }

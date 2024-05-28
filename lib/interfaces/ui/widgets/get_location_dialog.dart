@@ -34,9 +34,6 @@ class GetLocationDialog extends StatefulWidget {
 }
 
 class _GetLocationDialogState extends State<GetLocationDialog> {
-  /// Value to return on dialog confirmation.
-  // LocationCore? location;
-
   /// Indicate if the dialog is searching a place.
   bool _isSearching = false;
   final List<LocationCore> _searchResults = [];
@@ -99,20 +96,23 @@ class _GetLocationDialogState extends State<GetLocationDialog> {
           ),
           SizedBox(
             width: double.infinity,
-            child: Container(
-              width: 400.0,
-              padding: const EdgeInsets.all(16.0).copyWith(bottom: 0.0),
-              child: TextField(
-                controller: _searchController,
-                decoration: const InputDecoration(
-                  icon: Icon(Icons.search),
-                  hintText: 'Search Location',
+            child: Align(
+              alignment: Alignment.center,
+              child: Container(
+                width: 800.0,
+                padding: const EdgeInsets.all(16.0),
+                child: TextField(
+                  controller: _searchController,
+                  decoration: const InputDecoration(
+                    prefixIcon: Icon(Icons.search),
+                    hintText: 'Place name, address, or description',
+                  ),
+                  onChanged: (String text) async {
+                    if (text.length < 3) return;
+
+                    await _searchPlace(text);
+                  }.debounce(delay: Durations.extralong4),
                 ),
-                onChanged: (String text) async {
-                  if (text.length < 3) return;
-            
-                  await _searchPlace(text);
-                }.debounce(delay: Durations.extralong4),
               ),
             ),
           ),
@@ -123,7 +123,7 @@ class _GetLocationDialogState extends State<GetLocationDialog> {
                   )
                 : _isSearchPlaceOnce && _searchResults.isEmpty
                     ? Padding(
-                        padding: const EdgeInsets.all(16.0),
+                        padding: const EdgeInsets.all(16.0).copyWith(top: 0),
                         child: SizedErrorWidget(
                           error: _searchError ??
                               const SimpleException(
@@ -135,8 +135,7 @@ class _GetLocationDialogState extends State<GetLocationDialog> {
                         ),
                       )
                     : ListView.builder(
-                        padding:
-                            const EdgeInsets.all(16.0).copyWith(bottom: 16.0),
+                        padding: const EdgeInsets.only(bottom: 16.0),
                         itemCount: _searchResults.length,
                         itemBuilder: (context, index) {
                           final location = _searchResults[index];
@@ -144,11 +143,10 @@ class _GetLocationDialogState extends State<GetLocationDialog> {
                           return ListTile(
                             leading: const Icon(Icons.place_outlined),
                             title: Text(
-                              location.placeDetail?.displayName ??
-                                  location.address,
-                            ),
+                                location.displayNameOrNull ?? location.latlng),
                             subtitle: Text(
-                              location.address,
+                              location.placeDetail?.address ??
+                                  '${location.lat}, ',
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                             ),
