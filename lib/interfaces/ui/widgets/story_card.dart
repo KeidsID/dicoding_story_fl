@@ -52,16 +52,12 @@ class StoryCard extends StatelessWidget {
                     ],
                   ),
 
-                  //
-                  ...story.location == null
-                      ? []
-                      : [
-                          AddressSection(
-                            story.location!.displayName,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ],
+                  if (story.location != null)
+                    AddressSection(
+                      story.location!.displayName,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   const SizedBox(height: 8.0),
 
                   //

@@ -14,7 +14,11 @@ class AppAboutListTile extends StatelessWidget {
 
   VoidCallback _onTapLink(BuildContext context, {required Uri url}) {
     return () async {
-      if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+      if (!await launchUrl(
+        url,
+        mode: LaunchMode.externalApplication,
+        webOnlyWindowName: '_blank',
+      )) {
         if (kIsWeb) return; // skip invalid error on web
 
         if (context.mounted) {

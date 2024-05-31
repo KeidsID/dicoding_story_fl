@@ -101,17 +101,40 @@ class _GetLocationDialogState extends State<GetLocationDialog> {
               child: Container(
                 width: 800.0,
                 padding: const EdgeInsets.all(16.0),
-                child: TextField(
-                  controller: _searchController,
-                  decoration: const InputDecoration(
-                    prefixIcon: Icon(Icons.search),
-                    hintText: 'Place name, address, or description',
-                  ),
-                  onChanged: (String text) async {
-                    if (text.length < 3) return;
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TextField(
+                      controller: _searchController,
+                      decoration: const InputDecoration(
+                        prefixIcon: Icon(Icons.search),
+                        hintText: 'Place name, address, or description',
+                      ),
+                      onChanged: (String text) async {
+                        if (text.length < 3) return;
 
-                    await _searchPlace(text);
-                  }.debounce(delay: Durations.extralong4),
+                        await _searchPlace(text);
+                      }.debounce(delay: Durations.extralong4),
+                    ),
+                    const SizedBox(height: 8.0),
+                    FilledButton.tonalIcon(
+                      onPressed: () async {
+                        final gmapResult = await showDialog(
+                          context: context,
+                          builder: (_) => const CustomGMapsDialog(),
+                        );
+
+                        if (gmapResult == null) return;
+
+                        if (context.mounted) {
+                          Navigator.maybePop(context, gmapResult);
+                        }
+                      },
+                      icon: const Icon(Icons.map_outlined),
+                      label: const Text('Set from Map'),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -143,7 +166,8 @@ class _GetLocationDialogState extends State<GetLocationDialog> {
                           return ListTile(
                             leading: const Icon(Icons.place_outlined),
                             title: Text(
-                                location.displayNameOrNull ?? location.latlng),
+                              location.displayNameOrNull ?? location.latlng,
+                            ),
                             subtitle: Text(
                               location.placeDetail?.address ??
                                   '${location.lat}, ',

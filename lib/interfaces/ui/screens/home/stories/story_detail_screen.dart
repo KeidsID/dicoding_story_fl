@@ -1,4 +1,5 @@
 import 'package:fl_utilities/fl_utilities.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -8,6 +9,7 @@ import 'package:dicoding_story_fl/core/entities.dart';
 import 'package:dicoding_story_fl/interfaces/app_l10n.dart';
 import 'package:dicoding_story_fl/interfaces/ui.dart';
 import 'package:dicoding_story_fl/interfaces/ux.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class StoryDetailScreen extends StatelessWidget {
   const StoryDetailScreen(this.storyId, {super.key});
@@ -89,6 +91,28 @@ void _showImageDialog(BuildContext context, ImageProvider<Object> image) {
       });
 }
 
+VoidCallback _onAddressTap(BuildContext context, LocationCore location) {
+  return () async {
+    final url = (location.placeDetail != null)
+        ? 'https://www.google.com/maps/place/?q=place_id:${location.placeDetail!.id}'
+        : 'https://www.google.com/maps?q=${location.lat},${location.lon}';
+
+    if (!await launchUrl(
+      Uri.parse(url),
+      mode: LaunchMode.externalApplication,
+      webOnlyWindowName: '_blank',
+    )) {
+      if (kIsWeb) return; // skip invalid error on web
+
+      if (context.mounted) {
+        context.scaffoldMessenger?.showSnackBar(SnackBar(
+          content: Text('Cannot launch $url'),
+        ));
+      }
+    }
+  };
+}
+
 class _StoryDetailScreenS extends StatelessWidget {
   const _StoryDetailScreenS(this.story);
 
@@ -144,6 +168,7 @@ class _StoryDetailScreenS extends StatelessWidget {
                       story.location!.displayName,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
+                      onTap: _onAddressTap(context, story.location!),
                     ),
 
                   const SizedBox(height: 16.0),
@@ -235,6 +260,7 @@ class _StoryDetailScreenL extends StatelessWidget {
                         story.location!.displayName,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
+                        onTap: _onAddressTap(context, story.location!),
                       ),
 
                     const SizedBox(height: 16.0),
