@@ -33,14 +33,15 @@ jobs:
           mkdir secrets
           echo "${{ secrets.ANDROID_RELEASE_KEY_BASE64 }}" | base64 --decode > secrets/android-release-key.jks
           echo "${{ secrets.ANDROID_KEY_PROPS_BASE64 }}" | base64 --decode > android/key.properties
+          echo "${{secrets.BASE64_PROD_ENV}}" | base64 --decode > .env
 
       - name: 🏗️ Build APK release
-        run: flutter build apk --release
+        run: flutter build apk --release --dart-define-from-file=.env
 
       - name: 📝 Release build
         uses: ncipollo/release-action@v1
         with:
           name: "${{ github.ref_name }} - APK Release"
           # body: "Read `CHANGELOG.md` for more details."
-          bodyFile: "release-note.md"
+          bodyFile: "release-notes/apk.md"
           artifacts: "build/app/outputs/flutter-apk/app-release.apk,CHANGELOG.md"
