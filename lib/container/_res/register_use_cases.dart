@@ -8,8 +8,24 @@ void _registerUseCases() {
     ..registerLazySingleton(() => GetLoginSessionCase(get()))
     ..registerLazySingleton(() => LogoutCase(get()))
 
+    // maps
+    ..registerLazySingleton(() => GeocodingCase(get()))
+    ..registerLazySingleton(() => GetLocationCase(get()))
+    ..registerLazySingleton(() => ReverseGeocodingCase(get()))
+    ..registerLazySingleton(() => SearchPlaceCase(get()))
+
     // stories
-    ..registerLazySingleton(() => GetStoriesCase(get()))
-    ..registerLazySingleton(() => GetStoryDetailCase(get()))
+    ..registerLazySingleton(() {
+      return GetStoriesCase(
+        storiesRepo: get(),
+        gMapsRepo: get(),
+      );
+    })
+    ..registerLazySingleton(() {
+      return GetStoryDetailCase(
+        storiesRepo: get(),
+        gMapsRepo: get(),
+      );
+    })
     ..registerLazySingleton(() => PostStoryCase(get()));
 }

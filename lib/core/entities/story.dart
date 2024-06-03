@@ -1,5 +1,7 @@
 import 'package:equatable/equatable.dart';
 
+import 'package:dicoding_story_fl/core/entities.dart';
+
 /// {@template dicoding_story_fl.core.entities.Story}
 /// Story summary posted by user.
 /// {@endtemplate}
@@ -11,8 +13,7 @@ class Story extends Equatable {
     required this.description,
     required this.photoUrl,
     required this.createdAt,
-    this.lat,
-    this.lon,
+    this.location,
   });
 
   /// Unique identifier.
@@ -30,22 +31,29 @@ class Story extends Equatable {
   /// Date and time this story was posted.
   final DateTime createdAt;
 
-  /// [lat] (Latitude) unit used for geographic coordinate.
-  final double? lat;
-
-  /// [lon] (Longitude) unit used for geographic coordinate.
-  final double? lon;
+  /// Geographic coordinate of the story location (if available).
+  final LocationCore? location;
 
   @override
   List<Object?> get props {
-    return [
-      id,
-      owner,
-      description,
-      photoUrl,
-      createdAt,
-      lat,
-      lon,
-    ];
+    return [id, owner, description, photoUrl, createdAt, location];
+  }
+
+  Story copyWith({
+    String? id,
+    String? owner,
+    String? description,
+    String? photoUrl,
+    DateTime? createdAt,
+    LocationCore? location,
+  }) {
+    return Story(
+      id: id ?? this.id,
+      owner: owner ?? this.owner,
+      description: description ?? this.description,
+      photoUrl: photoUrl ?? this.photoUrl,
+      createdAt: createdAt ?? this.createdAt,
+      location: location ?? this.location,
+    );
   }
 }

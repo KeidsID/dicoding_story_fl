@@ -6,7 +6,7 @@ import 'package:dicoding_story_fl/interfaces/ux.dart';
 
 final class AuthProvider extends AsyncValueNotifier<UserCreds?> {
   AuthProvider([super.initialValue]) {
-    Future.microtask(() => _fetchToken()).catchError((e) => null);
+    _fetchToken();
   }
 
   /// Logged in state.
@@ -14,10 +14,8 @@ final class AuthProvider extends AsyncValueNotifier<UserCreds?> {
   /// Same as [value] is not null.
   bool get isLoggedIn => !hasValue;
 
-  Future<void> _fetchToken() async {
-    if (!isLoading) isLoading = true;
-
-    value = await container.get<GetLoginSessionCase>().execute();
+  void _fetchToken() {
+    value = container.get<GetLoginSessionCase>().execute();
   }
 
   Future<void> login({required String email, required String password}) async {
@@ -28,7 +26,7 @@ final class AuthProvider extends AsyncValueNotifier<UserCreds?> {
           .get<LoginCase>()
           .execute(email: email, password: password);
 
-      await _fetchToken();
+      _fetchToken();
     } catch (err, trace) {
       final parsedError = err.toSimpleException(trace: trace);
 
@@ -43,7 +41,7 @@ final class AuthProvider extends AsyncValueNotifier<UserCreds?> {
     try {
       await container.get<LogoutCase>().execute();
 
-      await _fetchToken();
+      _fetchToken();
     } catch (err, trace) {
       final parsedError = err.toSimpleException(trace: trace);
 

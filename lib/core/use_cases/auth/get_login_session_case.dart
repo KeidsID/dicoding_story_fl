@@ -11,5 +11,5 @@ class GetLoginSessionCase {
   final AuthRepo _authRepo;
 
   /// Get recent login credentials.
-  Future<UserCreds?> execute() => _authRepo.getLoginSession();
+  UserCreds? execute() => _authRepo.getLoginSession();
 }

@@ -15,7 +15,7 @@ final class PickedImageProvider extends AsyncValueNotifier<XFile?> {
   /// {@macro dicoding_story_fl.interfaces.ux.providers.PickedImageProvider}
   PickedImageProvider() : super(null) {
     if (defaultTargetPlatform == TargetPlatform.android) {
-      Future.microtask(() => _retrieveLostData()).then((_) => null);
+      _retrieveLostData();
     }
   }
 

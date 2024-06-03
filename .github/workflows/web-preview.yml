@@ -31,10 +31,11 @@ jobs:
         run: |
           dart run build_runner build -d
           flutter gen-l10n
+          echo "${{secrets.BASE64_DEV_ENV}}" | base64 --decode > .env
 
       - name: 🏗️ Build web profile
         run: |
-          flutter build web --profile --web-renderer canvaskit
+          flutter build web --profile --web-renderer canvaskit --dart-define-from-file=.env
 
       - name: 📝 Upload build
         uses: actions/upload-artifact@v2

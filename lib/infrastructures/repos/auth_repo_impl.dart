@@ -27,11 +27,6 @@ class AuthRepoImpl with OnErrorResponseMixin implements AuthRepo {
     required String password,
   }) async {
     try {
-      // check login session
-      final UserCreds? cachedUserCreds = await getLoginSession();
-
-      if (cachedUserCreds != null) return cachedUserCreds;
-
       final rawRes = await _authApi.postLogin(body: {
         "email": email,
         "password": password,
@@ -78,18 +73,10 @@ class AuthRepoImpl with OnErrorResponseMixin implements AuthRepo {
   static const _loginCacheKey = 'login_session';
 
   @override
-  Future<UserCreds?> getLoginSession() async {
-    try {
-      await _cache.reload();
+  UserCreds? getLoginSession() {
+    final rawCreds = _cache.getString(_loginCacheKey);
 
-      final rawCreds = _cache.getString(_loginCacheKey);
-
-      return rawCreds == null
-          ? null
-          : UserCreds.fromCache(jsonDecode(rawCreds));
-    } catch (err, trace) {
-      throw err.toSimpleException(trace: trace);
-    }
+    return rawCreds == null ? null : UserCreds.fromCache(jsonDecode(rawCreds));
   }
 
   @override

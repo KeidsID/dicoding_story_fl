@@ -33,7 +33,7 @@ class _StoriesScreenState extends State<StoriesScreen> {
 
     _controller.addListener(() {
       if (_controller.position.pixels >= _controller.position.maxScrollExtent) {
-        Future.microtask(_fetchStories);
+        _fetchStories();
       }
     });
 

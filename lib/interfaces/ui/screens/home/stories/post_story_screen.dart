@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 
 import 'package:dicoding_story_fl/common/constants.dart';
 import 'package:dicoding_story_fl/common/utils.dart';
+import 'package:dicoding_story_fl/core/entities.dart';
 import 'package:dicoding_story_fl/interfaces/app_l10n.dart';
 import 'package:dicoding_story_fl/interfaces/ui.dart';
 import 'package:dicoding_story_fl/interfaces/ux.dart';
@@ -21,6 +22,8 @@ class PostStoryScreen extends StatefulWidget {
 class PostStoryScreenState extends State<PostStoryScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _descriptionController = TextEditingController();
+
+  LocationCore? _location;
 
   VoidCallback _onRepickImage(BuildContext context) {
     return () async {
@@ -74,6 +77,19 @@ class PostStoryScreenState extends State<PostStoryScreen> {
     };
   }
 
+  VoidCallback _onSetLocation(BuildContext context) {
+    return () async {
+      final loc = await showDialog<LocationCore?>(
+        context: context,
+        builder: (_) => const GetLocationDialog(),
+      );
+
+      if (loc == null) return;
+
+      setState(() => _location = loc);
+    };
+  }
+
   VoidCallback _onPostButtonTap(BuildContext context) {
     return () async {
       final imageFile = context.read<PickedImageProvider>().value;
@@ -83,6 +99,14 @@ class PostStoryScreenState extends State<PostStoryScreen> {
       try {
         if (!(_formKey.currentState?.validate() ?? false)) return;
 
+        if (_location == null) {
+          context.scaffoldMessenger?.showSnackBar(const SnackBar(
+            content: Text('Location is required'),
+          ));
+
+          return;
+        }
+
         final userCreds = context.read<AuthProvider>().value!;
 
         await context.read<StoriesProvider>().postStory(
@@ -90,6 +114,8 @@ class PostStoryScreenState extends State<PostStoryScreen> {
               description: _descriptionController.text,
               imageBytes: await imageFile.readAsBytes(),
               imageFilename: imageFile.name,
+              lat: _location?.lat,
+              lon: _location?.lon,
             );
 
         if (context.mounted) context.pop();
@@ -210,6 +236,8 @@ class PostStoryScreenState extends State<PostStoryScreen> {
               formKey: _formKey,
               descController: _descriptionController,
               descIsEnabled: !isLoading,
+              address: _location?.displayName,
+              onAddressTap: _onSetLocation(context),
               onPostButtonTap: isLoading ? null : _onPostButtonTap(context),
             ));
           });
@@ -246,6 +274,8 @@ class _PostStoryFormScreenDelegate {
     this.formKey,
     this.descController,
     this.descIsEnabled,
+    this.address,
+    this.onAddressTap,
     this.onPostButtonTap,
   });
 
@@ -255,6 +285,9 @@ class _PostStoryFormScreenDelegate {
   final Key? formKey;
   final TextEditingController? descController;
   final bool? descIsEnabled;
+
+  final String? address;
+  final VoidCallback? onAddressTap;
 
   final VoidCallback? onPostButtonTap;
 }
@@ -289,6 +322,15 @@ abstract base class _PostStoryFormScreenLayoutBase extends StatelessWidget {
         ],
       );
     });
+  }
+
+  Widget get _addressSection {
+    return AddressSection(
+      delegate.address ?? 'Set location',
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
+      onTap: delegate.onAddressTap,
+    );
   }
 
   Widget get _descFormField {
@@ -342,6 +384,7 @@ final class _PostStoryFormScreenS extends _PostStoryFormScreenLayoutBase {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _titleSection,
+                _addressSection,
                 const SizedBox(height: 16.0),
 
                 //
@@ -383,6 +426,7 @@ final class _PostStoryFormScreenL extends _PostStoryFormScreenLayoutBase {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     _titleSection,
+                    _addressSection,
                     const SizedBox(height: 16.0),
 
                     //

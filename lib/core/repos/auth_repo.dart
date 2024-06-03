@@ -1,6 +1,8 @@
 import '../entities.dart';
 
 abstract interface class AuthRepo {
+  const AuthRepo();
+
   Future<void> register({
     required String username,
     required String email,
@@ -8,6 +10,6 @@ abstract interface class AuthRepo {
   });
 
   Future<UserCreds> login({required String email, required String password});
-  Future<UserCreds?> getLoginSession();
+  UserCreds? getLoginSession();
   Future<void> logout();
 }

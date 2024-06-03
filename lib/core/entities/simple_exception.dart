@@ -8,7 +8,10 @@ class SimpleException extends Equatable implements Exception {
     this.trace,
   });
 
+  /// Exception name.
   final String name;
+
+  /// Exception message.
   final String message;
 
   /// Raw error instance.

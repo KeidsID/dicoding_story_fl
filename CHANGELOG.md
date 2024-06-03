@@ -1,3 +1,7 @@
+## unreleased
+
+- feat: add "set location" on post story
+
 ## v1.2.0+3
 
 - feat(ux): infinite scrolling

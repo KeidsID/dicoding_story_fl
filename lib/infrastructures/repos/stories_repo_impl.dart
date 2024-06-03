@@ -23,14 +23,14 @@ class StoriesRepoImpl with OnErrorResponseMixin implements StoriesRepo {
     UserCreds userCreds, {
     int page = 1,
     int size = 10,
-    bool? hasCordinate,
+    bool includeLocation = false,
   }) async {
     try {
       final rawRes = await _storiesApi.getStories(
         authorization: 'Bearer ${userCreds.token}',
         page: page,
         size: size,
-        hasCordinate: hasCordinate == null ? null : (hasCordinate ? 1 : 0),
+        includeLocation: includeLocation ? 1 : 0,
       );
       final rawResBody = rawRes.body;
 
@@ -113,15 +113,16 @@ abstract class StoriesApiService extends ChopperService {
   ///
   /// - [page], page number. Valid value is greater than `0`.
   /// - [size], stories count for each page. Valid value is greater than `0`.
-  /// - [hasCordinate], include location coordinate on returned stories. Valid
-  ///   value are `1` for true and `0` for false, default is `0`.
+  /// - [includeLocation], include location coordinate 
+  ///   (`latitude`, and `longitude` value) on returned stories. Valid value are
+  ///   `1` for true and `0` for false, default is `0`.
   @Get(path: '/stories')
   Future<Response<Map<String, dynamic>>> getStories({
     @Header('Authorization') required String authorization,
     //
     @query int page = 1,
     @query int size = 10,
-    @Query('location') int? hasCordinate,
+    @Query('location') int? includeLocation,
   });
 
   /// Fetch story detail by [storyId].

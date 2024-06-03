@@ -29,7 +29,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    namespace "com.example.dicoding_story_fl"
+    namespace "tech.keids.dicoding_story_fl"
     compileSdkVersion flutter.compileSdkVersion
     ndkVersion flutter.ndkVersion
 

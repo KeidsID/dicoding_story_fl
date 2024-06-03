@@ -7,7 +7,25 @@ class StoryDetail extends Story {
     required super.description,
     required super.photoUrl,
     required super.createdAt,
-    super.lat,
-    super.lon,
+    super.location,
   });
+
+  @override
+  StoryDetail copyWith({
+    String? id,
+    String? owner,
+    String? description,
+    String? photoUrl,
+    DateTime? createdAt,
+    LocationCore? location,
+  }) {
+    return StoryDetail(
+      id: id ?? this.id,
+      owner: owner ?? this.owner,
+      description: description ?? this.description,
+      photoUrl: photoUrl ?? this.photoUrl,
+      createdAt: createdAt ?? this.createdAt,
+      location: location ?? this.location,
+    );
+  }
 }

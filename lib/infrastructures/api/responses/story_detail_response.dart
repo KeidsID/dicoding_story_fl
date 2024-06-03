@@ -36,14 +36,16 @@ class RawStoryDetail with _$RawStoryDetail {
   const RawStoryDetail._();
 
   StoryDetail toEntity() {
+    final LocationCore? location =
+        (lat != null && lon != null) ? LocationCore(lat!, lon!) : null;
+
     return StoryDetail(
       id: id,
       owner: name,
       description: description,
       photoUrl: photoUrl,
       createdAt: DateTime.tryParse(createdAt) ?? DateTime.now(),
-      lat: lat,
-      lon: lon,
+      location: location,
     );
   }
 }

@@ -1,3 +1,4 @@
+export 'entities/location_core.dart';
 export 'entities/simple_exception.dart';
 export 'entities/story.dart';
 export 'entities/story_detail.dart';
