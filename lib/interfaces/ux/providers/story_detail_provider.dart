@@ -3,16 +3,10 @@ import 'package:dicoding_story_fl/container.dart' as container;
 import 'package:dicoding_story_fl/core/entities.dart';
 import 'package:dicoding_story_fl/core/use_cases.dart';
 import 'package:dicoding_story_fl/interfaces/ux.dart';
-import 'package:flutter/foundation.dart';
 
 final class StoryDetailProvider extends AsyncValueNotifier<StoryDetail> {
   StoryDetailProvider({required this.storyId, required this.userCreds})
       : super(null) {
-    if (kIsWeb) {
-      Future.microtask(refresh);
-      return;
-    }
-
     refresh();
   }
 
