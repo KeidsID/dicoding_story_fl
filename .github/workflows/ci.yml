@@ -1,0 +1,65 @@
+name: Continuous Integration
+
+on:
+  pull_request:
+    branches:
+      - main
+
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  dependencies:
+    name: 📦 Setup Dependencies
+    runs-on: ubuntu-latest
+    outputs:
+      fl-cache-key: ${{ steps.fl-setup.outputs.CACHE-KEY }}
+      fl-pub-cache-key: ${{ steps.fl-setup.outputs.PUB-CACHE-KEY }}
+
+    steps:
+      - name: 📚 Code Checkout
+        uses: actions/checkout@v4
+
+      - name: 🐦 Setup Flutter SDK
+        id: fl-setup
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version-file: ./pubspec.yaml
+          channel: stable
+          cache: true
+          cache-key: |
+            fl-:channel:-v:version:-:os:-:arch:-ci-${{ hashFiles('./pubspec.lock') }}
+          pub-cache-key: |
+            fl-pub-:channel:-v:version:-:os:-:arch:-ci-${{ hashFiles('./pubspec.lock') }}
+
+      - name: 📦 Get dependencies
+        run: flutter pub get
+
+  lint:
+    name: 🔍 Code Linting
+    needs: dependencies
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📚 Code Checkout
+        uses: actions/checkout@v4
+
+      - name: 📦 Restore Dependencies
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version-file: ./pubspec.yaml
+          channel: stable
+          cache: true
+          cache-key: ${{needs.dependencies.outputs.fl-cache-key}}
+          pub-cache-key: ${{needs.dependencies.outputs.fl-pub-cache-key}}
+
+      - name: 🏗️ Build code utils
+        run: |
+          dart run build_runner build -d
+          flutter gen-l10n
+
+      - name: 🔍 Code Linting
+        run: flutter analyze lib
