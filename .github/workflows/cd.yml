@@ -1,0 +1,136 @@
+name: Continuous Delivery
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: 🚀 Release
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+      pull-requests: write
+
+    outputs:
+      release_created: ${{ steps.rp.outputs.release_created }}
+
+    steps:
+      - name: 📚 Code Checkout
+        uses: actions/checkout@v4
+
+      - name: 🚀 Release
+        id: rp
+        uses: googleapis/release-please-action@v4
+        with:
+          manifest-file: release.manifest.json
+          config-file: release.config.json
+
+  dependencies:
+    name: 📦 Setup Dependencies For Deployment
+    needs: release
+    if: ${{ needs.release.outputs.release_created }}
+    runs-on: macos-latest
+
+    outputs:
+      fl-cache-key: ${{ steps.fl-setup.outputs.CACHE-KEY }}
+      fl-pub-cache-key: ${{ steps.fl-setup.outputs.PUB-CACHE-KEY }}
+
+    steps:
+      - name: 📚 Code Checkout
+        uses: actions/checkout@v4
+
+      - name: 🐦 Setup Flutter SDK
+        id: fl-setup
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version-file: ./pubspec.yaml
+          channel: stable
+          cache: true
+          cache-key: |
+            fl-:channel:-v:version:-:os:-:arch:-cd-${{ hashFiles('./pubspec.lock') }}
+          pub-cache-key: |
+            fl-pub-:channel:-v:version:-:os:-:arch:-cd-${{ hashFiles('./pubspec.lock') }}
+
+      - name: 📦 Get dependencies
+        run: flutter pub get
+
+  web-deploy:
+    needs: dependencies
+    runs-on: macos-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: 📚 Code Checkout
+        uses: actions/checkout@v4
+
+      - name: 📦 Restore Dependencies
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version-file: ./pubspec.yaml
+          channel: stable
+          cache: true
+          cache-key: ${{needs.dependencies.outputs.fl-cache-key}}
+          pub-cache-key: ${{needs.dependencies.outputs.fl-pub-cache-key}}
+
+      - name: ⚙️ Setup environment
+        run: |
+          dart run build_runner build -d
+          flutter gen-l10n
+
+      - name: 🏗️ Build web release
+        run: |
+          flutter build web --release --base-href "/dicoding_story_fl/" --web-renderer canvaskit
+
+      - name: 🚀 Deploy to Github Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./build/web
+          publish_branch: web-release
+
+  gh-apk-release:
+    needs: dependencies
+    runs-on: macos-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: 📚 Code Checkout
+        uses: actions/checkout@v4
+
+      - name: 📦 Restore Dependencies
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version-file: ./pubspec.yaml
+          channel: stable
+          cache: true
+          cache-key: ${{needs.dependencies.outputs.fl-cache-key}}
+          pub-cache-key: ${{needs.dependencies.outputs.fl-pub-cache-key}}
+
+      - name: ⚙️ Setup environment
+        run: |
+          dart run build_runner build -d
+          flutter gen-l10n
+          mkdir secrets
+          echo "${{ secrets.ANDROID_RELEASE_KEY_BASE64 }}" | base64 --decode > secrets/android-release-key.jks
+          echo "${{ secrets.ANDROID_KEY_PROPS_BASE64 }}" | base64 --decode > android/key.properties
+
+      - name: 🏗️ Build APK release
+        run: flutter build apk --release
+
+      - name: 📝 Release build
+        uses: ncipollo/release-action@v1
+        with:
+          bodyFile: "release-note.md"
+          artifacts: "build/app/outputs/flutter-apk/app-release.apk,CHANGELOG.md"

@@ -1,0 +1,8 @@
+{
+  "group-pull-request-title-pattern": "chore: release-${version}",
+  "packages": {
+    ".": {
+      "release-type": "dart"
+    }
+  }
+}

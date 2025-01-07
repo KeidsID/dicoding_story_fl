@@ -1,0 +1,92 @@
+name: Continuous Integration Pull Request
+
+on:
+  pull_request:
+    types:
+      - assigned
+      - unassigned
+      - opened
+      - edited
+      - synchronize
+      - reopened
+      - labeled
+      - unlabeled
+      - ready_for_review
+
+  workflow_dispatch:
+
+concurrency:
+  group: ci-pr-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  dependencies:
+    name: 📦 Setup Dependencies
+    runs-on: ubuntu-latest
+
+    outputs:
+      fl-cache-key: ${{ steps.fl-setup.outputs.CACHE-KEY }}
+      fl-pub-cache-key: ${{ steps.fl-setup.outputs.PUB-CACHE-KEY }}
+
+    steps:
+      - name: 📚 Code Checkout
+        uses: actions/checkout@v4
+
+      - name: 🐦 Setup Flutter SDK
+        id: fl-setup
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version-file: ./pubspec.yaml
+          channel: stable
+          cache: true
+          cache-key: |
+            fl-:channel:-v:version:-:os:-:arch:-ci-pr-${{ hashFiles('./pubspec.lock') }}
+          pub-cache-key: |
+            fl-pub-:channel:-v:version:-:os:-:arch:-ci-pr-${{ hashFiles('./pubspec.lock') }}
+
+      - name: 📦 Get dependencies
+        run: flutter pub get
+
+  ci-pr:
+    name: 🔍 PR Linting
+    needs: dependencies
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      pull-requests: write
+
+    steps:
+      - name: 📚 Code Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 📦 Restore Dependencies
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version-file: ./pubspec.yaml
+          channel: stable
+          cache: true
+          cache-key: ${{needs.dependencies.outputs.fl-cache-key}}
+          pub-cache-key: ${{needs.dependencies.outputs.fl-pub-cache-key}}
+
+      - name: ⚙️ Setup NodeJS
+        uses: actions/setup-node@v3
+        with:
+          node-version: latest
+
+      - name: 📦 Install DangerJs and DangerDart
+        run: |
+          npm install -g danger
+          dart pub global activate danger_dart
+
+      - name: 🔍 Lint Commits
+        run: |
+          VERBOSE=true dart run commitlint_cli --from=${{ github.event.pull_request.head.sha }}~${{ github.event.pull_request.commits }} --to=${{ github.event.pull_request.head.sha }}
+
+      - name: 🔍 Lint Pull Request
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          danger_dart ci --failOnErrors
