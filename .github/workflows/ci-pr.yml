@@ -71,6 +71,11 @@ jobs:
           cache-key: ${{needs.dependencies.outputs.fl-cache-key}}
           pub-cache-key: ${{needs.dependencies.outputs.fl-pub-cache-key}}
 
+      - name: 🏗️ Build code utils
+        run: |
+          dart run build_runner build -d
+          flutter gen-l10n
+
       - name: ⚙️ Setup NodeJS
         uses: actions/setup-node@v3
         with:

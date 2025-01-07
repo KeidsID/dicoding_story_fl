@@ -82,7 +82,7 @@ jobs:
           cache-key: ${{needs.dependencies.outputs.fl-cache-key}}
           pub-cache-key: ${{needs.dependencies.outputs.fl-pub-cache-key}}
 
-      - name: ⚙️ Setup environment
+      - name: 🏗️ Build code utils
         run: |
           dart run build_runner build -d
           flutter gen-l10n
@@ -118,7 +118,7 @@ jobs:
           cache-key: ${{needs.dependencies.outputs.fl-cache-key}}
           pub-cache-key: ${{needs.dependencies.outputs.fl-pub-cache-key}}
 
-      - name: ⚙️ Setup environment
+      - name: 🏗️ Build code utils
         run: |
           dart run build_runner build -d
           flutter gen-l10n
