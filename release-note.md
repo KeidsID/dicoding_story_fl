@@ -1,6 +1,6 @@
 <!-- End-User Release Note -->
 
-# Dicoding Story v1.2.0+3
+# Release Note
 
 What's new?
 

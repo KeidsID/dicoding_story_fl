@@ -1,3 +1,5 @@
+# Changelog
+
 ## v1.2.0+3
 
 - feat(ux): infinite scrolling

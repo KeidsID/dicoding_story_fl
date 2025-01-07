@@ -56,6 +56,11 @@ dev_dependencies:
   go_router_builder: ^2.5.1
   json_serializable: ^6.7.1
 
+  # Gitlint
+  husky: ^0.1.7
+  commitlint_cli: ^0.8.1
+  danger_core: ^2.0.0
+
 flutter:
   uses-material-design: true
   # generate: true
