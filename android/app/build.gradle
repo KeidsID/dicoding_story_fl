@@ -29,8 +29,8 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    namespace "com.example.dicoding_story_fl"
-    compileSdkVersion flutter.compileSdkVersion
+    namespace "dev.keids.dicoding_story_fl"
+    compileSdk flutter.compileSdkVersion
     ndkVersion flutter.ndkVersion
 
     compileOptions {
@@ -48,10 +48,12 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId "tech.keids.dicoding_story_fl"
+        applicationId "dev.keids.dicoding_story_fl"
+
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
-        minSdkVersion 21
+        // minSdkVersion flutter.minSdkVersion
+        minSdkVersion 21 // camera_android plugin requires a higher sdk version
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
@@ -71,7 +73,6 @@ android {
             signingConfig signingConfigs.release
         }
     }
-
 }
 
 flutter {
