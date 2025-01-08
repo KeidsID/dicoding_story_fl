@@ -14,12 +14,21 @@ abstract class GitlintConfig {
   ];
 
   static const List<String> scopes = [
-    "domain",
-    "infrastructures",
-    "use_cases",
-    "interfaces",
-    "libs",
     "root",
+    "lib",
+    "lib-domain",
+    "lib-infrastructures",
+    "lib-use_cases",
+    "lib-interfaces",
+    "lib-libs",
+    "assets",
+    "android",
+    "ios",
+    "web",
+    "windows",
+    "macos",
+    "linux",
+    "github",
   ];
 
   static const List<String> issuePrefixes = ["ds", "release"];
