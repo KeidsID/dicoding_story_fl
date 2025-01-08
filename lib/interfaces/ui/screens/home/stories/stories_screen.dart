@@ -1,9 +1,9 @@
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import "package:flutter/material.dart";
+import "package:provider/provider.dart";
 
-import 'package:dicoding_story_fl/common/constants.dart';
-import 'package:dicoding_story_fl/interfaces/ui.dart';
-import 'package:dicoding_story_fl/interfaces/ux.dart';
+import "package:dicoding_story_fl/common/constants.dart";
+import "package:dicoding_story_fl/interfaces/ui.dart";
+import "package:dicoding_story_fl/interfaces/ux.dart";
 
 class StoriesScreen extends StatefulWidget {
   const StoriesScreen({super.key});
@@ -23,7 +23,7 @@ class _StoriesScreenState extends State<StoriesScreen> {
 
       await context.read<StoriesProvider>().fetchStories(userCreds);
     } catch (err, trace) {
-      kLogger.e('Stories fetch fail', error: err, stackTrace: trace);
+      kLogger.e("Stories fetch fail", error: err, stackTrace: trace);
     }
   }
 
@@ -68,7 +68,7 @@ class _StoriesScreenState extends State<StoriesScreen> {
               action: ElevatedButton.icon(
                 onPressed: () => _fetchStories(),
                 icon: const Icon(Icons.refresh_outlined),
-                label: const Text('Refresh'),
+                label: const Text("Refresh"),
               ),
             );
           }
@@ -94,7 +94,7 @@ class _StoriesScreenState extends State<StoriesScreen> {
                         onPressed: () => storiesProv
                             .refresh(context.read<AuthProvider>().value!),
                         icon: const Icon(Icons.refresh),
-                        label: const Text('Refresh'),
+                        label: const Text("Refresh"),
                       ),
               );
             }

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import "package:flutter/material.dart";
 
 class EmailTextField extends TextField {
   const EmailTextField({
@@ -64,8 +64,8 @@ class EmailTextField extends TextField {
   }) : super(
           keyboardType: TextInputType.emailAddress,
           decoration: const InputDecoration(
-            label: Text('Email'),
-            hintText: 'johndoe@dicoding.com',
+            label: Text("Email"),
+            hintText: "johndoe@dicoding.com",
           ),
         );
 }

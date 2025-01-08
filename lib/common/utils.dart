@@ -1,5 +1,5 @@
-import 'package:dicoding_story_fl/core/entities.dart';
-import 'package:flutter/material.dart';
+import "package:dicoding_story_fl/core/entities.dart";
+import "package:flutter/material.dart";
 
 /// Extension on nullable [Object].
 extension NullableObjectX on Object? {
@@ -12,7 +12,7 @@ extension NullableObjectX on Object? {
 
     return SimpleException(
       error: this,
-      message: message ?? 'Sorry for the inconvenience',
+      message: message ?? "Sorry for the inconvenience",
       trace: trace,
     );
   }
@@ -20,7 +20,7 @@ extension NullableObjectX on Object? {
   /// Return `null` instead `"null"` string on `null` value.
   ///
   /// Otherwise, return the original [toString] result.
-  String? toNullableString() => this == null ? null : '$this';
+  String? toNullableString() => this == null ? null : "$this";
 }
 
 /// Extension on [Image].

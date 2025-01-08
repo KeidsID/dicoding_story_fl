@@ -1,7 +1,7 @@
-import 'package:fl_utilities/fl_utilities.dart';
-import 'package:flutter/material.dart';
+import "package:fl_utilities/fl_utilities.dart";
+import "package:flutter/material.dart";
 
-import 'package:dicoding_story_fl/core/entities.dart';
+import "package:dicoding_story_fl/core/entities.dart";
 
 final class SizedErrorWidget extends StatelessWidget {
   const SizedErrorWidget({
@@ -76,7 +76,7 @@ final class SizedErrorWidget extends StatelessWidget {
 
     final statusCodeText = simpleException is SimpleHttpException
         ? Text(
-            '${simpleException.statusCode}',
+            "${simpleException.statusCode}",
             style: textTheme.headlineMedium,
           )
         : const SizedBox.shrink();

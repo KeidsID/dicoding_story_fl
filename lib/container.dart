@@ -13,6 +13,6 @@
 /// ```
 library container;
 
-import 'container/container.dart' show init, get;
+import "container/container.dart" show init, get;
 
-export 'container/container.dart';
+export "container/container.dart";

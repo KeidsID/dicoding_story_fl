@@ -1,7 +1,7 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:flutter/foundation.dart';
+import "package:freezed_annotation/freezed_annotation.dart";
+import "package:flutter/foundation.dart";
 
-part 'app_exception_entity.freezed.dart';
+part "app_exception_entity.freezed.dart";
 
 @freezed
 class AppException with _$AppException implements Exception {

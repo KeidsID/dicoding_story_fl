@@ -1,16 +1,16 @@
-import 'dart:async';
+import "dart:async";
 
-import 'package:chopper/chopper.dart';
-import 'package:http/http.dart' show MultipartFile;
+import "package:chopper/chopper.dart";
+import "package:http/http.dart" show MultipartFile;
 
-import 'package:dicoding_story_fl/common/constants.dart';
-import 'package:dicoding_story_fl/common/utils.dart';
-import 'package:dicoding_story_fl/core/entities.dart';
-import 'package:dicoding_story_fl/core/repos.dart';
-import 'package:dicoding_story_fl/infrastructures/api/responses.dart';
-import 'package:dicoding_story_fl/infrastructures/utils/on_error_response_mixin.dart';
+import "package:dicoding_story_fl/common/constants.dart";
+import "package:dicoding_story_fl/common/utils.dart";
+import "package:dicoding_story_fl/core/entities.dart";
+import "package:dicoding_story_fl/core/repos.dart";
+import "package:dicoding_story_fl/infrastructures/api/responses.dart";
+import "package:dicoding_story_fl/infrastructures/utils/on_error_response_mixin.dart";
 
-part 'stories_repo_impl.chopper.dart';
+part "stories_repo_impl.chopper.dart";
 
 class StoriesRepoImpl with OnErrorResponseMixin implements StoriesRepo {
   StoriesRepoImpl(ChopperClient client)
@@ -27,7 +27,7 @@ class StoriesRepoImpl with OnErrorResponseMixin implements StoriesRepo {
   }) async {
     try {
       final rawRes = await _storiesApi.getStories(
-        authorization: 'Bearer ${userCreds.token}',
+        authorization: "Bearer ${userCreds.token}",
         page: page,
         size: size,
         hasCordinate: hasCordinate == null ? null : (hasCordinate ? 1 : 0),
@@ -52,7 +52,7 @@ class StoriesRepoImpl with OnErrorResponseMixin implements StoriesRepo {
     try {
       final rawRes = await _storiesApi.getStoryDetail(
         id,
-        authorization: 'Bearer ${userCreds.token}',
+        authorization: "Bearer ${userCreds.token}",
       );
       final rawResBody = rawRes.body;
 
@@ -79,10 +79,10 @@ class StoriesRepoImpl with OnErrorResponseMixin implements StoriesRepo {
       kLogger.d(imageFilename);
 
       final rawRes = await _storiesApi.postStory(
-        authorization: 'Bearer ${userCreds.token}',
+        authorization: "Bearer ${userCreds.token}",
         description: description,
         imageFile: MultipartFile.fromBytes(
-          'photo',
+          "photo",
           imageBytes,
           filename: imageFilename,
         ),
@@ -115,13 +115,13 @@ abstract class StoriesApiService extends ChopperService {
   /// - [size], stories count for each page. Valid value is greater than `0`.
   /// - [hasCordinate], include location coordinate on returned stories. Valid
   ///   value are `1` for true and `0` for false, default is `0`.
-  @Get(path: '/stories')
+  @Get(path: "/stories")
   Future<Response<Map<String, dynamic>>> getStories({
-    @Header('Authorization') required String authorization,
+    @Header("Authorization") required String authorization,
     //
     @query int page = 1,
     @query int size = 10,
-    @Query('location') int? hasCordinate,
+    @Query("location") int? hasCordinate,
   });
 
   /// Fetch story detail by [storyId].
@@ -129,10 +129,10 @@ abstract class StoriesApiService extends ChopperService {
   /// Headers:
   ///
   /// - [authorization], `Bearer <token>` format.
-  @Get(path: '/stories/{id}')
+  @Get(path: "/stories/{id}")
   Future<Response<Map<String, dynamic>>> getStoryDetail(
-    @Path('id') String storyId, {
-    @Header('Authorization') required String authorization,
+    @Path("id") String storyId, {
+    @Header("Authorization") required String authorization,
   });
 
   /// Post a new story.
@@ -151,13 +151,13 @@ abstract class StoriesApiService extends ChopperService {
   /// - [lon] - `float`, longitude (optional).
   ///
   /// https://story-api.dicoding.dev/v1/#/?id=add-new-story
-  @Post(path: '/stories')
+  @Post(path: "/stories")
   @multipart
   Future<Response<Map<String, dynamic>>> postStory({
-    @Header('Authorization') required String authorization,
+    @Header("Authorization") required String authorization,
     //
     @part required String description,
-    @PartFile('photo') required MultipartFile imageFile,
+    @PartFile("photo") required MultipartFile imageFile,
     @part double? lat,
     @part double? lon,
   });

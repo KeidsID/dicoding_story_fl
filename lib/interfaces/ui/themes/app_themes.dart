@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:flex_color_scheme/flex_color_scheme.dart';
+import "package:flutter/material.dart";
+import "package:flex_color_scheme/flex_color_scheme.dart";
 
 abstract class AppThemes {
   /// Dicoding color.
@@ -37,7 +37,7 @@ abstract class AppThemes {
   static VisualDensity? get _visualDensity => VisualDensity.comfortable;
   static const bool useMaterial3 = true;
 
-  static const String fontFamily = 'Rubik';
+  static const String fontFamily = "Rubik";
 
   static ThemeData get light {
     return FlexThemeData.light(

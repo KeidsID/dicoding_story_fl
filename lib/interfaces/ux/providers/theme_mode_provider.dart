@@ -1,6 +1,6 @@
-import 'package:dicoding_story_fl/container.dart' as container;
-import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import "package:dicoding_story_fl/container.dart" as container;
+import "package:flutter/material.dart";
+import "package:shared_preferences/shared_preferences.dart";
 
 /// Provider for [ThemeMode].
 ///
@@ -10,7 +10,7 @@ class ThemeModeProvider extends ValueNotifier<ThemeMode> {
 
   static SharedPreferences get _cache => container.get();
 
-  static const cacheKey = 'theme_mode';
+  static const cacheKey = "theme_mode";
 
   @override
   set value(ThemeMode value) {

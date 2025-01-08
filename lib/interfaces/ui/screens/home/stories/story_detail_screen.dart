@@ -1,13 +1,13 @@
-import 'package:fl_utilities/fl_utilities.dart';
-import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
+import "package:fl_utilities/fl_utilities.dart";
+import "package:flutter/material.dart";
+import "package:go_router/go_router.dart";
+import "package:provider/provider.dart";
 
-import 'package:dicoding_story_fl/common/constants.dart';
-import 'package:dicoding_story_fl/core/entities.dart';
-import 'package:dicoding_story_fl/interfaces/app_l10n.dart';
-import 'package:dicoding_story_fl/interfaces/ui.dart';
-import 'package:dicoding_story_fl/interfaces/ux.dart';
+import "package:dicoding_story_fl/common/constants.dart";
+import "package:dicoding_story_fl/core/entities.dart";
+import "package:dicoding_story_fl/interfaces/app_l10n.dart";
+import "package:dicoding_story_fl/interfaces/ui.dart";
+import "package:dicoding_story_fl/interfaces/ux.dart";
 
 class StoryDetailScreen extends StatelessWidget {
   const StoryDetailScreen(this.storyId, {super.key});
@@ -38,7 +38,7 @@ class StoryDetailScreen extends StatelessWidget {
             action: ElevatedButton.icon(
               onPressed: () => storyDetailProv.refresh(),
               icon: const Icon(Icons.refresh_outlined),
-              label: const Text('Refresh'),
+              label: const Text("Refresh"),
             ),
           );
         }
@@ -130,7 +130,7 @@ class _StoryDetailScreenS extends StatelessWidget {
                     crossAxisAlignment: WrapCrossAlignment.end,
                     children: [
                       Text(
-                        '${story.owner} ',
+                        "${story.owner} ",
                         style: textTheme.headlineMedium,
                       ),
                       Text(kDateFormat.format(story.createdAt))
@@ -212,7 +212,7 @@ class _StoryDetailScreenL extends StatelessWidget {
                       crossAxisAlignment: WrapCrossAlignment.end,
                       children: [
                         Text(
-                          '${story.owner} ',
+                          "${story.owner} ",
                           style: textTheme.headlineMedium,
                         ),
                         Text(kDateFormat.format(story.createdAt))

@@ -1,12 +1,12 @@
-import 'package:fl_utilities/fl_utilities.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import "package:fl_utilities/fl_utilities.dart";
+import "package:flutter/material.dart";
+import "package:provider/provider.dart";
 
-import 'package:dicoding_story_fl/common/constants.dart';
-import 'package:dicoding_story_fl/core/entities.dart';
-import 'package:dicoding_story_fl/interfaces/app_l10n.dart';
-import 'package:dicoding_story_fl/interfaces/ui.dart';
-import 'package:dicoding_story_fl/interfaces/ux.dart';
+import "package:dicoding_story_fl/common/constants.dart";
+import "package:dicoding_story_fl/core/entities.dart";
+import "package:dicoding_story_fl/interfaces/app_l10n.dart";
+import "package:dicoding_story_fl/interfaces/ui.dart";
+import "package:dicoding_story_fl/interfaces/ux.dart";
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -45,13 +45,13 @@ class _LoginScreenState extends State<LoginScreen> {
         password: passwordController.text,
       );
     } on SimpleException catch (err) {
-      kLogger.d('Login Fail', error: err, stackTrace: err.trace);
+      kLogger.d("Login Fail", error: err, stackTrace: err.trace);
 
       showSnackBar?.call(SnackBar(content: Text(err.message)));
     } catch (err, trace) {
-      kLogger.f('Login Fail', error: err, stackTrace: trace);
+      kLogger.f("Login Fail", error: err, stackTrace: trace);
 
-      showSnackBar?.call(SnackBar(content: Text('$err')));
+      showSnackBar?.call(SnackBar(content: Text("$err")));
     }
   }
 
@@ -103,7 +103,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text('${appL10n.needAnAccount}?'),
+                      Text("${appL10n.needAnAccount}?"),
                       Builder(builder: (context) {
                         final authProv = context.watch<AuthProvider>();
 

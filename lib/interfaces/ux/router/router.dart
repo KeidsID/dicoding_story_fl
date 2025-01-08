@@ -1,10 +1,10 @@
-import 'package:dicoding_story_fl/core/entities.dart';
-import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
+import "package:dicoding_story_fl/core/entities.dart";
+import "package:flutter/material.dart";
+import "package:go_router/go_router.dart";
+import "package:provider/provider.dart";
 
-import 'package:dicoding_story_fl/interfaces/ui.dart';
-import 'package:dicoding_story_fl/interfaces/ux.dart';
+import "package:dicoding_story_fl/interfaces/ui.dart";
+import "package:dicoding_story_fl/interfaces/ux.dart";
 
 /// Key that store the [router] state.
 final routerKey = GlobalKey<NavigatorState>();
@@ -29,7 +29,7 @@ GoRouter router(BuildContext context) {
             return ElevatedButton.icon(
               onPressed: () => const StoriesRoute().go(context),
               icon: const Icon(Icons.home_outlined),
-              label: const Text('Back to Home'),
+              label: const Text("Back to Home"),
             );
           }),
         ),

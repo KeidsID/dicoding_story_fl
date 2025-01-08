@@ -1,6 +1,6 @@
-import 'package:flutter/foundation.dart';
+import "package:flutter/foundation.dart";
 
-import 'package:dicoding_story_fl/core/entities.dart';
+import "package:dicoding_story_fl/core/entities.dart";
 
 /// Asynchronous [ValueNotifier].
 ///

@@ -1,11 +1,11 @@
-import 'package:fl_utilities/fl_utilities.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import "package:fl_utilities/fl_utilities.dart";
+import "package:flutter/material.dart";
+import "package:provider/provider.dart";
 
-import 'package:dicoding_story_fl/core/entities.dart';
-import 'package:dicoding_story_fl/interfaces/app_l10n.dart';
-import 'package:dicoding_story_fl/interfaces/ui.dart';
-import 'package:dicoding_story_fl/interfaces/ux.dart';
+import "package:dicoding_story_fl/core/entities.dart";
+import "package:dicoding_story_fl/interfaces/app_l10n.dart";
+import "package:dicoding_story_fl/interfaces/ui.dart";
+import "package:dicoding_story_fl/interfaces/ux.dart";
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -51,7 +51,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       showSnackBar?.call(SnackBar(content: Text(err.message)));
     } catch (err) {
       showSnackBar?.call(const SnackBar(
-        content: Text('No internet connection'),
+        content: Text("No internet connection"),
       ));
     }
   }
@@ -84,8 +84,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     keyboardType: TextInputType.name,
                     textInputAction: TextInputAction.next,
                     decoration: const InputDecoration(
-                      label: Text('Username'),
-                      hintText: 'John Doe',
+                      label: Text("Username"),
+                      hintText: "John Doe",
                     ),
                   ),
                   const SizedBox(height: 16.0),
@@ -117,7 +117,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text('${appL10n.alreadyHaveAnAccount}?'),
+                      Text("${appL10n.alreadyHaveAnAccount}?"),
                       Builder(builder: (context) {
                         final authProv = context.watch<AuthProvider>();
 

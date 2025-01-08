@@ -1,10 +1,10 @@
-import 'package:flutter/foundation.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
+import "package:flutter/foundation.dart";
+import "package:freezed_annotation/freezed_annotation.dart";
 
-import 'package:dicoding_story_fl/core/entities.dart';
+import "package:dicoding_story_fl/core/entities.dart";
 
-part 'stories_response.freezed.dart';
-part 'stories_response.g.dart';
+part "stories_response.freezed.dart";
+part "stories_response.g.dart";
 
 @freezed
 class StoriesResponse with _$StoriesResponse {

@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+import "package:flutter/material.dart";
+import "package:go_router/go_router.dart";
 
-import 'package:dicoding_story_fl/interfaces/app_l10n.dart';
-import 'package:dicoding_story_fl/interfaces/ux.dart';
+import "package:dicoding_story_fl/interfaces/app_l10n.dart";
+import "package:dicoding_story_fl/interfaces/ux.dart";
 
 class HomeLayout extends StatefulWidget {
   const HomeLayout({super.key, this.child});
@@ -50,7 +50,7 @@ List<_NavBarItemDelegate> _navs(BuildContext context) {
   return [
     const _NavBarItemDelegate(
       icon: Icon(Icons.home_outlined),
-      label: 'Home',
+      label: "Home",
       activeIcon: Icon(Icons.home),
     ),
     _NavBarItemDelegate(
@@ -159,7 +159,7 @@ class _HomeLayoutL extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       IconButton(
-                        tooltip: isExtended ? 'Shrink' : 'Expand',
+                        tooltip: isExtended ? "Shrink" : "Expand",
                         onPressed: onTrailingTap,
                         icon: Icon(
                           isExtended ? Icons.chevron_left : Icons.chevron_right,

@@ -1,8 +1,8 @@
-import 'dart:io';
+import "dart:io";
 
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
+import "package:flutter/foundation.dart";
+import "package:flutter/material.dart";
+import "package:image_picker/image_picker.dart";
 
 /// [Image] widget for [XFile] from `image_picker` package.
 class ImageFromXFile extends Image {

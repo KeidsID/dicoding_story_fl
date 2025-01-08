@@ -1,10 +1,10 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:flutter/foundation.dart';
+import "package:freezed_annotation/freezed_annotation.dart";
+import "package:flutter/foundation.dart";
 
 import "package:dicoding_story_fl/libs/decorators.dart";
 
-part 'story_entity.freezed.dart';
-part 'story_entity.g.dart';
+part "story_entity.freezed.dart";
+part "story_entity.g.dart";
 
 @freezed
 class Story with _$Story {

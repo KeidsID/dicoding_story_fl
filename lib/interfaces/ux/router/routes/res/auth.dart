@@ -1,4 +1,4 @@
-part of '../routes.dart';
+part of "../routes.dart";
 
 /// {@template dicoding_story_fl.interfaces.ux.routes.RegisterRoute}
 /// `/auth/register` route.

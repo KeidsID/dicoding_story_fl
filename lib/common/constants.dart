@@ -1,8 +1,8 @@
-import 'package:flutter/foundation.dart';
-import 'package:logger/logger.dart';
-import 'package:intl/intl.dart' as intl;
+import "package:flutter/foundation.dart";
+import "package:logger/logger.dart";
+import "package:intl/intl.dart" as intl;
 
-const kAppName = 'Dicoding Story';
+const kAppName = "Dicoding Story";
 
 /// Use this instead [print] or [debugPrint] for debugging.
 final kLogger = Logger();

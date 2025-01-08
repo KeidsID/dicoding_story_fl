@@ -1,4 +1,4 @@
-import 'package:equatable/equatable.dart';
+import "package:equatable/equatable.dart";
 
 /// {@template dicoding_story_fl.core.entities.Story}
 /// Story summary posted by user.

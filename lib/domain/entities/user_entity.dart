@@ -1,8 +1,8 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:flutter/foundation.dart';
+import "package:freezed_annotation/freezed_annotation.dart";
+import "package:flutter/foundation.dart";
 
-part 'user_entity.freezed.dart';
-part 'user_entity.g.dart';
+part "user_entity.freezed.dart";
+part "user_entity.g.dart";
 
 @Freezed(toJson: true)
 class User with _$User {

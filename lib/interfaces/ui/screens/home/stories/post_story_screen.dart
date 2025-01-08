@@ -1,15 +1,15 @@
-import 'package:fl_utilities/fl_utilities.dart';
-import 'package:flex_color_scheme/flex_color_scheme.dart';
-import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:provider/provider.dart';
+import "package:fl_utilities/fl_utilities.dart";
+import "package:flex_color_scheme/flex_color_scheme.dart";
+import "package:flutter/material.dart";
+import "package:go_router/go_router.dart";
+import "package:image_picker/image_picker.dart";
+import "package:provider/provider.dart";
 
-import 'package:dicoding_story_fl/common/constants.dart';
-import 'package:dicoding_story_fl/common/utils.dart';
-import 'package:dicoding_story_fl/interfaces/app_l10n.dart';
-import 'package:dicoding_story_fl/interfaces/ui.dart';
-import 'package:dicoding_story_fl/interfaces/ux.dart';
+import "package:dicoding_story_fl/common/constants.dart";
+import "package:dicoding_story_fl/common/utils.dart";
+import "package:dicoding_story_fl/interfaces/app_l10n.dart";
+import "package:dicoding_story_fl/interfaces/ui.dart";
+import "package:dicoding_story_fl/interfaces/ux.dart";
 
 class PostStoryScreen extends StatefulWidget {
   const PostStoryScreen({super.key});
@@ -32,8 +32,8 @@ class PostStoryScreenState extends State<PostStoryScreen> {
           final appL10n = AppL10n.of(context)!;
 
           return AlertDialog(
-            title: Text('${appL10n.replaceImage}?'),
-            content: Text('${appL10n.from}:'),
+            title: Text("${appL10n.replaceImage}?"),
+            content: Text("${appL10n.from}:"),
             actions: [
               TextButton(
                 onPressed: () async {
@@ -97,7 +97,7 @@ class PostStoryScreenState extends State<PostStoryScreen> {
         final exception = err.toSimpleException(trace: trace);
 
         kLogger.w(
-          'On Post Story',
+          "On Post Story",
           error: exception,
           stackTrace: exception.trace,
         );
@@ -300,9 +300,9 @@ abstract base class _PostStoryFormScreenLayoutBase extends StatelessWidget {
         enabled: delegate.descIsEnabled,
         keyboardType: TextInputType.multiline,
         maxLines: null,
-        decoration: InputDecoration(hintText: '${appL10n.tellUsYourStory}...'),
+        decoration: InputDecoration(hintText: "${appL10n.tellUsYourStory}..."),
         validator: (text) {
-          if (text == null || text.isEmpty) return 'Cannot be empty';
+          if (text == null || text.isEmpty) return "Cannot be empty";
 
           return null;
         },

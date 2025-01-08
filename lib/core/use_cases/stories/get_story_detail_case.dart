@@ -1,5 +1,5 @@
-import 'package:dicoding_story_fl/core/entities.dart';
-import 'package:dicoding_story_fl/core/repos.dart';
+import "package:dicoding_story_fl/core/entities.dart";
+import "package:dicoding_story_fl/core/repos.dart";
 
 /// {@template dicoding_story_fl.domain.use_cases.stories.GetStoryDetailCase}
 /// Use case for get story detail case.

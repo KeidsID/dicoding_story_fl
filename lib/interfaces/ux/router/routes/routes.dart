@@ -1,20 +1,20 @@
-import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
+import "package:flutter/material.dart";
+import "package:go_router/go_router.dart";
+import "package:provider/provider.dart";
 
-import 'package:dicoding_story_fl/interfaces/ui.dart';
-import 'package:dicoding_story_fl/interfaces/ux.dart';
+import "package:dicoding_story_fl/interfaces/ui.dart";
+import "package:dicoding_story_fl/interfaces/ux.dart";
 
-part 'res/auth.dart';
-part 'res/home.dart';
-part 'routes.g.dart';
+part "res/auth.dart";
+part "res/home.dart";
+part "routes.g.dart";
 
 /// {@template dicoding_story_fl.interfaces.ux.routes.LoginRoute}
 /// `/auth` route.
 /// {@endtemplate}
 @TypedGoRoute<LoginRoute>(
-  path: '/auth',
-  routes: [TypedGoRoute<RegisterRoute>(path: 'register')],
+  path: "/auth",
+  routes: [TypedGoRoute<RegisterRoute>(path: "register")],
 )
 class LoginRoute extends GoRouteData {
   /// {@macro dicoding_story_fl.interfaces.ux.routes.LoginRoute}
@@ -27,13 +27,13 @@ class LoginRoute extends GoRouteData {
 
 @TypedShellRoute<HomeShellRoute>(routes: [
   TypedGoRoute<StoriesRoute>(
-    path: '/stories',
+    path: "/stories",
     routes: [
-      TypedGoRoute<PostStoryRoute>(path: 'post'),
-      TypedGoRoute<StoryDetailRoute>(path: 'view/:id'),
+      TypedGoRoute<PostStoryRoute>(path: "post"),
+      TypedGoRoute<StoryDetailRoute>(path: "view/:id"),
     ],
   ),
-  TypedGoRoute<ProfileRoute>(path: '/profile'),
+  TypedGoRoute<ProfileRoute>(path: "/profile"),
 ])
 @protected
 class HomeShellRoute extends ShellRouteData {

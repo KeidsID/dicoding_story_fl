@@ -1,13 +1,13 @@
-import 'package:fl_utilities/fl_utilities.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart';
-import 'package:package_info_plus/package_info_plus.dart';
-import 'package:provider/provider.dart';
-import 'package:url_launcher/url_launcher.dart';
+import "package:fl_utilities/fl_utilities.dart";
+import "package:flutter/foundation.dart";
+import "package:flutter/gestures.dart";
+import "package:flutter/material.dart";
+import "package:package_info_plus/package_info_plus.dart";
+import "package:provider/provider.dart";
+import "package:url_launcher/url_launcher.dart";
 
-import 'package:dicoding_story_fl/common/assets.dart';
-import 'package:dicoding_story_fl/common/constants.dart';
+import "package:dicoding_story_fl/common/assets.dart";
+import "package:dicoding_story_fl/common/constants.dart";
 
 class AppAboutListTile extends StatelessWidget {
   const AppAboutListTile({super.key});
@@ -22,12 +22,12 @@ class AppAboutListTile extends StatelessWidget {
             context: context,
             builder: (context) {
               return AlertDialog(
-                title: const Text('Hyperlink Fail'),
-                content: Text('Cannot launch $url'),
+                title: const Text("Hyperlink Fail"),
+                content: Text("Cannot launch $url"),
                 actions: [
                   TextButton(
                     onPressed: () => Navigator.maybePop(context),
-                    child: const Text('Ok'),
+                    child: const Text("Ok"),
                   )
                 ],
               );
@@ -49,9 +49,9 @@ class AppAboutListTile extends StatelessWidget {
         image: AssetImages.appIconL,
         width: 80.0,
       ),
-      applicationVersion: 'v${package.version}+${package.buildNumber}',
-      applicationLegalese: 'MIT License\n\n'
-          'Copyright (c) 2024 Kemal Idris [KeidsID]',
+      applicationVersion: "v${package.version}+${package.buildNumber}",
+      applicationLegalese: "MIT License\n\n"
+          "Copyright (c) 2024 Kemal Idris [KeidsID]",
       aboutBoxChildren: [
         const SizedBox(height: 16.0),
         Builder(builder: (context) {
@@ -63,39 +63,39 @@ class AppAboutListTile extends StatelessWidget {
           return Text.rich(TextSpan(
             children: [
               TextSpan(
-                text: 'App Icon',
+                text: "App Icon",
                 style: linkTextStyle,
                 recognizer: TapGestureRecognizer()
                   ..onTap = _onTapLink(
                     context,
                     url: Uri.parse(
-                      'https://www.flaticon.com/free-icon/content_15911316',
+                      "https://www.flaticon.com/free-icon/content_15911316",
                     ),
                   ),
               ),
-              const TextSpan(text: ' by '),
+              const TextSpan(text: " by "),
               TextSpan(
-                text: 'Adrly',
+                text: "Adrly",
                 style: linkTextStyle,
                 recognizer: TapGestureRecognizer()
                   ..onTap = _onTapLink(
                     context,
                     url: Uri.parse(
-                      'https://www.flaticon.com/authors/adrly',
+                      "https://www.flaticon.com/authors/adrly",
                     ),
                   ),
               ),
-              const TextSpan(text: ' on '),
+              const TextSpan(text: " on "),
               TextSpan(
-                text: 'flaticon.com',
+                text: "flaticon.com",
                 style: linkTextStyle,
                 recognizer: TapGestureRecognizer()
                   ..onTap = _onTapLink(
                     context,
-                    url: Uri.parse('https://www.flaticon.com/'),
+                    url: Uri.parse("https://www.flaticon.com/"),
                   ),
               ),
-              const TextSpan(text: '.'),
+              const TextSpan(text: "."),
             ],
           ));
         }),
@@ -106,9 +106,9 @@ class AppAboutListTile extends StatelessWidget {
             TextButton(
               onPressed: _onTapLink(
                 context,
-                url: Uri.parse('https://github.com/KeidsID/dicoding_story_fl'),
+                url: Uri.parse("https://github.com/KeidsID/dicoding_story_fl"),
               ),
-              child: const Text('Source Code'),
+              child: const Text("Source Code"),
             )
           ],
         )

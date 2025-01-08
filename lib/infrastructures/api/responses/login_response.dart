@@ -1,10 +1,10 @@
-import 'package:flutter/foundation.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
+import "package:flutter/foundation.dart";
+import "package:freezed_annotation/freezed_annotation.dart";
 
-import 'package:dicoding_story_fl/core/entities.dart';
+import "package:dicoding_story_fl/core/entities.dart";
 
-part 'login_response.freezed.dart';
-part 'login_response.g.dart';
+part "login_response.freezed.dart";
+part "login_response.g.dart";
 
 @freezed
 class LoginResponse with _$LoginResponse {

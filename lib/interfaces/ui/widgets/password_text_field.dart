@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import "package:flutter/material.dart";
 
 class PasswordTextField extends StatefulWidget {
   const PasswordTextField({
@@ -29,7 +29,7 @@ class _PasswordTextFieldState extends State<PasswordTextField> {
       obscureText: !isVisible,
       onSubmitted: widget.onSubmitted,
       decoration: InputDecoration(
-        label: const Text('Password'),
+        label: const Text("Password"),
         suffixIcon: IconButton(
           onPressed: () => setState(() => isVisible = !isVisible),
           icon: Icon(

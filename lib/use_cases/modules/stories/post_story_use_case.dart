@@ -1,5 +1,5 @@
-import 'package:dicoding_story_fl/domain/repositories.dart';
-import 'package:dicoding_story_fl/use_cases/libs/types.dart';
+import "package:dicoding_story_fl/domain/repositories.dart";
+import "package:dicoding_story_fl/use_cases/libs/types.dart";
 
 final class PostStoryUseCase implements UseCase<PostStoryRequestDto, void> {
   const PostStoryUseCase(this._storiesRepository);

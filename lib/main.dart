@@ -1,22 +1,22 @@
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:package_info_plus/package_info_plus.dart';
-import 'package:provider/provider.dart';
+import "package:flutter/foundation.dart";
+import "package:flutter/material.dart";
+import "package:flutter/services.dart";
+import "package:package_info_plus/package_info_plus.dart";
+import "package:provider/provider.dart";
 
-import 'common/assets.dart';
-import 'common/constants.dart';
-import 'container.dart' as container;
-import 'interfaces/app_l10n.dart';
-import 'interfaces/ui.dart';
-import 'interfaces/ux.dart';
+import "common/assets.dart";
+import "common/constants.dart";
+import "container.dart" as container;
+import "interfaces/app_l10n.dart";
+import "interfaces/ui.dart";
+import "interfaces/ux.dart";
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   LicenseRegistry.addLicense(() async* {
     yield LicenseEntryWithLineBreaks(
-      ['google_fonts'],
+      ["google_fonts"],
       await rootBundle.rubikFontLicense(),
     );
   });

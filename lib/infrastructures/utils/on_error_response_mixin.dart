@@ -1,9 +1,9 @@
-import 'package:chopper/chopper.dart';
-import 'package:flutter/foundation.dart';
+import "package:chopper/chopper.dart";
+import "package:flutter/foundation.dart";
 
-import 'package:dicoding_story_fl/common/utils.dart';
-import 'package:dicoding_story_fl/core/entities.dart';
-import 'package:dicoding_story_fl/infrastructures/api/responses/common_response.dart';
+import "package:dicoding_story_fl/common/utils.dart";
+import "package:dicoding_story_fl/core/entities.dart";
+import "package:dicoding_story_fl/infrastructures/api/responses/common_response.dart";
 
 mixin OnErrorResponseMixin {
   /// Converts [Response] into [SimpleException].

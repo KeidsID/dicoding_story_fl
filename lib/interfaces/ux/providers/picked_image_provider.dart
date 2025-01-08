@@ -1,12 +1,12 @@
-import 'package:camera/camera.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
+import "package:camera/camera.dart";
+import "package:flutter/foundation.dart";
+import "package:flutter/material.dart";
+import "package:image_picker/image_picker.dart";
 
-import 'package:dicoding_story_fl/common/constants.dart';
-import 'package:dicoding_story_fl/common/utils.dart';
-import 'package:dicoding_story_fl/interfaces/ui.dart';
-import 'package:dicoding_story_fl/interfaces/ux.dart';
+import "package:dicoding_story_fl/common/constants.dart";
+import "package:dicoding_story_fl/common/utils.dart";
+import "package:dicoding_story_fl/interfaces/ui.dart";
+import "package:dicoding_story_fl/interfaces/ux.dart";
 
 /// {@template dicoding_story_fl.interfaces.ux.providers.PickedImageProvider}
 /// Picked image from gallery or camera and store it in [value].
@@ -65,14 +65,14 @@ final class PickedImageProvider extends AsyncValueNotifier<XFile?> {
     } catch (err, trace) {
       final exception = err.toSimpleException(
         message: switch (source) {
-          ImageSource.camera => 'Camera is not available',
+          ImageSource.camera => "Camera is not available",
           ImageSource.gallery => "Can't access gallery",
         },
         trace: trace,
       );
 
       kLogger.e(
-        'PickedImageProvider.pickImage',
+        "PickedImageProvider.pickImage",
         error: exception,
         stackTrace: exception.trace,
       );
@@ -105,7 +105,7 @@ final class PickedImageProvider extends AsyncValueNotifier<XFile?> {
           rawException.toSimpleException(trace: StackTrace.current);
 
       kLogger.w(
-        'PickedImageProvider._retrieveLostData',
+        "PickedImageProvider._retrieveLostData",
         error: exception,
         stackTrace: exception.trace,
       );
@@ -150,7 +150,7 @@ class _CustomCamDialogState extends State<_CustomCamDialog> {
                             error: error.toSimpleException(
                               message: error is CameraException
                                   ? error.description
-                                  : 'Camera is not available',
+                                  : "Camera is not available",
                             ),
                           )
                         : CustomCamera(

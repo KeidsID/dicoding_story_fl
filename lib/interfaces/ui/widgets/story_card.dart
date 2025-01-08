@@ -1,9 +1,9 @@
-import 'package:dicoding_story_fl/common/constants.dart';
-import 'package:fl_utilities/fl_utilities.dart';
-import 'package:flutter/material.dart';
+import "package:dicoding_story_fl/common/constants.dart";
+import "package:fl_utilities/fl_utilities.dart";
+import "package:flutter/material.dart";
 
-import 'package:dicoding_story_fl/core/entities.dart';
-import 'package:dicoding_story_fl/interfaces/ui.dart';
+import "package:dicoding_story_fl/core/entities.dart";
+import "package:dicoding_story_fl/interfaces/ui.dart";
 
 class StoryCard extends StatelessWidget {
   const StoryCard(this.story, {super.key, this.onTap});
@@ -46,7 +46,7 @@ class StoryCard extends StatelessWidget {
                   Wrap(
                     crossAxisAlignment: WrapCrossAlignment.end,
                     children: [
-                      Text('${story.owner} ', style: textTheme.titleLarge),
+                      Text("${story.owner} ", style: textTheme.titleLarge),
                       Text(kDateFormat.format(story.createdAt))
                           .applyOpacity(opacity: 0.5),
                     ],

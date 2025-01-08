@@ -1,4 +1,4 @@
-import 'package:dicoding_story_fl/core/entities.dart';
+import "package:dicoding_story_fl/core/entities.dart";
 
 class StoryDetail extends Story {
   const StoryDetail({

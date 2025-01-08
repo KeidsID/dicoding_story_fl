@@ -1,2 +1,2 @@
 export "modules/auth.dart";
-export 'modules/stories.dart';
+export "modules/stories.dart";

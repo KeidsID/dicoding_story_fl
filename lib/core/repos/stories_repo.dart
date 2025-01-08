@@ -1,4 +1,4 @@
-import '../entities.dart';
+import "../entities.dart";
 
 abstract interface class StoriesRepo {
   Future<List<Story>> fetchStories(

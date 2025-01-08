@@ -1,15 +1,15 @@
-import 'dart:convert';
+import "dart:convert";
 
-import 'package:chopper/chopper.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import "package:chopper/chopper.dart";
+import "package:shared_preferences/shared_preferences.dart";
 
-import 'package:dicoding_story_fl/common/utils.dart';
-import 'package:dicoding_story_fl/core/entities.dart';
-import 'package:dicoding_story_fl/core/repos.dart';
-import 'package:dicoding_story_fl/infrastructures/api/responses.dart';
-import 'package:dicoding_story_fl/infrastructures/utils/on_error_response_mixin.dart';
+import "package:dicoding_story_fl/common/utils.dart";
+import "package:dicoding_story_fl/core/entities.dart";
+import "package:dicoding_story_fl/core/repos.dart";
+import "package:dicoding_story_fl/infrastructures/api/responses.dart";
+import "package:dicoding_story_fl/infrastructures/utils/on_error_response_mixin.dart";
 
-part 'auth_repo_impl.chopper.dart';
+part "auth_repo_impl.chopper.dart";
 
 class AuthRepoImpl with OnErrorResponseMixin implements AuthRepo {
   AuthRepoImpl({
@@ -75,7 +75,7 @@ class AuthRepoImpl with OnErrorResponseMixin implements AuthRepo {
   // CACHE
   // --------------------------------------------------------------------------
 
-  static const _loginCacheKey = 'login_session';
+  static const _loginCacheKey = "login_session";
 
   @override
   Future<UserCreds?> getLoginSession() async {
@@ -112,7 +112,7 @@ abstract class AuthApiService extends ChopperService {
   ///   "password": "String"
   /// }
   /// ```
-  @Post(path: '/register')
+  @Post(path: "/register")
   Future<Response<Map<String, dynamic>>> postRegister({
     @body required Map<String, dynamic> body,
   });
@@ -127,7 +127,7 @@ abstract class AuthApiService extends ChopperService {
   ///   "password": "String"
   /// }
   /// ```
-  @Post(path: '/login')
+  @Post(path: "/login")
   Future<Response<Map<String, dynamic>>> postLogin({
     @body required Map<String, dynamic> body,
   });

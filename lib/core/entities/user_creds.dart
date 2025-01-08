@@ -1,4 +1,4 @@
-import 'package:equatable/equatable.dart';
+import "package:equatable/equatable.dart";
 
 /// {@template dicoding_story_fl.core.entities.UserCreds}
 /// User credentials from login session.
@@ -24,7 +24,7 @@ class UserCreds extends Equatable {
   List<Object?> get props => [id, name, token];
 
   factory UserCreds.fromCache(Map<String, dynamic> map) =>
-      UserCreds(id: map['id'], name: map['name'], token: map['token']);
+      UserCreds(id: map["id"], name: map["name"], token: map["token"]);
 
-  Map<String, dynamic> toCache() => {'id': id, 'name': name, 'token': token};
+  Map<String, dynamic> toCache() => {"id": id, "name": name, "token": token};
 }

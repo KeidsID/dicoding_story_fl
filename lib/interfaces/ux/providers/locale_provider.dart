@@ -1,14 +1,14 @@
-import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import "package:flutter/material.dart";
+import "package:shared_preferences/shared_preferences.dart";
 
-import 'package:dicoding_story_fl/container.dart' as container;
+import "package:dicoding_story_fl/container.dart" as container;
 
 class LocaleProvider extends ValueNotifier<Locale?> {
   LocaleProvider() : super(_getCache());
 
   static SharedPreferences get _cache => container.get();
 
-  static const cacheKey = 'locale';
+  static const cacheKey = "locale";
 
   @override
   set value(Locale? value) {
@@ -21,7 +21,7 @@ class LocaleProvider extends ValueNotifier<Locale?> {
       await _cache.setString(
         cacheKey,
         value.countryCode != null
-            ? '${value.languageCode}_${value.countryCode}'
+            ? "${value.languageCode}_${value.countryCode}"
             : value.languageCode,
       );
     }).then((_) => null);
@@ -34,7 +34,7 @@ class LocaleProvider extends ValueNotifier<Locale?> {
 
     if (cache == null) return null;
 
-    final List<String> parsedCache = cache.split('_');
+    final List<String> parsedCache = cache.split("_");
 
     if (parsedCache.length == 1) return Locale(parsedCache.first);
 

@@ -1,10 +1,10 @@
-import 'package:fl_utilities/fl_utilities.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import "package:fl_utilities/fl_utilities.dart";
+import "package:flutter/material.dart";
+import "package:provider/provider.dart";
 
-import 'package:dicoding_story_fl/interfaces/app_l10n.dart';
-import 'package:dicoding_story_fl/interfaces/ui.dart';
-import 'package:dicoding_story_fl/interfaces/ux.dart';
+import "package:dicoding_story_fl/interfaces/app_l10n.dart";
+import "package:dicoding_story_fl/interfaces/ui.dart";
+import "package:dicoding_story_fl/interfaces/ux.dart";
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -27,7 +27,7 @@ class ProfileScreen extends StatelessWidget {
           Text(appL10n.profile, style: textTheme.headlineSmall),
           ListTile(
             leading: const Icon(Icons.person),
-            title: Text(userCreds?.name ?? 'Anonymous'),
+            title: Text(userCreds?.name ?? "Anonymous"),
           ),
           ListTile(
             iconColor: colorScheme.error,
@@ -39,7 +39,7 @@ class ProfileScreen extends StatelessWidget {
           Align(
             alignment: AlignmentDirectional.centerEnd,
             child: Text(
-              userCreds?.id ?? '',
+              userCreds?.id ?? "",
               style: textTheme.labelMedium?.applyOpacity(0.5),
             ),
           ),
@@ -91,8 +91,8 @@ class ProfileScreen extends StatelessWidget {
 
               String localeString(String localeString) {
                 return switch (localeString) {
-                  'en' => 'English',
-                  'id' => 'Bahasa Indonesia',
+                  "en" => "English",
+                  "id" => "Bahasa Indonesia",
                   _ => appL10n.flThemeMode(ThemeMode.system.name),
                 };
               }
@@ -102,12 +102,12 @@ class ProfileScreen extends StatelessWidget {
                 items: [
                   DropdownMenuItem(
                     value: null,
-                    child: Text(localeString('system')),
+                    child: Text(localeString("system")),
                   ),
                   ...AppL10n.supportedLocales.map((e) {
                     return DropdownMenuItem(
                       value: e,
-                      child: Text(localeString('$e')),
+                      child: Text(localeString("$e")),
                     );
                   })
                 ],

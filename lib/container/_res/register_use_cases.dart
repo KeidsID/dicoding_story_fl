@@ -1,4 +1,4 @@
-part of '../container.dart';
+part of "../container.dart";
 
 void _registerUseCases() {
   _locator

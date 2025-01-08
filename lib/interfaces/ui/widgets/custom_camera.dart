@@ -1,13 +1,13 @@
-import 'package:camera/camera.dart';
-import 'package:equatable/equatable.dart';
-import 'package:fl_utilities/fl_utilities.dart';
-import 'package:flex_color_scheme/flex_color_scheme.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import "package:camera/camera.dart";
+import "package:equatable/equatable.dart";
+import "package:fl_utilities/fl_utilities.dart";
+import "package:flex_color_scheme/flex_color_scheme.dart";
+import "package:flutter/foundation.dart";
+import "package:flutter/material.dart";
 
-import 'package:dicoding_story_fl/common/constants.dart';
-import 'package:dicoding_story_fl/common/utils.dart';
-import 'package:dicoding_story_fl/interfaces/ui.dart';
+import "package:dicoding_story_fl/common/constants.dart";
+import "package:dicoding_story_fl/common/utils.dart";
+import "package:dicoding_story_fl/interfaces/ui.dart";
 
 typedef CustomCameraResultCallback = void Function(XFile result);
 
@@ -56,7 +56,7 @@ class CustomCamera extends StatefulWidget {
     super.key,
     this.delegate = const CustomCameraDelegate(),
     this.onAcceptResult,
-  }) : assert(cameras.isNotEmpty, 'Camera Not Found');
+  }) : assert(cameras.isNotEmpty, "Camera Not Found");
 
   /// List of available cameras.
   ///
@@ -161,13 +161,13 @@ class CustomCameraState extends State<CustomCamera>
       late final String? msg;
 
       if (err is CameraException) {
-        msg = err.description ?? 'Failed to initialize camera';
+        msg = err.description ?? "Failed to initialize camera";
       }
 
       final exception = err.toSimpleException(message: msg, trace: trace);
 
       kLogger.e(
-        'CustomCameraWidgetState.setCamController',
+        "CustomCameraWidgetState.setCamController",
         error: exception,
         stackTrace: exception.trace,
       );
@@ -200,12 +200,12 @@ class CustomCameraState extends State<CustomCamera>
       return image;
     } on CameraException catch (err, trace) {
       final exception = err.toSimpleException(
-        message: err.description ?? 'Failed to take picture',
+        message: err.description ?? "Failed to take picture",
         trace: trace,
       );
 
       kLogger.e(
-        'CustomCameraWidgetState.takePicture',
+        "CustomCameraWidgetState.takePicture",
         error: exception,
         stackTrace: exception.trace,
       );
@@ -289,11 +289,11 @@ class CustomCameraState extends State<CustomCamera>
                   children: <Widget>[
                     TextButton(
                       onPressed: () => setState(() => camResult = null),
-                      child: const Text('Retry'),
+                      child: const Text("Retry"),
                     ),
                     TextButton(
                       onPressed: () => onAcceptResult?.call(camResult!),
-                      child: const Text('Ok'),
+                      child: const Text("Ok"),
                     ),
                   ].map((e) => Expanded(child: e)).toList(),
                 ),
@@ -313,7 +313,7 @@ class CustomCameraState extends State<CustomCamera>
                           : Center(
                               child: cameras.isEmpty
                                   ? Text(
-                                      'Camera Not Found',
+                                      "Camera Not Found",
                                       style: textTheme.headlineMedium,
                                     )
                                   : const CircularProgressIndicator(),
@@ -338,7 +338,7 @@ class CustomCameraState extends State<CustomCamera>
                         );
                       }).toList(),
                       builder: (context, menu, _) => IconButton(
-                        tooltip: 'Switch Camera',
+                        tooltip: "Switch Camera",
                         onPressed: isSwitchCamDisable
                             ? null
                             : () => menu.isOpen ? menu.close() : menu.open(),
@@ -348,7 +348,7 @@ class CustomCameraState extends State<CustomCamera>
                     //
                     IconButton.filledTonal(
                       iconSize: 48.0,
-                      tooltip: 'Take Picture',
+                      tooltip: "Take Picture",
                       onPressed: () => takePicture(),
                       icon: const Icon(Icons.camera_alt_outlined),
                     ),

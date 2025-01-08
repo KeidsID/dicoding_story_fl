@@ -1,4 +1,4 @@
-import '../entities.dart';
+import "../entities.dart";
 
 abstract interface class AuthRepo {
   Future<void> register({
