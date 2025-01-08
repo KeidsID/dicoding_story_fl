@@ -22,7 +22,7 @@ import 'package:dicoding_story_fl/core/entities.dart';
 /// }
 /// ```
 abstract base class AsyncValueNotifier<T> extends ValueNotifier<T?> {
-  AsyncValueNotifier([T? initialValue]) : super(initialValue);
+  AsyncValueNotifier([super.initialValue]);
 
   bool _isLoading = false;
   bool _isError = false;
