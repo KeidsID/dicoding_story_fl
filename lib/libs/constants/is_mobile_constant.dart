@@ -1,14 +1,4 @@
 import "package:flutter/foundation.dart";
-import "package:logger/logger.dart";
-import "package:intl/intl.dart" as intl;
-
-const kAppName = "Dicoding Story";
-
-/// Use this instead [print] or [debugPrint] for debugging.
-final kLogger = Logger();
-
-/// Commonly used date format for interface.
-final kDateFormat = intl.DateFormat.yMMMMd();
 
 /// Return `true` if current platform is mobile.
 ///

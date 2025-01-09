@@ -3,9 +3,9 @@ import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
 import "package:provider/provider.dart";
 
-import "package:dicoding_story_fl/common/constants.dart";
-import "package:dicoding_story_fl/core/entities.dart";
+import "package:dicoding_story_fl/domain/entities.dart";
 import "package:dicoding_story_fl/interfaces/app_l10n.dart";
+import "package:dicoding_story_fl/interfaces/libs/constants.dart";
 import "package:dicoding_story_fl/interfaces/ui.dart";
 import "package:dicoding_story_fl/interfaces/ux.dart";
 
@@ -16,14 +16,8 @@ class StoryDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final authProv = context.watch<AuthProvider>();
-
     return ChangeNotifierProvider.value(
-      value: StoryDetailProvider(
-        storyId: storyId,
-        // won't null becuase router
-        userCreds: authProv.value!,
-      ),
+      value: StoryDetailProvider(storyId),
       builder: (context, _) {
         final storyDetailProv = context.watch<StoryDetailProvider>();
 
@@ -92,7 +86,7 @@ void _showImageDialog(BuildContext context, ImageProvider<Object> image) {
 class _StoryDetailScreenS extends StatelessWidget {
   const _StoryDetailScreenS(this.story);
 
-  final StoryDetail story;
+  final Story story;
 
   @override
   Widget build(BuildContext context) {
@@ -154,7 +148,7 @@ class _StoryDetailScreenS extends StatelessWidget {
 class _StoryDetailScreenL extends StatelessWidget {
   const _StoryDetailScreenL(this.story);
 
-  final StoryDetail story;
+  final Story story;
 
   @override
   Widget build(BuildContext context) {

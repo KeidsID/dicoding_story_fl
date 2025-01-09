@@ -2,11 +2,11 @@ import "package:fl_utilities/fl_utilities.dart";
 import "package:flutter/material.dart";
 import "package:provider/provider.dart";
 
-import "package:dicoding_story_fl/common/constants.dart";
-import "package:dicoding_story_fl/core/entities.dart";
+import "package:dicoding_story_fl/domain/entities.dart";
 import "package:dicoding_story_fl/interfaces/app_l10n.dart";
 import "package:dicoding_story_fl/interfaces/ui.dart";
 import "package:dicoding_story_fl/interfaces/ux.dart";
+import "package:dicoding_story_fl/libs/constants.dart";
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -44,7 +44,7 @@ class _LoginScreenState extends State<LoginScreen> {
         email: emailController.text,
         password: passwordController.text,
       );
-    } on SimpleException catch (err) {
+    } on AppException catch (err) {
       kLogger.d("Login Fail", error: err, stackTrace: err.trace);
 
       showSnackBar?.call(SnackBar(content: Text(err.message)));

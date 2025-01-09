@@ -6,8 +6,7 @@ import "package:package_info_plus/package_info_plus.dart";
 import "package:provider/provider.dart";
 import "package:url_launcher/url_launcher.dart";
 
-import "package:dicoding_story_fl/common/assets.dart";
-import "package:dicoding_story_fl/common/constants.dart";
+import "package:dicoding_story_fl/libs/constants.dart";
 
 class AppAboutListTile extends StatelessWidget {
   const AppAboutListTile({super.key});

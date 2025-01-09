@@ -1,10 +1,10 @@
-import "package:dicoding_story_fl/common/utils.dart";
-import "package:dicoding_story_fl/container.dart" as container;
-import "package:dicoding_story_fl/core/entities.dart";
-import "package:dicoding_story_fl/core/use_cases.dart";
+import "package:dicoding_story_fl/domain/entities.dart";
 import "package:dicoding_story_fl/interfaces/ux.dart";
+import "package:dicoding_story_fl/libs/extensions.dart";
+import "package:dicoding_story_fl/service_locator.dart";
+import "package:dicoding_story_fl/use_cases.dart";
 
-final class AuthProvider extends AsyncValueNotifier<UserCreds?> {
+final class AuthProvider extends AsyncValueNotifier<User?> {
   AuthProvider([super.initialValue]) {
     Future.microtask(() => _fetchToken()).catchError((e) => null);
   }
@@ -17,20 +17,19 @@ final class AuthProvider extends AsyncValueNotifier<UserCreds?> {
   Future<void> _fetchToken() async {
     if (!isLoading) isLoading = true;
 
-    value = await container.get<GetLoginSessionCase>().execute();
+    value = await ServiceLocator.find<GetAuthUseCase>().execute(null);
   }
 
   Future<void> login({required String email, required String password}) async {
     isLoading = true;
 
     try {
-      await container
-          .get<LoginCase>()
-          .execute(email: email, password: password);
+      await ServiceLocator.find<SignInUseCase>()
+          .execute(SignInRequestDto(email: email, password: password));
 
       await _fetchToken();
     } catch (err, trace) {
-      final parsedError = err.toSimpleException(trace: trace);
+      final parsedError = err.toAppException(trace: trace);
 
       setError(parsedError);
       throw parsedError;
@@ -41,11 +40,11 @@ final class AuthProvider extends AsyncValueNotifier<UserCreds?> {
     isLoading = true;
 
     try {
-      await container.get<LogoutCase>().execute();
+      await ServiceLocator.find<SignOutUseCase>().execute(null);
 
       await _fetchToken();
     } catch (err, trace) {
-      final parsedError = err.toSimpleException(trace: trace);
+      final parsedError = err.toAppException(trace: trace);
 
       setError(parsedError);
       throw parsedError;
@@ -62,15 +61,17 @@ final class AuthProvider extends AsyncValueNotifier<UserCreds?> {
     isLoading = true;
 
     try {
-      await container.get<RegisterCase>().execute(
-            username: username,
-            email: email,
-            password: password,
-          );
+      await ServiceLocator.find<SignUpUseCase>().execute(
+        SignUpRequestDto(
+          name: username,
+          email: email,
+          password: password,
+        ),
+      );
 
       await login(email: email, password: password);
     } catch (err, trace) {
-      final parsedError = err.toSimpleException(trace: trace);
+      final parsedError = err.toAppException(trace: trace);
 
       setError(parsedError);
       throw parsedError;

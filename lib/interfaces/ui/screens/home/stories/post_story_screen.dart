@@ -5,11 +5,13 @@ import "package:go_router/go_router.dart";
 import "package:image_picker/image_picker.dart";
 import "package:provider/provider.dart";
 
-import "package:dicoding_story_fl/common/constants.dart";
-import "package:dicoding_story_fl/common/utils.dart";
 import "package:dicoding_story_fl/interfaces/app_l10n.dart";
+import "package:dicoding_story_fl/interfaces/libs/constants.dart";
+import "package:dicoding_story_fl/interfaces/libs/extensions.dart";
 import "package:dicoding_story_fl/interfaces/ui.dart";
 import "package:dicoding_story_fl/interfaces/ux.dart";
+import "package:dicoding_story_fl/libs/constants.dart";
+import "package:dicoding_story_fl/libs/extensions.dart";
 
 class PostStoryScreen extends StatefulWidget {
   const PostStoryScreen({super.key});
@@ -83,10 +85,7 @@ class PostStoryScreenState extends State<PostStoryScreen> {
       try {
         if (!(_formKey.currentState?.validate() ?? false)) return;
 
-        final userCreds = context.read<AuthProvider>().value!;
-
         await context.read<StoriesProvider>().postStory(
-              userCreds,
               description: _descriptionController.text,
               imageBytes: await imageFile.readAsBytes(),
               imageFilename: imageFile.name,
@@ -94,7 +93,7 @@ class PostStoryScreenState extends State<PostStoryScreen> {
 
         if (context.mounted) context.pop();
       } catch (err, trace) {
-        final exception = err.toSimpleException(trace: trace);
+        final exception = err.toAppException(trace: trace);
 
         kLogger.w(
           "On Post Story",

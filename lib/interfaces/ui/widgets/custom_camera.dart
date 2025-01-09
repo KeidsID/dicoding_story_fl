@@ -5,9 +5,9 @@ import "package:flex_color_scheme/flex_color_scheme.dart";
 import "package:flutter/foundation.dart";
 import "package:flutter/material.dart";
 
-import "package:dicoding_story_fl/common/constants.dart";
-import "package:dicoding_story_fl/common/utils.dart";
 import "package:dicoding_story_fl/interfaces/ui.dart";
+import "package:dicoding_story_fl/libs/constants.dart";
+import "package:dicoding_story_fl/libs/extensions.dart";
 
 typedef CustomCameraResultCallback = void Function(XFile result);
 
@@ -164,7 +164,7 @@ class CustomCameraState extends State<CustomCamera>
         msg = err.description ?? "Failed to initialize camera";
       }
 
-      final exception = err.toSimpleException(message: msg, trace: trace);
+      final exception = err.toAppException(message: msg, trace: trace);
 
       kLogger.e(
         "CustomCameraWidgetState.setCamController",
@@ -199,7 +199,7 @@ class CustomCameraState extends State<CustomCamera>
       setState(() => camResult = image);
       return image;
     } on CameraException catch (err, trace) {
-      final exception = err.toSimpleException(
+      final exception = err.toAppException(
         message: err.description ?? "Failed to take picture",
         trace: trace,
       );

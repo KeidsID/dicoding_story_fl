@@ -1,7 +1,7 @@
 import "package:fl_utilities/fl_utilities.dart";
 import "package:flutter/material.dart";
 
-import "package:dicoding_story_fl/core/entities.dart";
+import "package:dicoding_story_fl/domain/entities.dart";
 
 final class SizedErrorWidget extends StatelessWidget {
   const SizedErrorWidget({
@@ -58,7 +58,7 @@ final class SizedErrorWidget extends StatelessWidget {
   final StackTrace? _trace;
 
   StackTrace? get trace {
-    return error is SimpleException ? (error as SimpleException).trace : _trace;
+    return error is AppException ? (error as AppException).trace : _trace;
   }
 
   /// An action at the bottom.
@@ -70,16 +70,9 @@ final class SizedErrorWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = context.textTheme;
 
-    final SimpleException simpleException = error is SimpleException
-        ? (error as SimpleException)
-        : SimpleException(error: error, trace: trace);
-
-    final statusCodeText = simpleException is SimpleHttpException
-        ? Text(
-            "${simpleException.statusCode}",
-            style: textTheme.headlineMedium,
-          )
-        : const SizedBox.shrink();
+    final AppException exception = error is AppException
+        ? (error as AppException)
+        : AppException(error: error, trace: trace);
 
     return SizedBox(
       width: width,
@@ -88,10 +81,9 @@ final class SizedErrorWidget extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            statusCodeText,
-            Text(simpleException.name, style: textTheme.titleLarge),
+            Text(exception.name, style: textTheme.titleLarge),
             const Divider(),
-            Text(simpleException.message),
+            Text(exception.message),
             const SizedBox(height: 16.0),
             action ?? const SizedBox.shrink(),
           ],

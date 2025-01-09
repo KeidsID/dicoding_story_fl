@@ -2,7 +2,7 @@ import "package:fl_utilities/fl_utilities.dart";
 import "package:flutter/material.dart";
 import "package:provider/provider.dart";
 
-import "package:dicoding_story_fl/core/entities.dart";
+import "package:dicoding_story_fl/domain/entities.dart";
 import "package:dicoding_story_fl/interfaces/app_l10n.dart";
 import "package:dicoding_story_fl/interfaces/ui.dart";
 import "package:dicoding_story_fl/interfaces/ux.dart";
@@ -47,7 +47,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         email: emailController.text,
         password: passwordController.text,
       );
-    } on SimpleException catch (err) {
+    } on AppException catch (err) {
       showSnackBar?.call(SnackBar(content: Text(err.message)));
     } catch (err) {
       showSnackBar?.call(const SnackBar(

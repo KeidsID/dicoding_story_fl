@@ -1,6 +1,6 @@
 import "package:flutter/foundation.dart";
 
-import "package:dicoding_story_fl/core/entities.dart";
+import "package:dicoding_story_fl/domain/entities.dart";
 
 /// Asynchronous [ValueNotifier].
 ///
@@ -66,10 +66,10 @@ abstract base class AsyncValueNotifier<T> extends ValueNotifier<T?> {
   ///
   /// [isError] will be set to true. Setting [value] will reset [isError].
   @protected
-  void setError(Object? err, [StackTrace? stackTrace]) {
+  void setError(Object? err, [StackTrace? trace]) {
     _isError = true;
     _error = err;
-    _trace = err is SimpleException ? err.trace : stackTrace;
+    _trace = err is AppException ? err.trace : trace;
     isLoading = false;
   }
 }

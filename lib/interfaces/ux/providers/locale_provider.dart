@@ -1,12 +1,12 @@
 import "package:flutter/material.dart";
 import "package:shared_preferences/shared_preferences.dart";
 
-import "package:dicoding_story_fl/container.dart" as container;
+import "package:dicoding_story_fl/service_locator.dart";
 
 class LocaleProvider extends ValueNotifier<Locale?> {
   LocaleProvider() : super(_getCache());
 
-  static SharedPreferences get _cache => container.get();
+  static SharedPreferences get _cache => ServiceLocator.find();
 
   static const cacheKey = "locale";
 

@@ -1,4 +1,4 @@
-import "package:dicoding_story_fl/container.dart" as container;
+import "package:dicoding_story_fl/service_locator.dart";
 import "package:flutter/material.dart";
 import "package:shared_preferences/shared_preferences.dart";
 
@@ -8,7 +8,7 @@ import "package:shared_preferences/shared_preferences.dart";
 class ThemeModeProvider extends ValueNotifier<ThemeMode> {
   ThemeModeProvider() : super(_getCache());
 
-  static SharedPreferences get _cache => container.get();
+  static SharedPreferences get _cache => ServiceLocator.find();
 
   static const cacheKey = "theme_mode";
 

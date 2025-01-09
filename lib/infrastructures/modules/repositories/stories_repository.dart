@@ -35,10 +35,11 @@ final class StoriesRepositoryImpl implements StoriesRepository {
       );
       final rawResponseBody = rawResponse.body!;
 
-      final rawStories =
-          rawResponseBody["listStory"] as List<Map<String, dynamic>>;
+      final rawStories = rawResponseBody["listStory"] as List;
 
-      return rawStories.map((e) => Story.fromJson(e)).toList();
+      return rawStories
+          .map((e) => Story.fromJson(e as Map<String, dynamic>))
+          .toList();
     } on ChopperHttpException catch (exception, trace) {
       throw handleApiErrorResponse(exception, trace);
     } catch (error, trace) {

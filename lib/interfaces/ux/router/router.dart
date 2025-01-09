@@ -1,4 +1,4 @@
-import "package:dicoding_story_fl/core/entities.dart";
+import "package:dicoding_story_fl/domain/entities.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
 import "package:provider/provider.dart";
@@ -21,8 +21,7 @@ GoRouter router(BuildContext context) {
     errorBuilder: (context, state) {
       return Scaffold(
         body: SizedErrorWidget.expand(
-          error: SimpleHttpException(
-            statusCode: 404,
+          error: AppException(
             message: 'No route found for "${state.uri.path}"',
           ),
           action: Builder(builder: (context) {

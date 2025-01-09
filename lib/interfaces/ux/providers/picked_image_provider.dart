@@ -3,10 +3,10 @@ import "package:flutter/foundation.dart";
 import "package:flutter/material.dart";
 import "package:image_picker/image_picker.dart";
 
-import "package:dicoding_story_fl/common/constants.dart";
-import "package:dicoding_story_fl/common/utils.dart";
 import "package:dicoding_story_fl/interfaces/ui.dart";
 import "package:dicoding_story_fl/interfaces/ux.dart";
+import "package:dicoding_story_fl/libs/constants.dart";
+import "package:dicoding_story_fl/libs/extensions.dart";
 
 /// {@template dicoding_story_fl.interfaces.ux.providers.PickedImageProvider}
 /// Picked image from gallery or camera and store it in [value].
@@ -63,7 +63,7 @@ final class PickedImageProvider extends AsyncValueNotifier<XFile?> {
 
       return image;
     } catch (err, trace) {
-      final exception = err.toSimpleException(
+      final exception = err.toAppException(
         message: switch (source) {
           ImageSource.camera => "Camera is not available",
           ImageSource.gallery => "Can't access gallery",
@@ -101,8 +101,7 @@ final class PickedImageProvider extends AsyncValueNotifier<XFile?> {
     final rawException = response.exception;
 
     if (rawException != null) {
-      final exception =
-          rawException.toSimpleException(trace: StackTrace.current);
+      final exception = rawException.toAppException(trace: StackTrace.current);
 
       kLogger.w(
         "PickedImageProvider._retrieveLostData",
@@ -147,7 +146,7 @@ class _CustomCamDialogState extends State<_CustomCamDialog> {
                     ? const Center(child: CircularProgressIndicator())
                     : hasError
                         ? SizedErrorWidget(
-                            error: error.toSimpleException(
+                            error: error.toAppException(
                               message: error is CameraException
                                   ? error.description
                                   : "Camera is not available",

@@ -1,9 +1,9 @@
 import "package:flutter/material.dart";
 import "package:provider/provider.dart";
 
-import "package:dicoding_story_fl/common/constants.dart";
 import "package:dicoding_story_fl/interfaces/ui.dart";
 import "package:dicoding_story_fl/interfaces/ux.dart";
+import "package:dicoding_story_fl/libs/constants.dart";
 
 class StoriesScreen extends StatefulWidget {
   const StoriesScreen({super.key});
@@ -17,11 +17,7 @@ class _StoriesScreenState extends State<StoriesScreen> {
 
   Future<void> _fetchStories() async {
     try {
-      final userCreds = context.read<AuthProvider>().value;
-
-      if (userCreds == null) return;
-
-      await context.read<StoriesProvider>().fetchStories(userCreds);
+      await context.read<StoriesProvider>().fetchStories();
     } catch (err, trace) {
       kLogger.e("Stories fetch fail", error: err, stackTrace: trace);
     }
@@ -91,8 +87,7 @@ class _StoriesScreenState extends State<StoriesScreen> {
                 child: !isLatestPage
                     ? const CircularProgressIndicator()
                     : ElevatedButton.icon(
-                        onPressed: () => storiesProv
-                            .refresh(context.read<AuthProvider>().value!),
+                        onPressed: () => storiesProv.refresh(),
                         icon: const Icon(Icons.refresh),
                         label: const Text("Refresh"),
                       ),

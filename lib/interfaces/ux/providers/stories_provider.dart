@@ -1,8 +1,8 @@
-import "package:dicoding_story_fl/common/utils.dart";
-import "package:dicoding_story_fl/container.dart" as container;
-import "package:dicoding_story_fl/core/entities.dart";
-import "package:dicoding_story_fl/core/use_cases.dart";
+import "package:dicoding_story_fl/domain/entities.dart";
 import "package:dicoding_story_fl/interfaces/ux.dart";
+import "package:dicoding_story_fl/libs/extensions.dart";
+import "package:dicoding_story_fl/service_locator.dart";
+import "package:dicoding_story_fl/use_cases.dart";
 
 final class StoriesProvider extends AsyncValueNotifier<List<Story>> {
   StoriesProvider({this.storiesCount = 10}) : super([]);
@@ -23,16 +23,15 @@ final class StoriesProvider extends AsyncValueNotifier<List<Story>> {
 
   /// Fetch stories and set it to [value].
   ///
-  /// May throw a [SimpleException].
-  Future<void> fetchStories(UserCreds userCreds) async {
+  /// May throw a [AppException].
+  Future<void> fetchStories() async {
     if (isLatestPage || isLoading) return;
 
     isLoading = true;
 
     try {
-      final stories = await container
-          .get<GetStoriesCase>()
-          .execute(userCreds, page: page, size: storiesCount);
+      final stories = await ServiceLocator.find<GetStoriesUseCase>()
+          .execute(GetStoriesRequestDto(page: page, size: storiesCount));
 
       if (stories.length < storiesCount) {
         _isLatestPage = true;
@@ -42,7 +41,7 @@ final class StoriesProvider extends AsyncValueNotifier<List<Story>> {
 
       value = [...value!, ...stories];
     } catch (err, trace) {
-      final parsedError = err.toSimpleException(trace: trace);
+      final parsedError = err.toAppException(trace: trace);
 
       setError(parsedError);
       throw parsedError;
@@ -50,19 +49,18 @@ final class StoriesProvider extends AsyncValueNotifier<List<Story>> {
   }
 
   /// Reset provider to initial state. Then do [fetchStories] again.
-  Future<void> refresh(UserCreds userCreds) async {
+  Future<void> refresh() async {
     _page = 1;
     _isLatestPage = false;
     value = [];
 
-    await fetchStories(userCreds);
+    await fetchStories();
   }
 
   /// Post a new story, then call [refresh].
   ///
-  /// May throw a [SimpleException].
-  Future<void> postStory(
-    UserCreds userCreds, {
+  /// May throw a [AppException].
+  Future<void> postStory({
     required String description,
     required List<int> imageBytes,
     required String imageFilename,
@@ -72,18 +70,15 @@ final class StoriesProvider extends AsyncValueNotifier<List<Story>> {
     isLoading = true;
 
     try {
-      await container.get<PostStoryCase>().execute(
-            userCreds,
-            description: description,
-            imageBytes: imageBytes,
-            imageFilename: imageFilename,
-            lat: lat,
-            lon: lon,
-          );
+      await ServiceLocator.find<PostStoryUseCase>().execute(PostStoryRequestDto(
+        description: description,
+        imageBytes: imageBytes,
+        imageFilename: imageFilename,
+      ));
 
-      await refresh(userCreds);
+      await refresh();
     } catch (err, trace) {
-      final parsedError = err.toSimpleException(trace: trace);
+      final parsedError = err.toAppException(trace: trace);
 
       setError(parsedError);
       throw parsedError;
