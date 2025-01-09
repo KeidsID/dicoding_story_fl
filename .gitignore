@@ -4,6 +4,7 @@
 *.freezed.dart
 **/l10n/gen/**
 !**/l10n/gen/untranslated.txt
+service_locator.config.dart
 
 # Miscellaneous
 secrets/

@@ -26,11 +26,14 @@ dependencies:
   chopper: ^7.4.0
   equatable: ^2.0.7
   freezed_annotation: ^2.4.4
-  get_it: ^8.0.3
   http: ^1.2.2
   json_annotation: ^4.9.0
   logger: ^2.5.0
   logging: ^1.2.0
+
+  # injectable
+  get_it: ^7.7.0
+  injectable: ^2.4.2
 
   # flutter
   cached_network_image: ^3.4.0
@@ -56,6 +59,7 @@ dev_dependencies:
   chopper_generator: ^7.4.0
   freezed: ^2.5.2
   go_router_builder: ^2.7.1
+  injectable_generator: ^2.6.1
   json_serializable: ^6.8.0
 
   # Gitlint

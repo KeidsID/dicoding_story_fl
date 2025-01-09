@@ -1,6 +1,9 @@
+import "package:injectable/injectable.dart";
+
 import "package:dicoding_story_fl/domain/repositories.dart";
 import "package:dicoding_story_fl/use_cases/libs/types.dart";
 
+@singleton
 final class SignUpUseCase implements UseCase<SignUpRequestDto, void> {
   const SignUpUseCase(this._authRepository);
 
