@@ -1,7 +1,7 @@
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
 
-import "package:dicoding_story_fl/interfaces/app_l10n.dart";
+import "package:dicoding_story_fl/interfaces/libs/l10n/modules.dart";
 import "package:dicoding_story_fl/interfaces/ux.dart";
 
 class HomeLayout extends StatefulWidget {

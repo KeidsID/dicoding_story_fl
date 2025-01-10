@@ -3,7 +3,7 @@
 *.chopper.dart
 *.freezed.dart
 **/l10n/gen/**
-!**/l10n/gen/untranslated.txt
+!**/l10n/gen/untranslated.json
 service_locator.config.dart
 
 # Miscellaneous

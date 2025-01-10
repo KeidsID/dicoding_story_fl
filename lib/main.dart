@@ -4,7 +4,7 @@ import "package:flutter/services.dart";
 import "package:package_info_plus/package_info_plus.dart";
 import "package:provider/provider.dart";
 
-import "interfaces/app_l10n.dart";
+import "interfaces/libs/l10n/modules.dart";
 import "interfaces/ui.dart";
 import "interfaces/ux.dart";
 import "libs/constants.dart";

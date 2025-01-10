@@ -2,7 +2,7 @@ import "package:fl_utilities/fl_utilities.dart";
 import "package:flutter/material.dart";
 import "package:provider/provider.dart";
 
-import "package:dicoding_story_fl/interfaces/app_l10n.dart";
+import "package:dicoding_story_fl/interfaces/libs/l10n/modules.dart";
 import "package:dicoding_story_fl/interfaces/ui.dart";
 import "package:dicoding_story_fl/interfaces/ux.dart";
 

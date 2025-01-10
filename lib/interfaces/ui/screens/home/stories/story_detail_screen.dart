@@ -4,7 +4,7 @@ import "package:go_router/go_router.dart";
 import "package:provider/provider.dart";
 
 import "package:dicoding_story_fl/domain/entities.dart";
-import "package:dicoding_story_fl/interfaces/app_l10n.dart";
+import "package:dicoding_story_fl/interfaces/libs/l10n/modules.dart";
 import "package:dicoding_story_fl/interfaces/libs/constants.dart";
 import "package:dicoding_story_fl/interfaces/ui.dart";
 import "package:dicoding_story_fl/interfaces/ux.dart";
