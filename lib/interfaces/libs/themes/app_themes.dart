@@ -1,8 +1,8 @@
 import "package:flutter/material.dart";
 import "package:flex_color_scheme/flex_color_scheme.dart";
 
-abstract class AppThemes {
-  /// Dicoding color.
+abstract final class AppThemes {
+  /// App brand color.
   static const primaryColorSeed = Color(0xFF2D3E50);
 
   static FlexSchemeColor get _flexSchemeColor =>

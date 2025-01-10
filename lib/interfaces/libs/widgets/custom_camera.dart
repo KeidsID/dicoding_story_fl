@@ -5,7 +5,7 @@ import "package:flex_color_scheme/flex_color_scheme.dart";
 import "package:flutter/foundation.dart";
 import "package:flutter/material.dart";
 
-import "package:dicoding_story_fl/interfaces/ui.dart";
+import "package:dicoding_story_fl/interfaces/libs/widgets.dart";
 import "package:dicoding_story_fl/libs/constants.dart";
 import "package:dicoding_story_fl/libs/extensions.dart";
 
