@@ -37,6 +37,6 @@ abstract class StoriesRemoteData extends ChopperService {
   @Get(path: "/{id}")
   Future<Response<Map<String, dynamic>>> getStoryById({
     @Header("Authorization") required String bearerToken,
-    @query required String id,
+    @path required String id,
   });
 }
