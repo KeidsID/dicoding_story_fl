@@ -1,33 +1,52 @@
 import "package:fl_utilities/fl_utilities.dart";
 import "package:flutter/material.dart";
+import "package:go_router/go_router.dart";
 import "package:provider/provider.dart";
 
+import "package:dicoding_story_fl/interfaces/libs/constants.dart";
 import "package:dicoding_story_fl/interfaces/libs/l10n/modules.dart";
-import "package:dicoding_story_fl/interfaces/ui.dart";
-import "package:dicoding_story_fl/interfaces/ux.dart";
+import "package:dicoding_story_fl/interfaces/libs/providers.dart";
+import "package:dicoding_story_fl/interfaces/libs/widgets.dart";
 
-class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({super.key});
+const profileRouteBuild = TypedGoRoute<ProfileRoute>(
+  path: AppRoutePaths.profile,
+);
+
+final class ProfileRoute extends GoRouteData {
+  const ProfileRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return const _ProfileRouteScreen();
+  }
+}
+
+class _ProfileRouteScreen extends StatelessWidget {
+  const _ProfileRouteScreen();
+
+  final EdgeInsetsGeometry _padding = const EdgeInsets.all(16.0);
 
   @override
   Widget build(BuildContext context) {
     final authProvider = context.watch<AuthProvider>();
-    final userCreds = authProvider.value;
+    final user = authProvider.value;
 
+    final appL10n = AppL10n.of(context)!;
     final colorScheme = context.colorScheme;
     final textTheme = context.textTheme;
 
-    final appL10n = AppL10n.of(context)!;
+    final sectionHeaderTextStyle = textTheme.headlineSmall;
 
     return Scaffold(
       appBar: AppBar(title: Text(appL10n.yourProfile)),
       body: ListView(
-        padding: const EdgeInsets.all(16.0),
+        padding: _padding,
         children: [
-          Text(appL10n.profile, style: textTheme.headlineSmall),
+          // profile section
+          Text(appL10n.profile, style: sectionHeaderTextStyle),
           ListTile(
             leading: const Icon(Icons.person),
-            title: Text(userCreds?.name ?? "Anonymous"),
+            title: Text(user?.name ?? "Anonymous"),
           ),
           ListTile(
             iconColor: colorScheme.error,
@@ -39,22 +58,20 @@ class ProfileScreen extends StatelessWidget {
           Align(
             alignment: AlignmentDirectional.centerEnd,
             child: Text(
-              userCreds?.id ?? "",
-              style: textTheme.labelMedium?.applyOpacity(0.5),
-            ),
+              user?.id ?? "",
+              style: textTheme.labelMedium,
+            ).applyOpacity(opacity: 0.5),
           ),
           const Divider(),
+          const SizedBox(height: 8.0),
 
-          //
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(appL10n.other(2), style: textTheme.headlineSmall),
-          ),
+          // others section
+          Text(appL10n.other(2), style: sectionHeaderTextStyle),
           ListTile(
             leading: const Icon(Icons.color_lens_outlined),
             title: Text(appL10n.appTheme),
             trailing: Builder(builder: (context) {
-              final themeModeProv = context.watch<ThemeModeProvider>();
+              final themeModeProvider = context.watch<ThemeModeProvider>();
 
               final icons = ThemeMode.values.map((e) {
                 return switch (e) {
@@ -65,12 +82,11 @@ class ProfileScreen extends StatelessWidget {
               }).toList();
 
               return DropdownButton<ThemeMode>(
-                value: themeModeProv.value,
+                value: themeModeProvider.value,
                 items: ThemeMode.values.map((e) {
-                  return DropdownMenuItem(
+                  return DropdownMenuItem<ThemeMode>(
                     value: e,
                     child: Row(
-                      mainAxisSize: MainAxisSize.min,
                       children: [
                         Icon(icons[e.index]),
                         const SizedBox(width: 8.0),
@@ -79,15 +95,15 @@ class ProfileScreen extends StatelessWidget {
                     ),
                   );
                 }).toList(),
-                onChanged: (value) => themeModeProv.value = value!,
+                onChanged: (value) => themeModeProvider.value = value!,
               );
             }),
           ),
           ListTile(
-            leading: const Icon(Icons.translate),
+            leading: const Icon(Icons.language_outlined),
             title: Text(appL10n.language),
             trailing: Builder(builder: (context) {
-              final localeProv = context.watch<LocaleProvider>();
+              final localeProvider = context.watch<LocaleProvider>();
 
               String localeString(String localeString) {
                 return switch (localeString) {
@@ -98,7 +114,7 @@ class ProfileScreen extends StatelessWidget {
               }
 
               return DropdownButton<Locale?>(
-                value: localeProv.value,
+                value: localeProvider.value,
                 items: [
                   DropdownMenuItem(
                     value: null,
@@ -111,7 +127,7 @@ class ProfileScreen extends StatelessWidget {
                     );
                   })
                 ],
-                onChanged: (value) => localeProv.value = value,
+                onChanged: (value) => localeProvider.value = value,
               );
             }),
           ),

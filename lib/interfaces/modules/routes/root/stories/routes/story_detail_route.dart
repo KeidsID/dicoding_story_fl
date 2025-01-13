@@ -4,13 +4,28 @@ import "package:go_router/go_router.dart";
 import "package:provider/provider.dart";
 
 import "package:dicoding_story_fl/domain/entities.dart";
-import "package:dicoding_story_fl/interfaces/libs/l10n/modules.dart";
 import "package:dicoding_story_fl/interfaces/libs/constants.dart";
-import "package:dicoding_story_fl/interfaces/ui.dart";
-import "package:dicoding_story_fl/interfaces/ux.dart";
+import "package:dicoding_story_fl/interfaces/libs/l10n.dart";
+import "package:dicoding_story_fl/interfaces/libs/providers.dart";
+import "package:dicoding_story_fl/interfaces/libs/widgets.dart";
 
-class StoryDetailScreen extends StatelessWidget {
-  const StoryDetailScreen(this.storyId, {super.key});
+const storyDetailRouteBuild = TypedGoRoute<StoryDetailRoute>(
+  path: AppRouteStoriesPaths.view$storyId,
+);
+
+final class StoryDetailRoute extends GoRouteData {
+  const StoryDetailRoute(this.storyId);
+
+  final String storyId;
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return _StoryDetailRouteScreen(storyId);
+  }
+}
+
+class _StoryDetailRouteScreen extends StatelessWidget {
+  const _StoryDetailRouteScreen(this.storyId);
 
   final String storyId;
 
@@ -43,10 +58,10 @@ class StoryDetailScreen extends StatelessWidget {
 
         return LayoutBuilder(builder: (context, constraints) {
           if (constraints.maxWidth < 720) {
-            return _StoryDetailScreenS(story);
+            return _StoryDetailRouteScreenSmall(story);
           }
 
-          return _StoryDetailScreenL(story);
+          return _StoryDetailRouteScreenWide(story);
         });
       },
     );
@@ -83,8 +98,8 @@ void _showImageDialog(BuildContext context, ImageProvider<Object> image) {
       });
 }
 
-class _StoryDetailScreenS extends StatelessWidget {
-  const _StoryDetailScreenS(this.story);
+class _StoryDetailRouteScreenSmall extends StatelessWidget {
+  const _StoryDetailRouteScreenSmall(this.story);
 
   final Story story;
 
@@ -145,8 +160,8 @@ class _StoryDetailScreenS extends StatelessWidget {
   }
 }
 
-class _StoryDetailScreenL extends StatelessWidget {
-  const _StoryDetailScreenL(this.story);
+class _StoryDetailRouteScreenWide extends StatelessWidget {
+  const _StoryDetailRouteScreenWide(this.story);
 
   final Story story;
 

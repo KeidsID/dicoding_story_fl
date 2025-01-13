@@ -5,26 +5,59 @@ import "package:go_router/go_router.dart";
 import "package:image_picker/image_picker.dart";
 import "package:provider/provider.dart";
 
-import "package:dicoding_story_fl/interfaces/libs/l10n/modules.dart";
 import "package:dicoding_story_fl/interfaces/libs/constants.dart";
 import "package:dicoding_story_fl/interfaces/libs/extensions.dart";
-import "package:dicoding_story_fl/interfaces/ui.dart";
-import "package:dicoding_story_fl/interfaces/ux.dart";
+import "package:dicoding_story_fl/interfaces/libs/l10n.dart";
+import "package:dicoding_story_fl/interfaces/libs/providers.dart";
+import "package:dicoding_story_fl/interfaces/libs/widgets.dart";
 import "package:dicoding_story_fl/libs/constants.dart";
 import "package:dicoding_story_fl/libs/extensions.dart";
 
-class PostStoryScreen extends StatefulWidget {
-  const PostStoryScreen({super.key});
+/// [PostStoryRoute] build decorator.
+const postStoryRouteBuild = TypedGoRoute<PostStoryRoute>(
+  path: AppRouteStoriesPaths.post,
+);
+
+final class PostStoryRoute extends GoRouteData {
+  const PostStoryRoute();
 
   @override
-  State<PostStoryScreen> createState() => PostStoryScreenState();
+  Widget build(BuildContext context, GoRouterState state) {
+    return ChangeNotifierProvider.value(
+      value: PickedImageProvider(),
+      child: const _PostStoryRouteScreen(),
+    );
+  }
 }
 
-class PostStoryScreenState extends State<PostStoryScreen> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final TextEditingController _descriptionController = TextEditingController();
+class _PostStoryRouteScreen extends StatefulWidget {
+  const _PostStoryRouteScreen();
 
-  VoidCallback _onRepickImage(BuildContext context) {
+  @override
+  State<_PostStoryRouteScreen> createState() => _PostStoryRouteScreenState();
+}
+
+class _PostStoryRouteScreenState extends State<_PostStoryRouteScreen> {
+  late final GlobalKey<FormState> _formKey;
+  late final TextEditingController _descriptionController;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _formKey = GlobalKey();
+    _descriptionController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _formKey.currentState?.dispose();
+    _descriptionController.dispose();
+
+    super.dispose();
+  }
+
+  VoidCallback _handleRepickImage(BuildContext context) {
     return () async {
       final pickedImageProv = context.read<PickedImageProvider>();
 
@@ -76,7 +109,7 @@ class PostStoryScreenState extends State<PostStoryScreen> {
     };
   }
 
-  VoidCallback _onPostButtonTap(BuildContext context) {
+  VoidCallback _handlePostStory(BuildContext context) {
     return () async {
       final imageFile = context.read<PickedImageProvider>().value;
 
@@ -108,14 +141,6 @@ class PostStoryScreenState extends State<PostStoryScreen> {
         }
       }
     };
-  }
-
-  @override
-  void dispose() {
-    _formKey.currentState?.dispose();
-    _descriptionController.dispose();
-
-    super.dispose();
   }
 
   @override
@@ -203,13 +228,13 @@ class PostStoryScreenState extends State<PostStoryScreen> {
 
             final isLoading = storiesProv.isLoading;
 
-            return _PostStoryFormScreen(_PostStoryFormScreenDelegate(
+            return _PostStoryForm(_PostStoryFormDelegate(
               pickedImage,
-              onImageTap: isLoading ? null : _onRepickImage(context),
+              onImageTap: isLoading ? null : _handleRepickImage(context),
               formKey: _formKey,
               descController: _descriptionController,
               descIsEnabled: !isLoading,
-              onPostButtonTap: isLoading ? null : _onPostButtonTap(context),
+              onPostButtonTap: isLoading ? null : _handlePostStory(context),
             ));
           });
         },
@@ -218,10 +243,10 @@ class PostStoryScreenState extends State<PostStoryScreen> {
   }
 }
 
-class _PostStoryFormScreen extends StatelessWidget {
-  const _PostStoryFormScreen(this.delegate);
+class _PostStoryForm extends StatelessWidget {
+  const _PostStoryForm(this.delegate);
 
-  final _PostStoryFormScreenDelegate delegate;
+  final _PostStoryFormDelegate delegate;
 
   @override
   Widget build(BuildContext context) {
@@ -229,17 +254,17 @@ class _PostStoryFormScreen extends StatelessWidget {
       key: delegate.formKey,
       child: LayoutBuilder(builder: (context, constraints) {
         if (constraints.maxWidth < 720) {
-          return _PostStoryFormScreenS(delegate);
+          return _PostStoryFormScreenSmall(delegate);
         }
 
-        return _PostStoryFormScreenL(delegate);
+        return _PostStoryFormScreenWide(delegate);
       }),
     );
   }
 }
 
-class _PostStoryFormScreenDelegate {
-  const _PostStoryFormScreenDelegate(
+class _PostStoryFormDelegate {
+  const _PostStoryFormDelegate(
     this.imageFile, {
     this.onImageTap,
     this.formKey,
@@ -258,10 +283,10 @@ class _PostStoryFormScreenDelegate {
   final VoidCallback? onPostButtonTap;
 }
 
-abstract base class _PostStoryFormScreenLayoutBase extends StatelessWidget {
-  const _PostStoryFormScreenLayoutBase(this.delegate);
+abstract base class _PostStoryFormBase extends StatelessWidget {
+  const _PostStoryFormBase(this.delegate);
 
-  final _PostStoryFormScreenDelegate delegate;
+  final _PostStoryFormDelegate delegate;
 
   Widget get _imageWidget {
     return InkWell(
@@ -318,8 +343,8 @@ abstract base class _PostStoryFormScreenLayoutBase extends StatelessWidget {
   }
 }
 
-final class _PostStoryFormScreenS extends _PostStoryFormScreenLayoutBase {
-  const _PostStoryFormScreenS(super.delegate);
+final class _PostStoryFormScreenSmall extends _PostStoryFormBase {
+  const _PostStoryFormScreenSmall(super.delegate);
 
   @override
   Widget build(BuildContext context) {
@@ -356,8 +381,8 @@ final class _PostStoryFormScreenS extends _PostStoryFormScreenLayoutBase {
   }
 }
 
-final class _PostStoryFormScreenL extends _PostStoryFormScreenLayoutBase {
-  const _PostStoryFormScreenL(super.delegate);
+final class _PostStoryFormScreenWide extends _PostStoryFormBase {
+  const _PostStoryFormScreenWide(super.delegate);
 
   @override
   Widget build(BuildContext context) {

@@ -4,9 +4,10 @@ import "package:flutter/services.dart";
 import "package:package_info_plus/package_info_plus.dart";
 import "package:provider/provider.dart";
 
-import "interfaces/libs/l10n/modules.dart";
-import "interfaces/ui.dart";
-import "interfaces/ux.dart";
+import "interfaces/libs/l10n.dart";
+import "interfaces/libs/providers.dart";
+import "interfaces/libs/themes.dart";
+import "interfaces/modules.dart";
 import "libs/constants.dart";
 import "libs/extensions.dart";
 import "service_locator.dart";

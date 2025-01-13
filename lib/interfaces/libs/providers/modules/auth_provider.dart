@@ -1,8 +1,9 @@
 import "package:dicoding_story_fl/domain/entities.dart";
-import "package:dicoding_story_fl/interfaces/ux.dart";
 import "package:dicoding_story_fl/libs/extensions.dart";
 import "package:dicoding_story_fl/service_locator.dart";
 import "package:dicoding_story_fl/use_cases.dart";
+
+import "../libs/types.dart";
 
 final class AuthProvider extends AsyncValueNotifier<User?> {
   AuthProvider([super.initialValue]) {

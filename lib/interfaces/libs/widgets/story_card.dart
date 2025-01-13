@@ -3,7 +3,7 @@ import "package:flutter/material.dart";
 
 import "package:dicoding_story_fl/domain/entities.dart";
 import "package:dicoding_story_fl/interfaces/libs/constants.dart";
-import "package:dicoding_story_fl/interfaces/ui.dart";
+import "package:dicoding_story_fl/interfaces/libs/widgets.dart";
 
 class StoryCard extends StatelessWidget {
   const StoryCard(this.story, {super.key, this.onTap});

@@ -3,10 +3,11 @@ import "package:flutter/foundation.dart";
 import "package:flutter/material.dart";
 import "package:image_picker/image_picker.dart";
 
-import "package:dicoding_story_fl/interfaces/ui.dart";
-import "package:dicoding_story_fl/interfaces/ux.dart";
+import "package:dicoding_story_fl/interfaces/libs/widgets.dart";
 import "package:dicoding_story_fl/libs/constants.dart";
 import "package:dicoding_story_fl/libs/extensions.dart";
+
+import "../libs/types.dart";
 
 /// {@template dicoding_story_fl.interfaces.ux.providers.PickedImageProvider}
 /// Picked image from gallery or camera and store it in [value].
