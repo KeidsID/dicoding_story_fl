@@ -1,0 +1,67 @@
+{
+  "@@locale": "id",
+  "alreadyHaveAnAccount": "Sudah punya akun",
+  "@alreadyHaveAnAccount": {},
+  "appTheme": "Tema Aplikasi",
+  "@appTheme": {},
+  "camera": "Kamera",
+  "@camera": {},
+  "flThemeMode": "{themeModeName, select, other{Pengaturan Perangkat} light{Terang} dark{Gelap}}",
+  "@flThemeMode": {
+    "description": "Flutter [ThemeMode] enum localization. Provide [ThemeMode.name] on [themeModeName] argument.",
+    "placeholders": {
+      "themeModeName": {
+        "type": "String"
+      }
+    }
+  },
+  "from": "Dari",
+  "@from": {},
+  "fromCamera": "Dari Camera",
+  "@fromCamera": {},
+  "fromGallery": "Dari Gallery",
+  "@fromGallery": {},
+  "gallery": "Galeri",
+  "@gallery": {},
+  "language": "Bahasa",
+  "@language": {},
+  "login": "Masuk",
+  "@login": {},
+  "logout": "Keluar",
+  "@logout": {},
+  "needAnAccount": "Butuh akun",
+  "@needAnAccount": {},
+  "other": "{count,plural, =1{Lainnya} other{Lainnya}}",
+  "@other": {
+    "description": "Set [count] to `1` for the singular form. \nOtherwise, return the plural form.\n",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "personStory": "Cerita \"{person}\"",
+  "@personStory": {
+    "placeholders": {
+      "person": {
+        "type": "String"
+      }
+    }
+  },
+  "pickAnImageForYourStory": "Pilih gambar untuk cerita Anda",
+  "@pickAnImageForYourStory": {},
+  "postStory": "Buat Cerita",
+  "@postStory": {},
+  "profile": "Profil",
+  "@profile": {},
+  "register": "Daftar",
+  "@register": {},
+  "registerForm": "Form Pendaftaran",
+  "@registerForm": {},
+  "replaceImage": "Ganti gambar",
+  "@replaceImage": {},
+  "tellUsYourStory": "Ceritakan cerita Anda",
+  "@tellUsYourStory": {},
+  "yourProfile": "Profil Anda",
+  "@yourProfile": {}
+}

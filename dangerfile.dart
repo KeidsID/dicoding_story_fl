@@ -14,12 +14,21 @@ abstract class GitlintConfig {
   ];
 
   static const List<String> scopes = [
-    "domain",
-    "infrastructures",
-    "use_cases",
-    "interfaces",
-    "libs",
     "root",
+    "lib",
+    "lib-domain",
+    "lib-infrastructures",
+    "lib-use_cases",
+    "lib-interfaces",
+    "lib-libs",
+    "assets",
+    "android",
+    "ios",
+    "web",
+    "windows",
+    "macos",
+    "linux",
+    "github",
   ];
 
   static const List<String> issuePrefixes = ["ds", "release"];
@@ -41,14 +50,14 @@ final config = PRConfig(
   titlePattern: RegExp(
     '^(${GitlintConfig.types.join("|")})'
     '(\\((${GitlintConfig.scopes.join(("|"))})(\\/(${GitlintConfig.scopes.join(("|"))}))*\\))?'
-    ': (.*\\S )?'
+    ": (.*\\S )?"
     '(${GitlintConfig.issuePrefixes.join("|")})-\\d{1,6}((\\.\\d+){1,2})?\$',
   ),
   branchPattern: RegExp(
-    '^\\d{1,6}-'
+    "^\\d{1,6}-"
     "${GitlintConfig.types.join("|")}-"
-    '[a-zA-Z\\d-]+\$'
-    '|(main)\$',
+    "[a-zA-Z\\d-]+\$"
+    "|(main)\$",
   ),
   requireAssignee: true,
 );

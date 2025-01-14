@@ -22,12 +22,20 @@ rules:
   scope-enum:
     - 2
     - always
-    - - domain
-      - infrastructures
-      - use_cases
-      - interfaces
-      - libs
-      - root
+    - - root
+      - lib
+      - lib-domain
+      - lib-infrastructures
+      - lib-use_cases
+      - lib-interfaces
+      - assets
+      - android
+      - ios
+      - web
+      - windows
+      - macos
+      - linux
+      - github
   references-empty:
     - 2
     - never

@@ -1,5 +1,13 @@
 include: package:flutter_lints/flutter.yaml
 
-analyzer: 
-  exclude: 
-    - '**/l10n/gen/*.dart'
+analyzer:
+  exclude:
+    - "**/l10n/gen/*.dart"
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"
+  errors:
+    invalid_annotation_target: ignore
+
+linter:
+  rules:
+    - prefer_double_quotes

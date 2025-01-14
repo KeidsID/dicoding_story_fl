@@ -1,9 +1,9 @@
-arb-dir: lib/interfaces/l10n
-template-arb-file: app_en.arb
+arb-dir: lib/interfaces/libs/l10n/modules
+template-arb-file: app_id.arb
 synthetic-package: false
 nullable-getters: false
-untranslated-messages-file: lib/interfaces/l10n/gen/untranslated.txt
+untranslated-messages-file: lib/interfaces/libs/l10n/gen/untranslated.json
 
-output-dir: lib/interfaces/l10n/gen
+output-dir: lib/interfaces/libs/l10n/gen
 output-class: AppL10n
 output-localization-file: app_l10n.dart
