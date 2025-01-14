@@ -75,6 +75,8 @@ final class StoriesProvider extends AsyncValueNotifier<List<Story>> {
         description: description,
         imageBytes: imageBytes,
         imageFilename: imageFilename,
+        lat: lat,
+        lon: lon,
       ));
 
       await refresh();

@@ -68,32 +68,44 @@ class _PostStoryRouteScreenState extends State<_PostStoryRouteScreen> {
 
           return AlertDialog(
             title: Text("${appL10n.replaceImage}?"),
-            content: Text("${appL10n.from}:"),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text("${appL10n.from}:"),
+                const SizedBox(height: 8.0),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    TextButton.icon(
+                      onPressed: () async {
+                        final img = await pickedImageProv.pickImage(context);
+
+                        if (img == null) return;
+
+                        if (context.mounted) Navigator.maybePop(context);
+                      },
+                      icon: const Icon(Icons.image_outlined),
+                      label: Text(appL10n.gallery),
+                    ),
+                    TextButton.icon(
+                      onPressed: () async {
+                        final img = await pickedImageProv.pickImage(
+                          context,
+                          source: ImageSource.camera,
+                        );
+
+                        if (img == null) return;
+
+                        if (context.mounted) Navigator.maybePop(context);
+                      },
+                      icon: const Icon(Icons.camera_alt_outlined),
+                      label: Text(appL10n.camera),
+                    ),
+                  ],
+                ),
+              ],
+            ),
             actions: [
-              TextButton(
-                onPressed: () async {
-                  final img = await pickedImageProv.pickImage(context);
-
-                  if (img == null) return;
-
-                  if (context.mounted) Navigator.maybePop(context);
-                },
-                child: Text(appL10n.gallery),
-              ),
-              TextButton(
-                onPressed: () async {
-                  final img = await pickedImageProv.pickImage(
-                    context,
-                    source: ImageSource.camera,
-                  );
-
-                  if (img == null) return;
-
-                  if (context.mounted) Navigator.maybePop(context);
-                },
-                child: Text(appL10n.camera),
-              ),
-              //
               TextButton(
                 onPressed: () => Navigator.maybePop(context),
                 child: Text(

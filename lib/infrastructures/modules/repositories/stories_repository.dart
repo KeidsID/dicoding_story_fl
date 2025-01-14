@@ -88,7 +88,7 @@ final class StoriesRepositoryImpl implements StoriesRepository {
       if (token == null) throw const AppException(message: "Unauthorized");
 
       final imageFile = MultipartFile.fromBytes(
-        "image",
+        "photo",
         imageBytes,
         filename: imageFilename,
       );
