@@ -21,6 +21,7 @@ jobs:
 
     outputs:
       release_created: ${{ steps.rp.outputs.release_created }}
+      created_tag: ${{ steps.rp.outputs.tag_name }}
 
     steps:
       - name: 📚 Code Checkout
@@ -32,6 +33,7 @@ jobs:
         with:
           manifest-file: release.manifest.json
           config-file: release.config.json
+          include-component-in-tag: false
 
   dependencies:
     name: 📦 Setup Dependencies For Deployment
@@ -40,8 +42,11 @@ jobs:
     runs-on: macos-latest
 
     outputs:
+      release-tag: ${{ needs.release.outputs.created_tag }}
       fl-cache-key: ${{ steps.fl-setup.outputs.CACHE-KEY }}
       fl-pub-cache-key: ${{ steps.fl-setup.outputs.PUB-CACHE-KEY }}
+      jdk-version: ${{ steps.jdk.outputs.version }}
+      jdk-distro: ${{ steps.jdk.outputs.distribution }}
 
     steps:
       - name: 📚 Code Checkout
@@ -58,6 +63,20 @@ jobs:
             fl-:channel:-v:version:-:os:-:arch:-cd-${{ hashFiles('./pubspec.lock') }}
           pub-cache-key: |
             fl-pub-:channel:-v:version:-:os:-:arch:-cd-${{ hashFiles('./pubspec.lock') }}
+
+      - name: ☕ Setup JDK v17
+        id: jdk
+        uses: actions/setup-java@v4
+        with:
+          java-version: 17
+          distribution: microsoft
+          cache: "gradle"
+          cache-dependency-path: |
+            android/*.gradle*
+            android/**/gradle-wrapper.properties
+
+      - name: 🔍 flutter doctor
+        run: flutter doctor -v
 
       - name: 📦 Get dependencies
         run: flutter pub get
@@ -88,12 +107,15 @@ jobs:
           dart run build_runner build -d
           flutter gen-l10n
 
-      - name: 🏗️ Release build number setup
+      - name: 🏗️ Generate build number
         id: build-number
         uses: onyxmueller/build-tag-number@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_TAG: ${{ needs.dependencies.outputs.release-tag }}
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          prefix: build-number--web--github-action
+          token: ${{ env.GITHUB_TOKEN }}
+          prefix: "web--github-pages--${{ env.RELEASE_TAG }}+"
 
       - name: 🏗️ Build web release
         env:
@@ -131,6 +153,17 @@ jobs:
           cache-key: ${{needs.dependencies.outputs.fl-cache-key}}
           pub-cache-key: ${{needs.dependencies.outputs.fl-pub-cache-key}}
 
+      - name: ☕ Setup JDK v${{ needs.dependencies.outputs.jdk-version }}
+        id: jdk
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ needs.dependencies.outputs.jdk-version }}
+          distribution: ${{ needs.dependencies.outputs.jdk-distro }}
+          cache: "gradle"
+          cache-dependency-path: |
+            android/*.gradle*
+            android/**/gradle-wrapper.properties
+
       - name: 🏗️ Build code utils
         run: |
           dart run build_runner build -d
@@ -139,12 +172,15 @@ jobs:
           echo "${{ secrets.ANDROID_RELEASE_KEY_BASE64 }}" | base64 --decode > secrets/android-release-key.jks
           echo "${{ secrets.ANDROID_KEY_PROPS_BASE64 }}" | base64 --decode > android/key.properties
 
-      - name: 🏗️ Release build number setup
+      - name: 🏗️ Generate build number
         id: build-number
         uses: onyxmueller/build-tag-number@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_TAG: ${{ needs.dependencies.outputs.release-tag }}
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          prefix: build-number--apk--github-release
+          token: ${{ env.GITHUB_TOKEN }}
+          prefix: apk--github-release--${{ env.RELEASE_TAG }}+"
 
       - name: 🏗️ Build APK release
         env:
