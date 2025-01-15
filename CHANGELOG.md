@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.2](https://github.com/KeidsID/dicoding_story_fl/compare/dicoding_story_fl-v1.3.1...dicoding_story_fl-v1.3.2) (2025-01-15)
+
+
+### Bug Fixes
+
+* **github:** add missing JDK on CD workflow ds-15 ([#16](https://github.com/KeidsID/dicoding_story_fl/issues/16)) ([604271e](https://github.com/KeidsID/dicoding_story_fl/commit/604271e24ff6e8d6083ce2d0232747ff34537b53))
+
 ## [1.3.1](https://github.com/KeidsID/dicoding_story_fl/compare/dicoding_story_fl-v1.3.0...dicoding_story_fl-v1.3.1) (2025-01-15)
 
 
