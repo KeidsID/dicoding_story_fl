@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.1](https://github.com/KeidsID/dicoding_story_fl/compare/dicoding_story_fl-v1.3.0...dicoding_story_fl-v1.3.1) (2025-01-15)
+
+
+### Bug Fixes
+
+* missing build number ds-12 ([#13](https://github.com/KeidsID/dicoding_story_fl/issues/13)) ([2522ef4](https://github.com/KeidsID/dicoding_story_fl/commit/2522ef4f9e7dcc515f81a912628b6d83cf9ff824))
+
 ## [1.3.0](https://github.com/KeidsID/dicoding_story_fl/compare/dicoding_story_fl-v1.2.0...dicoding_story_fl-v1.3.0) (2025-01-07)
 
 
