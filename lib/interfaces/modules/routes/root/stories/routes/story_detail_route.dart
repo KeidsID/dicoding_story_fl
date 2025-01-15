@@ -29,6 +29,8 @@ class _StoryDetailRouteScreen extends StatelessWidget {
 
   final String storyId;
 
+  double get _wideLayoutMinWidth => 800;
+
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider.value(
@@ -57,48 +59,51 @@ class _StoryDetailRouteScreen extends StatelessWidget {
         if (story == null) return loadingWidget;
 
         return LayoutBuilder(builder: (context, constraints) {
-          if (constraints.maxWidth < 720) {
-            return _StoryDetailRouteScreenSmall(story);
+          if (constraints.minWidth >= _wideLayoutMinWidth) {
+            return _StoryDetailRouteScreenWide(story);
           }
 
-          return _StoryDetailRouteScreenWide(story);
+          return _StoryDetailRouteScreenSmall(story);
         });
       },
     );
   }
 }
 
-/// Expands image on dialog to show image with [BoxFit.contain].
-void _showImageDialog(BuildContext context, ImageProvider<Object> image) {
-  showDialog(
-      context: context,
-      builder: (context) {
-        return Dialog(
-          clipBehavior: Clip.hardEdge,
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              Image(image: image, fit: BoxFit.contain),
-              //
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Align(
-                  alignment: Alignment.topRight,
-                  child: IconButton.filledTonal(
-                    icon: const Icon(Icons.close),
-                    tooltip:
-                        MaterialLocalizations.of(context).closeButtonTooltip,
-                    onPressed: () => Navigator.maybePop(context),
+mixin _StoryDetailRouteScreenHelperMixin {
+  /// Expands image on dialog to show image with [BoxFit.contain].
+  void _showImageDialog(BuildContext context, ImageProvider<Object> image) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return Dialog(
+            clipBehavior: Clip.hardEdge,
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                Image(image: image, fit: BoxFit.contain),
+                //
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Align(
+                    alignment: Alignment.topRight,
+                    child: IconButton.filledTonal(
+                      icon: const Icon(Icons.close),
+                      tooltip:
+                          MaterialLocalizations.of(context).closeButtonTooltip,
+                      onPressed: () => Navigator.maybePop(context),
+                    ),
                   ),
                 ),
-              ),
-            ],
-          ),
-        );
-      });
+              ],
+            ),
+          );
+        });
+  }
 }
 
-class _StoryDetailRouteScreenSmall extends StatelessWidget {
+class _StoryDetailRouteScreenSmall extends StatelessWidget
+    with _StoryDetailRouteScreenHelperMixin {
   const _StoryDetailRouteScreenSmall(this.story);
 
   final Story story;
@@ -160,7 +165,8 @@ class _StoryDetailRouteScreenSmall extends StatelessWidget {
   }
 }
 
-class _StoryDetailRouteScreenWide extends StatelessWidget {
+class _StoryDetailRouteScreenWide extends StatelessWidget
+    with _StoryDetailRouteScreenHelperMixin {
   const _StoryDetailRouteScreenWide(this.story);
 
   final Story story;
@@ -178,7 +184,7 @@ class _StoryDetailRouteScreenWide extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
-              flex: 8,
+              flex: 10,
               child: Stack(
                 fit: StackFit.expand,
                 children: [
@@ -210,7 +216,7 @@ class _StoryDetailRouteScreenWide extends StatelessWidget {
             ),
             const VerticalDivider(width: 2.0, thickness: 2.0),
             Flexible(
-              flex: 10,
+              flex: 8,
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
