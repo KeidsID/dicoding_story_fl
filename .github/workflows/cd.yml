@@ -114,12 +114,9 @@ jobs:
       - name: 🏗️ Generate build number
         id: build-number
         uses: onyxmueller/build-tag-number@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          RELEASE_TAG: ${{ needs.dependencies.outputs.release-tag }}
         with:
-          token: ${{ env.GITHUB_TOKEN }}
-          prefix: "web--github-pages--${{ env.RELEASE_TAG }}+"
+          token: ${{ secrets.GITHUB_TOKEN }}
+          prefix: "web--github-pages--"
 
       - name: 🏗️ Build web release
         env:
@@ -131,10 +128,15 @@ jobs:
 
       - name: 🚀 Deploy to Github Pages
         uses: peaceiris/actions-gh-pages@v3
+        env:
+          RELEASE_TAG: ${{ needs.dependencies.outputs.release-tag }}
+          BUILD_NUMBER: ${{ steps.build-number.outputs.build_number }}
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./build/web
           publish_branch: web-release
+          commit_message:
+            "${{ env.RELEASE_TAG }}+${{ env.BUILD_NUMBER }} web release"
 
   apk-github-release:
     name: 🚀 Apk Release on Github Release
@@ -168,6 +170,9 @@ jobs:
             android/*.gradle*
             android/**/gradle-wrapper.properties
 
+      - name: 📝 Accept Android licenses
+        run: "yes | flutter doctor --android-licenses"
+
       - name: 🏗️ Build code utils
         run: |
           dart run build_runner build -d
@@ -179,12 +184,9 @@ jobs:
       - name: 🏗️ Generate build number
         id: build-number
         uses: onyxmueller/build-tag-number@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          RELEASE_TAG: ${{ needs.dependencies.outputs.release-tag }}
         with:
-          token: ${{ env.GITHUB_TOKEN }}
-          prefix: apk--github-release--${{ env.RELEASE_TAG }}+"
+          token: ${{ secrets.GITHUB_TOKEN }}
+          prefix: "apk--github-release--"
 
       - name: 🏗️ Build APK release
         env:
@@ -192,8 +194,15 @@ jobs:
         run: |
           flutter build apk --release --build-number ${{ env.BUILD_NUMBER }}
 
-      - name: 📝 Release build
-        uses: ncipollo/release-action@v1
+      - name: 🚀 Publish to Github Release
+        uses: softprops/action-gh-release@v2
+        env:
+          RELEASE_TAG: ${{ needs.dependencies.outputs.release-tag }}
+          BUILD_NUMBER: ${{ steps.build-number.outputs.build_number }}
         with:
-          bodyFile: "release-note.md"
-          artifacts: "build/app/outputs/flutter-apk/app-release.apk,CHANGELOG.md"
+          name: "${{ env.RELEASE_TAG }}+${{ env.BUILD_NUMBER }} APK Release"
+          tag_name: "${{ env.RELEASE_TAG }}+${{ env.BUILD_NUMBER }}--apk-build"
+          generate_release_notes: true
+          files: |
+            "build/app/outputs/flutter-apk/app-release.apk"
+            "CHANGELOG.md"
