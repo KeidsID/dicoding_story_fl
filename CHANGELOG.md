@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.4](https://github.com/KeidsID/dicoding_story_fl/compare/dicoding_story_fl-v1.3.3...dicoding_story_fl-v1.3.4) (2025-01-15)
+
+
+### Bug Fixes
+
+* **github:** fix gh apk release and build number generator ds-15 ([#20](https://github.com/KeidsID/dicoding_story_fl/issues/20)) ([6236de2](https://github.com/KeidsID/dicoding_story_fl/commit/6236de21f735c8f10036d1e663d6c796037945db))
+
 ## [1.3.3](https://github.com/KeidsID/dicoding_story_fl/compare/dicoding_story_fl-v1.3.2...dicoding_story_fl-v1.3.3) (2025-01-15)
 
 
