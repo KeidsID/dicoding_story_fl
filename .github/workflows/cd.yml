@@ -41,12 +41,16 @@ jobs:
     if: ${{ needs.release.outputs.release_created }}
     runs-on: macos-latest
 
+    env:
+      JDK_VERSION: 17
+      JDK_DISTRIBUTION: microsoft
+
     outputs:
       release-tag: ${{ needs.release.outputs.created_tag }}
       fl-cache-key: ${{ steps.fl-setup.outputs.CACHE-KEY }}
       fl-pub-cache-key: ${{ steps.fl-setup.outputs.PUB-CACHE-KEY }}
       jdk-version: ${{ steps.jdk.outputs.version }}
-      jdk-distro: ${{ steps.jdk.outputs.distribution }}
+      jdk-distro: ${{ env.JDK_DISTRIBUTION }}
 
     steps:
       - name: 📚 Code Checkout
@@ -64,12 +68,12 @@ jobs:
           pub-cache-key: |
             fl-pub-:channel:-v:version:-:os:-:arch:-cd-${{ hashFiles('./pubspec.lock') }}
 
-      - name: ☕ Setup JDK v17
+      - name: ☕ Setup JDK v${{ env.JDK_VERSION }}
         id: jdk
         uses: actions/setup-java@v4
         with:
-          java-version: 17
-          distribution: microsoft
+          java-version: ${{ env.JDK_VERSION }}
+          distribution: ${{ env.JDK_DISTRIBUTION }}
           cache: "gradle"
           cache-dependency-path: |
             android/*.gradle*
