@@ -11,37 +11,7 @@ import "package:dicoding_story_fl/libs/extensions.dart";
 
 typedef CustomCameraResultCallback = void Function(XFile result);
 
-/// {@template dicoding_story_fl.interfaces.ui.CustomCameraDelegate}
-/// Camera configuration.
-/// {@endtemplate}
-class CustomCameraDelegate extends Equatable {
-  /// {@macro dicoding_story_fl.interfaces.ui.CustomCameraDelegate}
-  const CustomCameraDelegate({
-    this.resolutionPreset = ResolutionPreset.medium,
-    this.enableAudio = true,
-    this.imageFormatGroup,
-  });
-
-  /// Affect the quality of video recording and image capture:
-  ///
-  /// A preset is treated as a target resolution, and exact values are not
-  /// guaranteed. Platform implementations may fall back to a higher or lower
-  /// resolution if a specific preset is not available.
-  final ResolutionPreset resolutionPreset;
-
-  /// Whether to include audio when recording a video.
-  final bool enableAudio;
-
-  /// The [ImageFormatGroup] describes the output of the raw image format.
-  ///
-  /// When null the imageFormat will fallback to the platforms default.
-  final ImageFormatGroup? imageFormatGroup;
-
-  @override
-  List<Object?> get props => [resolutionPreset, enableAudio, imageFormatGroup];
-}
-
-/// {@template dicoding_story_fl.interfaces.ui.CustomCamera}
+/// {@template ds.interfaces.libs.widgets.CustomCamera}
 /// Custom camera widget.
 ///
 /// Note that this widget will expand to fill available space. So make sure
@@ -50,7 +20,7 @@ class CustomCameraDelegate extends Equatable {
 /// Video record not supported yet.
 /// {@endtemplate}
 class CustomCamera extends StatefulWidget {
-  /// {@macro dicoding_story_fl.interfaces.ui.CustomCamera}
+  /// {@macro ds.interfaces.libs.widgets.CustomCamera}
   CustomCamera(
     this.cameras, {
     super.key,
@@ -92,23 +62,23 @@ class CustomCameraState extends State<CustomCamera>
   // STATES AND METHODS
   // ---------------------------------------------------------------------------
 
-  CameraController? _camController;
+  CameraController? _controller;
 
   /// Controller for camera widget.
   ///
-  /// Initialize it with [setCamController] method.
-  CameraController? get camController => _camController;
+  /// Initialize it with [setController] method.
+  CameraController? get controller => _controller;
 
-  /// [CameraDescription] from [camController].
-  CameraDescription? get selectedCam => camController?.description;
+  /// [CameraDescription] from [controller].
+  CameraDescription? get selectedCamera => controller?.description;
 
-  /// Indicates [camController] is initialized and ready to use.
-  bool get isCamInitialized => camController?.value.isInitialized ?? false;
+  /// Indicates [controller] is initialized and ready to use.
+  bool get isCameraInitialized => controller?.value.isInitialized ?? false;
 
-  /// Indicates [camController] is switching camera. Don't misinterpret this as
+  /// Indicates [controller] is switching camera. Don't misinterpret this as
   /// a condition that the camera has been switched.
   ///
-  /// Triggered by [setCamController] method.
+  /// Triggered by [setController] method.
   bool isSwitchingCam = false;
 
   Object? _error;
@@ -120,11 +90,11 @@ class CustomCameraState extends State<CustomCamera>
   /// [error] trace.
   StackTrace? get trace => _trace;
 
-  /// Set [camController]. Will [setState] if [mounted].
+  /// Set [controller]. Will [setState] if [mounted].
   ///
   /// If [camera] already used, then won't do anything.
-  Future<void> setCamController(CameraDescription camera) async {
-    if (selectedCam == camera && error == null) return;
+  Future<void> setController(CameraDescription camera) async {
+    if (selectedCamera == camera && error == null) return;
 
     final newController = CameraController(
       camera,
@@ -133,23 +103,23 @@ class CustomCameraState extends State<CustomCamera>
       imageFormatGroup: delegate.imageFormatGroup,
     );
 
-    void initProcess() {
+    void preProcess() {
       isSwitchingCam = true;
       _error = null;
       _trace = null;
     }
 
-    (mounted) ? setState(initProcess) : initProcess();
+    (mounted) ? setState(preProcess) : preProcess();
 
     try {
       // for debugging camera switching
       if (kDebugMode) await Future.delayed(const Duration(seconds: 1));
 
       await newController.initialize();
-      await camController?.dispose();
+      await controller?.dispose();
 
       void postProcess() {
-        _camController = newController;
+        _controller = newController;
         isSwitchingCam = false;
       }
 
@@ -158,7 +128,7 @@ class CustomCameraState extends State<CustomCamera>
       // dispose [newController] on error.
       newController.dispose();
 
-      late final String? msg;
+      String? msg;
 
       if (err is CameraException) {
         msg = err.description ?? "Failed to initialize camera";
@@ -167,36 +137,36 @@ class CustomCameraState extends State<CustomCamera>
       final exception = err.toAppException(message: msg, trace: trace);
 
       kLogger.e(
-        "CustomCameraWidgetState.setCamController",
+        "CustomCameraState.setController",
         error: exception,
         stackTrace: exception.trace,
       );
 
-      void postProcess() {
+      void errorPostProcess() {
         isSwitchingCam = false;
         _error = exception;
         _trace = exception.trace;
       }
 
-      (mounted) ? setState(postProcess) : postProcess();
+      (mounted) ? setState(errorPostProcess) : errorPostProcess();
     }
   }
 
   /// File result from camera capture/recording.
   ///
   /// Video are not supported yet.
-  XFile? camResult;
+  XFile? cameraResult;
 
   /// Take picture from camera.
   ///
-  /// Success take will stored in [camResult].
+  /// Success take will stored in [cameraResult].
   Future<XFile?> takePicture() async {
     try {
-      final image = await camController?.takePicture();
+      final image = await controller?.takePicture();
 
       if (image == null) return null;
 
-      setState(() => camResult = image);
+      setState(() => cameraResult = image);
       return image;
     } on CameraException catch (err, trace) {
       final exception = err.toAppException(
@@ -205,7 +175,7 @@ class CustomCameraState extends State<CustomCamera>
       );
 
       kLogger.e(
-        "CustomCameraWidgetState.takePicture",
+        "CustomCameraState.takePicture",
         error: exception,
         stackTrace: exception.trace,
       );
@@ -218,14 +188,14 @@ class CustomCameraState extends State<CustomCamera>
   /// (Commonly on mobile to switch between front and back camera).
   ///
   /// For more switching methods, try use [DropdownButton] with
-  /// [setCamController].
-  Future<void> switchCam() async {
+  /// [setController].
+  Future<void> switchCamera() async {
     if (cameras.length != 2) return;
 
-    if (camController?.description == cameras.first) {
-      setCamController(cameras[1]);
+    if (controller?.description == cameras.first) {
+      setController(cameras[1]);
     } else {
-      setCamController(cameras.first);
+      setController(cameras.first);
     }
   }
 
@@ -235,14 +205,14 @@ class CustomCameraState extends State<CustomCamera>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (!isCamInitialized) return;
+    if (!isCameraInitialized) return;
 
     switch (state) {
       case AppLifecycleState.inactive:
-        camController?.dispose();
+        controller?.dispose();
         break;
       case AppLifecycleState.resumed:
-        if (selectedCam != null) setCamController(selectedCam!);
+        if (selectedCamera != null) setController(selectedCamera!);
         break;
       default:
     }
@@ -254,13 +224,13 @@ class CustomCameraState extends State<CustomCamera>
 
     WidgetsBinding.instance.addObserver(this);
 
-    if (cameras.isNotEmpty) setCamController(cameras.first);
+    if (cameras.isNotEmpty) setController(cameras.first);
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    camController?.dispose();
+    controller?.dispose();
 
     super.dispose();
   }
@@ -270,15 +240,15 @@ class CustomCameraState extends State<CustomCamera>
     final theme = context.theme;
     final textTheme = theme.textTheme;
 
-    final isSwitchCamDisable = cameras.length < 2 && isCamInitialized;
+    final isSwitchCamDisable = cameras.length < 2 && isCameraInitialized;
 
-    return camResult != null
+    return cameraResult != null
         ? Column(
             children: [
               Expanded(
                 child: SizedBox(
                   width: double.infinity,
-                  child: ImageFromXFile(camResult!, fit: BoxFit.cover),
+                  child: ImageFromXFile(cameraResult!, fit: BoxFit.cover),
                 ),
               ),
               Container(
@@ -288,11 +258,11 @@ class CustomCameraState extends State<CustomCamera>
                 child: Row(
                   children: <Widget>[
                     TextButton(
-                      onPressed: () => setState(() => camResult = null),
+                      onPressed: () => setState(() => cameraResult = null),
                       child: const Text("Retry"),
                     ),
                     TextButton(
-                      onPressed: () => onAcceptResult?.call(camResult!),
+                      onPressed: () => onAcceptResult?.call(cameraResult!),
                       child: const Text("Ok"),
                     ),
                   ].map((e) => Expanded(child: e)).toList(),
@@ -306,8 +276,8 @@ class CustomCameraState extends State<CustomCamera>
                 child: Container(
                   height: double.infinity,
                   color: theme.scaffoldBackgroundColor,
-                  child: isCamInitialized && !isSwitchingCam
-                      ? camController?.buildPreview()
+                  child: isCameraInitialized && !isSwitchingCam
+                      ? controller?.buildPreview()
                       : error != null
                           ? SizedErrorWidget.expand(error: error, trace: trace)
                           : Center(
@@ -331,7 +301,7 @@ class CustomCameraState extends State<CustomCamera>
                     MenuAnchor(
                       menuChildren: cameras.map((e) {
                         return MenuItemButton(
-                          onPressed: () => setCamController(e),
+                          onPressed: () => setController(e),
                           child: Text(
                             '${e.lensDirection.name.capitalize} Camera - ${e.name.split('<').first}',
                           ),
@@ -363,4 +333,34 @@ class CustomCameraState extends State<CustomCamera>
             ],
           );
   }
+}
+
+/// {@template ds.interfaces.libs.widgets.CustomCameraDelegate}
+/// Camera configuration.
+/// {@endtemplate}
+class CustomCameraDelegate extends Equatable {
+  /// {@macro ds.interfaces.libs.widgets.CustomCameraDelegate}
+  const CustomCameraDelegate({
+    this.resolutionPreset = ResolutionPreset.medium,
+    this.enableAudio = true,
+    this.imageFormatGroup,
+  });
+
+  /// Affect the quality of video recording and image capture:
+  ///
+  /// A preset is treated as a target resolution, and exact values are not
+  /// guaranteed. Platform implementations may fall back to a higher or lower
+  /// resolution if a specific preset is not available.
+  final ResolutionPreset resolutionPreset;
+
+  /// Whether to include audio when recording a video.
+  final bool enableAudio;
+
+  /// The [ImageFormatGroup] describes the output of the raw image format.
+  ///
+  /// When null the imageFormat will fallback to the platforms default.
+  final ImageFormatGroup? imageFormatGroup;
+
+  @override
+  List<Object?> get props => [resolutionPreset, enableAudio, imageFormatGroup];
 }

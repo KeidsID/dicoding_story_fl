@@ -67,70 +67,8 @@ class _ProfileRouteScreen extends StatelessWidget {
 
           // others section
           Text(appL10n.other(2), style: sectionHeaderTextStyle),
-          ListTile(
-            leading: const Icon(Icons.color_lens_outlined),
-            title: Text(appL10n.appTheme),
-            trailing: Builder(builder: (context) {
-              final themeModeProvider = context.watch<ThemeModeProvider>();
-
-              final icons = ThemeMode.values.map((e) {
-                return switch (e) {
-                  ThemeMode.system => Icons.settings_outlined,
-                  ThemeMode.light => Icons.light_mode_outlined,
-                  ThemeMode.dark => Icons.dark_mode_outlined,
-                };
-              }).toList();
-
-              return DropdownButton<ThemeMode>(
-                value: themeModeProvider.value,
-                items: ThemeMode.values.map((e) {
-                  return DropdownMenuItem<ThemeMode>(
-                    value: e,
-                    child: Row(
-                      children: [
-                        Icon(icons[e.index]),
-                        const SizedBox(width: 8.0),
-                        Text(appL10n.flThemeMode(e.name)),
-                      ],
-                    ),
-                  );
-                }).toList(),
-                onChanged: (value) => themeModeProvider.value = value!,
-              );
-            }),
-          ),
-          ListTile(
-            leading: const Icon(Icons.language_outlined),
-            title: Text(appL10n.language),
-            trailing: Builder(builder: (context) {
-              final localeProvider = context.watch<LocaleProvider>();
-
-              String localeString(String localeString) {
-                return switch (localeString) {
-                  "en" => "English",
-                  "id" => "Bahasa Indonesia",
-                  _ => appL10n.flThemeMode(ThemeMode.system.name),
-                };
-              }
-
-              return DropdownButton<Locale?>(
-                value: localeProvider.value,
-                items: [
-                  DropdownMenuItem(
-                    value: null,
-                    child: Text(localeString("system")),
-                  ),
-                  ...AppL10n.supportedLocales.map((e) {
-                    return DropdownMenuItem(
-                      value: e,
-                      child: Text(localeString("$e")),
-                    );
-                  })
-                ],
-                onChanged: (value) => localeProvider.value = value,
-              );
-            }),
-          ),
+          const ThemeListTile(),
+          const LocaleListTile(),
           const AppAboutListTile(),
         ],
       ),

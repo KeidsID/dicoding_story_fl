@@ -11,7 +11,7 @@ import "package:dicoding_story_fl/libs/constants.dart";
 class AppAboutListTile extends StatelessWidget {
   const AppAboutListTile({super.key});
 
-  VoidCallback _onTapLink(BuildContext context, {required Uri url}) {
+  VoidCallback _handleUrlVisit(BuildContext context, {required Uri url}) {
     return () async {
       if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
         if (kIsWeb) return; // skip invalid error on web
@@ -21,8 +21,8 @@ class AppAboutListTile extends StatelessWidget {
             context: context,
             builder: (context) {
               return AlertDialog(
-                title: const Text("Hyperlink Fail"),
-                content: Text("Cannot launch $url"),
+                title: const Text("Url Visit Error"),
+                content: Text("Cannot visit $url"),
                 actions: [
                   TextButton(
                     onPressed: () => Navigator.maybePop(context),
@@ -48,7 +48,8 @@ class AppAboutListTile extends StatelessWidget {
         image: AssetImages.appIconL,
         width: 80.0,
       ),
-      applicationVersion: "v${package.version}+${package.buildNumber}",
+      applicationVersion: "v${package.version}"
+          "${package.buildNumber.isNotEmpty ? "+${package.buildNumber}" : ""}",
       applicationLegalese: "MIT License\n\n"
           "Copyright (c) 2024 Kemal Idris [KeidsID]",
       aboutBoxChildren: [
@@ -65,7 +66,7 @@ class AppAboutListTile extends StatelessWidget {
                 text: "App Icon",
                 style: linkTextStyle,
                 recognizer: TapGestureRecognizer()
-                  ..onTap = _onTapLink(
+                  ..onTap = _handleUrlVisit(
                     context,
                     url: Uri.parse(
                       "https://www.flaticon.com/free-icon/content_15911316",
@@ -77,7 +78,7 @@ class AppAboutListTile extends StatelessWidget {
                 text: "Adrly",
                 style: linkTextStyle,
                 recognizer: TapGestureRecognizer()
-                  ..onTap = _onTapLink(
+                  ..onTap = _handleUrlVisit(
                     context,
                     url: Uri.parse(
                       "https://www.flaticon.com/authors/adrly",
@@ -89,7 +90,7 @@ class AppAboutListTile extends StatelessWidget {
                 text: "flaticon.com",
                 style: linkTextStyle,
                 recognizer: TapGestureRecognizer()
-                  ..onTap = _onTapLink(
+                  ..onTap = _handleUrlVisit(
                     context,
                     url: Uri.parse("https://www.flaticon.com/"),
                   ),
@@ -103,7 +104,7 @@ class AppAboutListTile extends StatelessWidget {
         Wrap(
           children: [
             TextButton(
-              onPressed: _onTapLink(
+              onPressed: _handleUrlVisit(
                 context,
                 url: Uri.parse("https://github.com/KeidsID/dicoding_story_fl"),
               ),
