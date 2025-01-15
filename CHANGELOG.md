@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.3](https://github.com/KeidsID/dicoding_story_fl/compare/dicoding_story_fl-v1.3.2...dicoding_story_fl-v1.3.3) (2025-01-15)
+
+
+### Bug Fixes
+
+* **github:** fix invalid JDK distro output on CD workflow ds-15 ([#18](https://github.com/KeidsID/dicoding_story_fl/issues/18)) ([56e8475](https://github.com/KeidsID/dicoding_story_fl/commit/56e84758676da3a8b41c2b531a47ebd0e2b364da))
+
 ## [1.3.2](https://github.com/KeidsID/dicoding_story_fl/compare/dicoding_story_fl-v1.3.1...dicoding_story_fl-v1.3.2) (2025-01-15)
 
 
