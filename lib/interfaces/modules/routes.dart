@@ -124,12 +124,15 @@ class _RootShellRouteScreenNavDelegate {
   final String label;
   final Icon? activeIcon;
   final String routePath;
+
+  /// Only be rendered when the current route matches the [routePath].
   final Widget? floatingActionButton;
 }
 
 mixin _RootShellRouteScreenNavHelperMixin on Widget {
   double get minWidthForNavigationRail => 800.0;
 
+  /// Match [GoRouter] current route starts with the [navs] route path.
   int _getCurrentNavigationIndex(
     BuildContext context,
     List<_RootShellRouteScreenNavDelegate> navs,
@@ -137,6 +140,19 @@ mixin _RootShellRouteScreenNavHelperMixin on Widget {
     final currentRoute = GoRouterState.of(context).uri.path;
 
     return navs.indexWhere((e) => currentRoute.startsWith(e.routePath));
+  }
+
+  /// Instead of matching the route starts like [_getCurrentNavigationIndex]
+  /// does, this method match the exact route path.
+  ///
+  /// If there is no matched route, it returns -1.
+  int _getActualRouteMatchIndex(
+    BuildContext context,
+    List<_RootShellRouteScreenNavDelegate> navs,
+  ) {
+    final currentRoute = GoRouterState.of(context).uri.path;
+
+    return navs.indexWhere((e) => currentRoute == e.routePath);
   }
 }
 
@@ -239,6 +255,7 @@ class _RootShellRouteScreenBottomNavBar extends StatelessWidget
         return BottomNavigationBarItem(
           icon: e.icon,
           label: e.label,
+          activeIcon: e.activeIcon,
         );
       }).toList(),
     );
@@ -263,10 +280,12 @@ class _RootShellRouteScreenFAB extends StatelessWidget
 
   @override
   Widget build(BuildContext context) {
-    final currentNavIndex = _getCurrentNavigationIndex(
+    final currentNavIndex = _getActualRouteMatchIndex(
       context,
       navigationDelegates,
     );
+
+    if (currentNavIndex == -1) return const SizedBox.shrink();
 
     return navigationDelegates[currentNavIndex].floatingActionButton ??
         const SizedBox.shrink();
