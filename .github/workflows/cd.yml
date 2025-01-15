@@ -62,7 +62,8 @@ jobs:
       - name: 📦 Get dependencies
         run: flutter pub get
 
-  web-deploy:
+  web-github-pages:
+    name: 🚀 Web Deploy on Github Pages
     needs: dependencies
     runs-on: macos-latest
 
@@ -87,9 +88,20 @@ jobs:
           dart run build_runner build -d
           flutter gen-l10n
 
+      - name: 🏗️ Release build number setup
+        id: build-number
+        uses: onyxmueller/build-tag-number@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          prefix: build-number--web--github-action
+
       - name: 🏗️ Build web release
+        env:
+          BASE_HREF: "/dicoding_story_fl/"
+          BUILD_NUMBER: ${{ steps.build-number.outputs.build_number }}
+          WEB_RENDERER: canvaskit
         run: |
-          flutter build web --release --base-href "/dicoding_story_fl/" --web-renderer canvaskit
+          flutter build web --release --base-href ${{ env.BASE_HREF }} --build-number ${{ env.BUILD_NUMBER }}  --build-number ${{ env.BUILD_NUMBER }} --web-renderer ${{ env.WEB_RENDERER }}
 
       - name: 🚀 Deploy to Github Pages
         uses: peaceiris/actions-gh-pages@v3
@@ -98,7 +110,8 @@ jobs:
           publish_dir: ./build/web
           publish_branch: web-release
 
-  gh-apk-release:
+  apk-github-release:
+    name: 🚀 Apk Release on Github Release
     needs: dependencies
     runs-on: macos-latest
 
@@ -126,8 +139,18 @@ jobs:
           echo "${{ secrets.ANDROID_RELEASE_KEY_BASE64 }}" | base64 --decode > secrets/android-release-key.jks
           echo "${{ secrets.ANDROID_KEY_PROPS_BASE64 }}" | base64 --decode > android/key.properties
 
+      - name: 🏗️ Release build number setup
+        id: build-number
+        uses: onyxmueller/build-tag-number@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          prefix: build-number--apk--github-release
+
       - name: 🏗️ Build APK release
-        run: flutter build apk --release
+        env:
+          BUILD_NUMBER: ${{ steps.build-number.outputs.build_number }}
+        run: |
+          flutter build apk --release --build-number ${{ env.BUILD_NUMBER }}
 
       - name: 📝 Release build
         uses: ncipollo/release-action@v1

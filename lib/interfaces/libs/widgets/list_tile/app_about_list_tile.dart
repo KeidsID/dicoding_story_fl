@@ -48,8 +48,8 @@ class AppAboutListTile extends StatelessWidget {
         image: AssetImages.appIconL,
         width: 80.0,
       ),
-      applicationVersion:
-          "v${package.version}${package.buildNumber.isNotEmpty ? "+${package.buildNumber}" : ""}",
+      applicationVersion: "v${package.version}"
+          "${package.buildNumber.isNotEmpty ? "+${package.buildNumber}" : ""}",
       applicationLegalese: "MIT License\n\n"
           "Copyright (c) 2024 Kemal Idris [KeidsID]",
       aboutBoxChildren: [
