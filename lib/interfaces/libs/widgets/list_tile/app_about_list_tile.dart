@@ -3,10 +3,10 @@ import "package:flutter/foundation.dart";
 import "package:flutter/gestures.dart";
 import "package:flutter/material.dart";
 import "package:package_info_plus/package_info_plus.dart";
-import "package:provider/provider.dart";
 import "package:url_launcher/url_launcher.dart";
 
 import "package:dicoding_story_fl/libs/constants.dart";
+import "package:dicoding_story_fl/service_locator.dart";
 
 class AppAboutListTile extends StatelessWidget {
   const AppAboutListTile({super.key});
@@ -39,7 +39,7 @@ class AppAboutListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final package = context.watch<PackageInfo>();
+    final packageInfo = ServiceLocator.find<PackageInfo>();
 
     return AboutListTile(
       icon: const Icon(Icons.info_outline),
@@ -48,8 +48,8 @@ class AppAboutListTile extends StatelessWidget {
         image: AssetImages.appIconL,
         width: 80.0,
       ),
-      applicationVersion: "v${package.version}"
-          "${package.buildNumber.isNotEmpty ? "+${package.buildNumber}" : ""}",
+      applicationVersion: "v${packageInfo.version}"
+          "${packageInfo.buildNumber.isNotEmpty ? "+${packageInfo.buildNumber}" : ""}",
       applicationLegalese: "MIT License\n\n"
           "Copyright (c) 2024 Kemal Idris [KeidsID]",
       aboutBoxChildren: [
