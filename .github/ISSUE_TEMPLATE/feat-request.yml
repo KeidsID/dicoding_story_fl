@@ -1,17 +1,18 @@
 name: 💡 Feature Request
-description: Suggest a feature request
+description: Request a new feature
 title: "feat: "
 labels: ["feat"]
+assignees: ["KeidsID"]
 body:
-  - type: textarea
-    id: what-feature
+  - id: description
+    type: textarea
     attributes:
       label: What feature?
-      placeholder: Add descriptions
+      placeholder: What feature do you want to add?
     validations:
       required: true
-  - type: textarea
-    id: screenshots
+  - id: additional-media
+    type: textarea
     attributes:
-      label: Add screenshots
-      placeholder: Add screenshots, mockups, etc.
+      label: Additional Images/Videos
+      placeholder: Provide screenshots or videos that may help showcase the feature
