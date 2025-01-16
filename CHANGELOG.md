@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.5](https://github.com/KeidsID/dicoding_story_fl/compare/dicoding_story_fl-v1.3.4...dicoding_story_fl-v1.3.5) (2025-01-16)
+
+
+### Bug Fixes
+
+* **github:** missing apk release build ds-22 ([#24](https://github.com/KeidsID/dicoding_story_fl/issues/24)) ([97aa32c](https://github.com/KeidsID/dicoding_story_fl/commit/97aa32cc1e285cb21c232244f7f34fda7053aad5))
+
 ## [1.3.4](https://github.com/KeidsID/dicoding_story_fl/compare/dicoding_story_fl-v1.3.3...dicoding_story_fl-v1.3.4) (2025-01-15)
 
 
