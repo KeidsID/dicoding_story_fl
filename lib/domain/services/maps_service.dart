@@ -12,11 +12,12 @@ abstract interface class MapsService {
   /// Get location data from [latitude] and [longitude] values.
   ///
   /// - [languageCode], specify the language to return on the place detail.
+  /// - [includeDisplayName], will do additional request to get place name.
   Future<LocationData> reverseGeocoding(
     double latitude,
     double longitude, {
-    bool includeDisplayName = true,
     String? languageCode,
+    bool includeDisplayName = true,
   });
 
   /// Search place by [query].
