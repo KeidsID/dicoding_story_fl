@@ -9,6 +9,8 @@ import "package:dicoding_story_fl/domain/entities.dart";
 import "package:dicoding_story_fl/domain/services.dart";
 import "package:dicoding_story_fl/infrastructures/libs/data/remote/modules.dart";
 import "package:dicoding_story_fl/libs/extensions.dart";
+import "package:dicoding_story_fl/infrastructures/libs/constants.dart"
+    show GoogleMapsApiKeys;
 
 @LazySingleton(as: MapsService)
 final class MapsServiceImpl implements MapsService {
@@ -41,8 +43,13 @@ final class MapsServiceImpl implements MapsService {
   String get _googleMapsApiKey {
     if (kDebugMode) return _configService.env.debugGoogleMapsApiKey;
 
-    /// TODO: add google maps api key for production
-    return _configService.env.debugGoogleMapsApiKey;
+    if (kIsWeb) return GoogleMapsApiKeys.web;
+
+    return switch (defaultTargetPlatform) {
+      TargetPlatform.android => GoogleMapsApiKeys.android,
+      TargetPlatform.iOS => GoogleMapsApiKeys.ios,
+      _ => "unsuported platform",
+    };
   }
 
   @override
