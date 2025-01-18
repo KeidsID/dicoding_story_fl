@@ -7,12 +7,19 @@
 			<string>en</string>
 			<string>id</string>
 		</array>
+
+		<!-- media permissions -->
 		<key>NSPhotoLibraryUsageDescription</key>
-		<string>For post story purpose</string>
+		<string>Post story</string>
 		<key>NSCameraUsageDescription</key>
-		<string>For post story purpose</string>
+		<string>Post story</string>
 		<key>NSMicrophoneUsageDescription</key>
-		<string>For post story purpose</string>
+		<string>Post story</string>
+
+		<!-- location permissions-->
+		<key>NSLocationWhenInUseUsageDescription</key>
+		<string>Post story</string>
+
 		<key>CFBundleDevelopmentRegion</key>
 		<string>$(DEVELOPMENT_LANGUAGE)</string>
 		<key>CFBundleDisplayName</key>
