@@ -15,18 +15,14 @@ class LocationData with _$LocationData {
 
   const LocationData._();
 
-  /// [latitude], [longitude] formatted as "latitude, longitude".
-  String get latitudeLon => "$latitude, $longitude";
+  /// [latitude] and [longitude] formatted as "latitude, longitude".
+  String get latLon => "$latitude, $longitude";
 
   /// Get address from [placeData].
-  ///
-  /// return [latitudeLon] if address not found.
-  String get address => placeData?.address ?? latitudeLon;
+  String? get address => placeData?.address;
 
   /// Get display name from [placeData].
-  ///
-  /// return [address] if display name not found.
-  String get displayName => placeData?.displayName ?? address;
+  String? get displayName => placeData?.displayName;
 }
 
 /// [g-maps-places-api]: https://developers.google.com/maps/documentation/places/web-service

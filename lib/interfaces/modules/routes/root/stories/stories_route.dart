@@ -42,6 +42,14 @@ class _StoriesRouteScreen extends StatefulWidget {
 class _StoriesRouteScreenState extends State<_StoriesRouteScreen> {
   late final ScrollController _scrollController;
 
+  Future<void> _handleFetchStories() async {
+    try {
+      await context.read<StoriesProvider>().fetchStories();
+    } catch (err, trace) {
+      kLogger.e("Stories fetch fail", error: err, stackTrace: trace);
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -64,14 +72,6 @@ class _StoriesRouteScreenState extends State<_StoriesRouteScreen> {
     _scrollController.dispose();
 
     super.dispose();
-  }
-
-  Future<void> _handleFetchStories() async {
-    try {
-      await context.read<StoriesProvider>().fetchStories();
-    } catch (err, trace) {
-      kLogger.e("Stories fetch fail", error: err, stackTrace: trace);
-    }
   }
 
   @override

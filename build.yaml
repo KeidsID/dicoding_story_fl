@@ -5,7 +5,7 @@ targets:
         options:
           # to_json: true
           copy_with: false
-          # equal: false
+          equal: true
       json_serializable:
         options:
           # Options configure how source code is generated for every

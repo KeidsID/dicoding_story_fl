@@ -10,6 +10,6 @@ AppException handleApiErrorResponse(
   return AppException(
     error: exception,
     trace: trace,
-    message: errorBody["message"],
+    message: errorBody["message"] ?? "Unknown Error",
   );
 }

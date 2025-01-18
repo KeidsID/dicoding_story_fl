@@ -100,6 +100,14 @@ mixin _StoryDetailRouteScreenHelperMixin {
           );
         });
   }
+
+  String getAddressFromStory(Story story) {
+    final location = story.location;
+
+    if (location == null) return "";
+
+    return location.displayName ?? location.address ?? location.latLon;
+  }
 }
 
 class _StoryDetailRouteScreenSmall extends StatelessWidget
@@ -107,6 +115,8 @@ class _StoryDetailRouteScreenSmall extends StatelessWidget
   const _StoryDetailRouteScreenSmall(this.story);
 
   final Story story;
+
+  String get _address => getAddressFromStory(story);
 
   @override
   Widget build(BuildContext context) {
@@ -151,6 +161,12 @@ class _StoryDetailRouteScreenSmall extends StatelessWidget
                           .applyOpacity(opacity: 0.5),
                     ],
                   ),
+                  if (_address.isNotEmpty)
+                    AddressSection(
+                      _address,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   const SizedBox(height: 8.0),
 
                   //
@@ -170,6 +186,8 @@ class _StoryDetailRouteScreenWide extends StatelessWidget
   const _StoryDetailRouteScreenWide(this.story);
 
   final Story story;
+
+  String get _address => getAddressFromStory(story);
 
   @override
   Widget build(BuildContext context) {
@@ -234,6 +252,12 @@ class _StoryDetailRouteScreenWide extends StatelessWidget
                             .applyOpacity(opacity: 0.5),
                       ],
                     ),
+                    if (_address.isNotEmpty)
+                      AddressSection(
+                        _address,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     const SizedBox(height: 8.0),
 
                     //

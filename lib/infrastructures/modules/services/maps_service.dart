@@ -155,35 +155,44 @@ final class MapsServiceImpl implements MapsService {
     String query, {
     String? languageCode,
   }) async {
-    final response = await _newPlacesApiService.textSearch(
-      fieldMask: "places.id,"
-          "places.displayName,"
-          "places.location,"
-          "places.formattedAddress",
-      body: {
-        "textQuery": query,
-        if (languageCode?.isNotEmpty ?? false) "languageCode": languageCode,
-      },
-    );
-    final rawResponseBody = response.body!;
-    final List rawResults = rawResponseBody["places"] ?? [];
-
-    return rawResults.map((e) {
-      final placeId = (e as Map)["id"] as String;
-      final location = e["location"] as Map<String, dynamic>;
-      final formattedAddress = e["formattedAddress"] as String;
-      final displayName = e["displayName"]["text"] as String;
-
-      return LocationData(
-        location["latitude"] ?? 0.0,
-        location["longitude"] ?? 0.0,
-        placeData: LocationPlaceData(
-          id: placeId,
-          address: formattedAddress,
-          displayName: displayName,
-        ),
+    try {
+      final response = await _newPlacesApiService.textSearch(
+        fieldMask: "places.id,"
+            "places.displayName,"
+            "places.location,"
+            "places.formattedAddress",
+        body: {
+          "textQuery": query,
+          if (languageCode?.isNotEmpty ?? false) "languageCode": languageCode,
+        },
       );
-    }).toList();
+      final rawResponseBody = response.body!;
+      final List rawResults = rawResponseBody["places"] ?? [];
+
+      return rawResults.map((e) {
+        final placeId = (e as Map)["id"] as String;
+        final location = e["location"] as Map<String, dynamic>;
+        final formattedAddress = e["formattedAddress"] as String;
+        final displayName = e["displayName"]["text"] as String;
+
+        return LocationData(
+          location["latitude"] ?? 0.0,
+          location["longitude"] ?? 0.0,
+          placeData: LocationPlaceData(
+            id: placeId,
+            address: formattedAddress,
+            displayName: displayName,
+          ),
+        );
+      }).toList();
+    } on ChopperHttpException catch (exception, trace) {
+      throw handleApiErrorResponse(exception, trace);
+    } catch (error, trace) {
+      throw error.toAppException(
+        message: "Failed to search place",
+        trace: trace,
+      );
+    }
   }
 
   /// Request location service permission.

@@ -1,3 +1,4 @@
+import "package:dicoding_story_fl/domain/entities.dart";
 import "package:fl_utilities/fl_utilities.dart";
 import "package:flex_color_scheme/flex_color_scheme.dart";
 import "package:flutter/material.dart";
@@ -40,22 +41,7 @@ class _PostStoryRouteScreen extends StatefulWidget {
 class _PostStoryRouteScreenState extends State<_PostStoryRouteScreen> {
   late final GlobalKey<FormState> _formKey;
   late final TextEditingController _descriptionController;
-
-  @override
-  void initState() {
-    super.initState();
-
-    _formKey = GlobalKey();
-    _descriptionController = TextEditingController();
-  }
-
-  @override
-  void dispose() {
-    _formKey.currentState?.dispose();
-    _descriptionController.dispose();
-
-    super.dispose();
-  }
+  LocationData? _locationData;
 
   VoidCallback _handleRepickImage(BuildContext context) {
     return () async {
@@ -134,6 +120,8 @@ class _PostStoryRouteScreenState extends State<_PostStoryRouteScreen> {
               description: _descriptionController.text,
               imageBytes: await imageFile.readAsBytes(),
               imageFilename: imageFile.name,
+              lat: _locationData?.latitude,
+              lon: _locationData?.longitude,
             );
 
         if (context.mounted) context.pop();
@@ -153,6 +141,35 @@ class _PostStoryRouteScreenState extends State<_PostStoryRouteScreen> {
         }
       }
     };
+  }
+
+  VoidCallback _handleLocationSet(BuildContext context) {
+    return () async {
+      final result = await showDialog<LocationData?>(
+        context: context,
+        builder: (_) => GetLocationDialog(initialLocation: _locationData),
+      );
+
+      if (result == null) return;
+
+      setState(() => _locationData = result);
+    };
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    _formKey = GlobalKey();
+    _descriptionController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _formKey.currentState?.dispose();
+    _descriptionController.dispose();
+
+    super.dispose();
   }
 
   @override
@@ -246,7 +263,12 @@ class _PostStoryRouteScreenState extends State<_PostStoryRouteScreen> {
               formKey: _formKey,
               descController: _descriptionController,
               descIsEnabled: !isLoading,
+              address: _locationData?.displayName ??
+                  _locationData?.address ??
+                  _locationData?.latLon,
               onPostButtonTap: isLoading ? null : _handlePostStory(context),
+              onAddressSectionTap:
+                  isLoading ? null : _handleLocationSet(context),
             ));
           });
         },
@@ -282,7 +304,9 @@ class _PostStoryFormDelegate {
     this.formKey,
     this.descController,
     this.descIsEnabled,
+    this.address,
     this.onPostButtonTap,
+    this.onAddressSectionTap,
   });
 
   final XFile imageFile;
@@ -291,8 +315,10 @@ class _PostStoryFormDelegate {
   final Key? formKey;
   final TextEditingController? descController;
   final bool? descIsEnabled;
+  final String? address;
 
   final VoidCallback? onPostButtonTap;
+  final VoidCallback? onAddressSectionTap;
 }
 
 abstract base class _PostStoryFormBase extends StatelessWidget {
@@ -323,6 +349,20 @@ abstract base class _PostStoryFormBase extends StatelessWidget {
           ),
           Text(kDateFormat.format(DateTime.now())).applyOpacity(opacity: 0.5),
         ],
+      );
+    });
+  }
+
+  Widget get _addressSection {
+    final address = delegate.address;
+    final onAddressSectionTap = delegate.onAddressSectionTap;
+
+    return Builder(builder: (context) {
+      return AddressSection(
+        address ?? "Set Location",
+        onTap: onAddressSectionTap,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
       );
     });
   }
@@ -378,6 +418,7 @@ final class _PostStoryFormScreenSmall extends _PostStoryFormBase {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _titleSection,
+                _addressSection,
                 const SizedBox(height: 16.0),
 
                 //
@@ -419,6 +460,7 @@ final class _PostStoryFormScreenWide extends _PostStoryFormBase {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     _titleSection,
+                    _addressSection,
                     const SizedBox(height: 16.0),
 
                     //

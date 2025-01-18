@@ -32,7 +32,11 @@ final class StoriesProvider extends AsyncValueNotifier<List<Story>> {
 
     try {
       final stories = await ServiceLocator.find<GetStoriesUseCase>()
-          .execute(GetStoriesRequestDto(page: page, size: storiesCount));
+          .execute(GetStoriesRequestDto(
+        page: page,
+        size: storiesCount,
+        hasCoordinates: true,
+      ));
 
       if (stories.length < storiesCount) {
         _isLatestPage = true;

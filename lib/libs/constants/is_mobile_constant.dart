@@ -12,3 +12,8 @@ bool get kIsMobile {
       return false;
   }
 }
+
+/// Return `true` if current platform is native mobile.
+///
+/// If you allow web-mobile, use [kIsMobile] instead.
+bool get kIsNativeMobile => kIsMobile && !kIsWeb;
