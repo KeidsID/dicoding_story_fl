@@ -378,7 +378,7 @@ abstract base class _PostStoryFormBase extends StatelessWidget {
         maxLines: null,
         decoration: InputDecoration(hintText: "${appL10n.tellUsYourStory}..."),
         validator: (text) {
-          if (text == null || text.isEmpty) return "Cannot be empty";
+          if (text == null || text.isEmpty) return appL10n.cannotBeEmpty;
 
           return null;
         },

@@ -1,3 +1,4 @@
+import "package:dicoding_story_fl/interfaces/libs/l10n.dart";
 import "package:fl_utilities/fl_utilities.dart";
 import "package:flutter/material.dart";
 
@@ -99,6 +100,8 @@ class _GetLocationDialogState extends State<GetLocationDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final appL10n = AppL10n.of(context)!;
+
     return Dialog.fullscreen(
       child: Column(
         children: [
@@ -106,7 +109,7 @@ class _GetLocationDialogState extends State<GetLocationDialog> {
             leading: CloseButton(
               onPressed: () => Navigator.pop(context, initialLocation),
             ),
-            title: const Text("Set Location"),
+            title: Text(appL10n.setLocation),
           ),
           SizedBox(
             width: double.infinity,
@@ -121,9 +124,9 @@ class _GetLocationDialogState extends State<GetLocationDialog> {
                   children: [
                     TextField(
                       controller: _searchController,
-                      decoration: const InputDecoration(
-                        prefixIcon: Icon(Icons.search),
-                        hintText: "Place name, address, or description",
+                      decoration: InputDecoration(
+                        prefixIcon: const Icon(Icons.search),
+                        hintText: appL10n.searchLocationHint,
                       ),
                       onChanged: (String text) async {
                         if (text.length < 3) return;
@@ -151,7 +154,7 @@ class _GetLocationDialogState extends State<GetLocationDialog> {
                           }
                         },
                         icon: const Icon(Icons.map_outlined),
-                        label: const Text("Set from Map"),
+                        label: Text(appL10n.setFromMap),
                       );
                     }),
                   ],
@@ -169,10 +172,9 @@ class _GetLocationDialogState extends State<GetLocationDialog> {
                         padding: const EdgeInsets.all(16.0).copyWith(top: 0),
                         child: SizedErrorWidget(
                           error: _searchError ??
-                              const AppException(
-                                name: "No Results Found",
-                                message:
-                                    "Make sure you didn't misspell anything",
+                              AppException(
+                                name: appL10n.searchLocationErrorTitle,
+                                message: appL10n.searchLocationErrorMessage,
                               ),
                         ),
                       )
@@ -188,7 +190,7 @@ class _GetLocationDialogState extends State<GetLocationDialog> {
                               location.displayName ?? location.latLon,
                             ),
                             subtitle: Text(
-                              location.address ?? "Unknown Address",
+                              location.address ?? "-",
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                             ),

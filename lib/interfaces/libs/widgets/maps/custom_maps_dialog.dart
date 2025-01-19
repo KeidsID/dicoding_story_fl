@@ -169,6 +169,7 @@ class _CustomMapsDialogState extends State<CustomMapsDialog> {
     final textTheme = theme.textTheme;
 
     final appL10n = AppL10n.of(context)!;
+    final materialL10n = MaterialLocalizations.of(context);
 
     return Dialog.fullscreen(
       child: Stack(
@@ -200,7 +201,9 @@ class _CustomMapsDialogState extends State<CustomMapsDialog> {
                                     _fetchInitLocationValue =
                                         _fetchInitLocation();
                                   }),
-                                  child: const Text("Retry"),
+                                  child: Text(
+                                    materialL10n.refreshIndicatorSemanticLabel,
+                                  ),
                                 ),
                               );
                             }
@@ -291,8 +294,7 @@ class _CustomMapsDialogState extends State<CustomMapsDialog> {
                         onPressed: () =>
                             Navigator.pop(context, initialLocation),
                         icon: const Icon(Icons.close),
-                        tooltip: MaterialLocalizations.of(context)
-                            .closeButtonTooltip,
+                        tooltip: materialL10n.closeButtonTooltip,
                       ),
                       //
 
@@ -310,8 +312,7 @@ class _CustomMapsDialogState extends State<CustomMapsDialog> {
                               IconButton.filledTonal(
                                 onPressed: _animateMapCameraToInitLocation,
                                 icon: const Icon(Icons.restore),
-                                tooltip: MaterialLocalizations.of(context)
-                                    .refreshIndicatorSemanticLabel,
+                                tooltip: appL10n.backToInitialLocation,
                               ),
                             if (!readonly)
                               IconButton.filledTonal(
@@ -386,7 +387,7 @@ class _CustomMapsDialogState extends State<CustomMapsDialog> {
                               ? Text(
                                   location?.address ??
                                       _currentLocation.address ??
-                                      "Unknown Address",
+                                      "-",
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
                                 )

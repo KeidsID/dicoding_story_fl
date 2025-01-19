@@ -3,13 +3,13 @@ import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
 import "package:provider/provider.dart";
 
-import "package:dicoding_story_fl/domain/entities.dart";
 import "package:dicoding_story_fl/interfaces/libs/constants.dart";
 import "package:dicoding_story_fl/interfaces/libs/l10n/modules.dart";
 import "package:dicoding_story_fl/interfaces/libs/providers.dart";
 import "package:dicoding_story_fl/interfaces/libs/widgets.dart";
 import "package:dicoding_story_fl/interfaces/modules.dart";
 import "package:dicoding_story_fl/libs/constants.dart";
+import "package:dicoding_story_fl/libs/extensions.dart";
 
 /// [SignInRoute] build decorator.
 const signInRouteBuild = TypedGoRoute<SignInRoute>(
@@ -55,23 +55,27 @@ class _SignInRouteScreenState extends State<_SignInRouteScreen> {
   double get _maxWidth => 400.0;
   EdgeInsetsGeometry get _padding => const EdgeInsets.all(16.0);
 
-  Future<void> _handleSignIn() async {
-    final showSnackBar = context.scaffoldMessenger?.showSnackBar;
-    final authProv = context.read<AuthProvider>();
-
+  Future<void> _handleSignIn(BuildContext context) async {
     try {
-      await authProv.login(
-        email: emailController.text,
-        password: passwordController.text,
+      await context.read<AuthProvider>().login(
+            email: emailController.text,
+            password: passwordController.text,
+          );
+    } catch (error, trace) {
+      final exception = error.toAppException(
+        message: "Failed to sign in",
+        trace: trace,
       );
-    } on AppException catch (err) {
-      kLogger.d("Login Fail", error: err, stackTrace: err.trace);
 
-      showSnackBar?.call(SnackBar(content: Text(err.message)));
-    } catch (err, trace) {
-      kLogger.f("Login Fail", error: err, stackTrace: trace);
+      kLogger.w("Sign in Fail", error: exception, stackTrace: exception.trace);
 
-      showSnackBar?.call(SnackBar(content: Text("$err")));
+      if (context.mounted) {
+        final appL10n = AppL10n.of(context);
+
+        context.scaffoldMessenger?.showSnackBar(SnackBar(
+          content: Text(appL10n?.signInErrorMessage ?? "Sign in fail"),
+        ));
+      }
     }
   }
 
@@ -101,7 +105,7 @@ class _SignInRouteScreenState extends State<_SignInRouteScreen> {
               const SizedBox(height: 16.0),
               PasswordTextField(
                 controller: passwordController,
-                onSubmitted: (value) => _handleSignIn(),
+                onSubmitted: (value) => _handleSignIn(context),
               ),
               const SizedBox(height: 32.0),
 
@@ -114,7 +118,7 @@ class _SignInRouteScreenState extends State<_SignInRouteScreen> {
                 }
 
                 return FilledButton(
-                  onPressed: () => _handleSignIn(),
+                  onPressed: () => _handleSignIn(context),
                   child: Text(appL10n.login),
                 );
               }),
