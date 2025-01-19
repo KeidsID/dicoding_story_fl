@@ -1,7 +1,7 @@
 name: dicoding_story_fl
 description: Simple media social app for dicoding.com final project.
 publish_to: "none"
-version: 1.3.5
+version: 1.4.0
 
 environment:
   # https://docs.flutter.dev/release/archive
