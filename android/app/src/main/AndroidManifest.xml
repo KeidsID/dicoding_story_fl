@@ -34,7 +34,7 @@
             android:value="2" />
 
         <!-- Restricted Google Maps API key
-            Please notice if this key still can be used on other apps -->
+            Please report if this key still can be used on other apps -->
         <meta-data android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyBHiULWIzUmlHFAgbHrcAlRkSz9bftnfyI" />
     </application>
