@@ -71,6 +71,14 @@ class _StoryDetailRouteScreen extends StatelessWidget {
 }
 
 mixin _StoryDetailRouteScreenHelperMixin {
+  String _getAddressFromStory(Story story) {
+    final location = story.location;
+
+    if (location == null) return "";
+
+    return location.displayName ?? location.address ?? location.latLon;
+  }
+
   /// Expands image on dialog to show image with [BoxFit.contain].
   void _showImageDialog(BuildContext context, ImageProvider<Object> image) {
     showDialog(
@@ -101,12 +109,19 @@ mixin _StoryDetailRouteScreenHelperMixin {
         });
   }
 
-  String getAddressFromStory(Story story) {
-    final location = story.location;
-
-    if (location == null) return "";
-
-    return location.displayName ?? location.address ?? location.latLon;
+  void _showCustomMapsDialog(
+    BuildContext context, [
+    LocationData? initialLocation,
+  ]) {
+    showDialog(
+      context: context,
+      builder: (_) {
+        return CustomMapsDialog(
+          initialLocation: initialLocation,
+          readonly: true,
+        );
+      },
+    );
   }
 }
 
@@ -116,7 +131,7 @@ class _StoryDetailRouteScreenSmall extends StatelessWidget
 
   final Story story;
 
-  String get _address => getAddressFromStory(story);
+  String get _address => _getAddressFromStory(story);
 
   @override
   Widget build(BuildContext context) {
@@ -164,6 +179,10 @@ class _StoryDetailRouteScreenSmall extends StatelessWidget
                   if (_address.isNotEmpty)
                     AddressSection(
                       _address,
+                      onTap: () => _showCustomMapsDialog(
+                        context,
+                        story.location,
+                      ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -187,7 +206,7 @@ class _StoryDetailRouteScreenWide extends StatelessWidget
 
   final Story story;
 
-  String get _address => getAddressFromStory(story);
+  String get _address => _getAddressFromStory(story);
 
   @override
   Widget build(BuildContext context) {
@@ -255,6 +274,10 @@ class _StoryDetailRouteScreenWide extends StatelessWidget
                     if (_address.isNotEmpty)
                       AddressSection(
                         _address,
+                        onTap: () => _showCustomMapsDialog(
+                          context,
+                          story.location,
+                        ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),

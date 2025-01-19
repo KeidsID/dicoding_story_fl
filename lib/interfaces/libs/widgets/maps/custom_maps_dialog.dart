@@ -1,20 +1,36 @@
-import "package:dicoding_story_fl/interfaces/libs/constants.dart";
-import "package:dicoding_story_fl/interfaces/libs/widgets.dart";
-import "package:dicoding_story_fl/libs/constants.dart";
 import "package:fl_utilities/fl_utilities.dart";
 import "package:flutter/material.dart";
 import "package:google_maps_flutter/google_maps_flutter.dart";
 
 import "package:dicoding_story_fl/domain/entities.dart";
+import "package:dicoding_story_fl/interfaces/libs/constants.dart";
+import "package:dicoding_story_fl/interfaces/libs/l10n.dart";
+import "package:dicoding_story_fl/interfaces/libs/widgets.dart";
+import "package:dicoding_story_fl/libs/constants.dart";
 import "package:dicoding_story_fl/service_locator.dart";
 import "package:dicoding_story_fl/use_cases.dart";
 
 /// A fullscreen custom Google Maps dialog that return [LocationData] on
 /// location confirmation.
 class CustomMapsDialog extends StatefulWidget {
-  const CustomMapsDialog({super.key, this.initialLocation});
+  const CustomMapsDialog({
+    super.key,
+    this.initialLocation,
+    this.title,
+    this.readonly = false,
+  });
 
   final LocationData? initialLocation;
+
+  /// Dialog title.
+  ///
+  /// Only used when [readonly] is `false`.
+  final String? title;
+
+  /// Dialog is readonly and won't return any value on [Navigator.pop].
+  ///
+  /// Useful for displaying [initialLocation].
+  final bool readonly;
 
   @override
   State<CustomMapsDialog> createState() => _CustomMapsDialogState();
@@ -22,6 +38,8 @@ class CustomMapsDialog extends StatefulWidget {
 
 class _CustomMapsDialogState extends State<CustomMapsDialog> {
   LocationData? get initialLocation => widget.initialLocation;
+  String? get title => widget.title;
+  bool get readonly => widget.readonly;
 
   /// Value to return on location confirmation.
   LocationData? location;
@@ -45,9 +63,9 @@ class _CustomMapsDialogState extends State<CustomMapsDialog> {
   ///
   /// Updated on camera move, but did'nt trigger widget rebuild.
   LocationData get _currentLocation {
-    final loc = _mapCam.target;
+    final location = _mapCam.target;
 
-    return LocationData(loc.latitude, loc.longitude);
+    return LocationData(location.latitude, location.longitude);
   }
 
   /// Fetched map location on map camera idle.
@@ -67,7 +85,6 @@ class _CustomMapsDialogState extends State<CustomMapsDialog> {
 
   Future<void> _onMapCamIdle() async {
     if (location != null) {
-      // to make sure init location detail did'nt skip.
       if (_fetchedLocation == _currentLocation) {
         setState(() => _isFetchingMapLocation = false);
         return;
@@ -116,6 +133,17 @@ class _CustomMapsDialogState extends State<CustomMapsDialog> {
   void _onMapZoomOutTap() =>
       _mapController?.animateCamera(CameraUpdate.zoomOut());
 
+  /// Move map camera to [initialLocation].
+  void _animateMapCameraToInitLocation() {
+    if (initialLocation == null) return;
+
+    _mapController?.animateCamera(
+      CameraUpdate.newLatLng(
+        LatLng(initialLocation!.latitude, initialLocation!.longitude),
+      ),
+    );
+  }
+
   // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
   // DESCRIBE
   // -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
@@ -140,11 +168,13 @@ class _CustomMapsDialogState extends State<CustomMapsDialog> {
     final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
 
+    final appL10n = AppL10n.of(context)!;
+
     return Dialog.fullscreen(
       child: Stack(
         fit: StackFit.expand,
         children: [
-          // maps.
+          // maps
           Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -184,31 +214,31 @@ class _CustomMapsDialogState extends State<CustomMapsDialog> {
                               initLocation.latitude,
                               initLocation.longitude,
                             ),
-                            zoom:
-                                (context.mediaQuery?.size.width ?? 600.0) / 75,
+                            zoom: 20,
                           );
 
                           return GoogleMap(
                             initialCameraPosition: initMapCam,
-                            style: context.theme.brightness == Brightness.dark
-                                ? kDarkGoogleMapsStyle
-                                : null,
                             onMapCreated: (controller) => setState(() {
                               _mapController = controller;
                               _mapCam = initMapCam;
                               _fetchedLocation = _currentLocation;
                               _onMapCamIdle();
                             }),
-                            myLocationButtonEnabled: false,
-                            zoomControlsEnabled: false,
-                            mapToolbarEnabled: false,
                             onCameraMoveStarted: _onMapCamMoveStart,
                             onCameraMove: _onMapCamMove,
                             onCameraIdle: _onMapCamIdle,
+                            style: context.theme.brightness == Brightness.dark
+                                ? kDarkGoogleMapsStyle
+                                : null,
+                            myLocationButtonEnabled: false,
+                            zoomControlsEnabled: false,
+                            mapToolbarEnabled: false,
                           );
                         },
                       ),
                     ),
+
                     // map marker
                     if (_mapController != null) ...[
                       Center(
@@ -258,14 +288,14 @@ class _CustomMapsDialogState extends State<CustomMapsDialog> {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       IconButton.filledTonal(
-                        onPressed: () => Navigator.pop(
-                          context,
-                          initialLocation,
-                        ),
+                        onPressed: () =>
+                            Navigator.pop(context, initialLocation),
                         icon: const Icon(Icons.close),
                         tooltip: MaterialLocalizations.of(context)
                             .closeButtonTooltip,
                       ),
+                      //
+
                       AnimatedCrossFade(
                         duration: Durations.medium1,
                         crossFadeState: switch (_mapController) {
@@ -276,23 +306,31 @@ class _CustomMapsDialogState extends State<CustomMapsDialog> {
                         secondChild: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            IconButton.filledTonal(
-                              onPressed: _onLocationTap,
-                              icon: const Icon(Icons.gps_fixed),
-                              tooltip: "Use Device Location",
-                            ),
+                            if (readonly)
+                              IconButton.filledTonal(
+                                onPressed: _animateMapCameraToInitLocation,
+                                icon: const Icon(Icons.restore),
+                                tooltip: MaterialLocalizations.of(context)
+                                    .refreshIndicatorSemanticLabel,
+                              ),
+                            if (!readonly)
+                              IconButton.filledTonal(
+                                onPressed: _onLocationTap,
+                                icon: const Icon(Icons.gps_fixed),
+                                tooltip: appL10n.deviceLocation,
+                              ),
                             if (!kIsNativeMobile) ...[
                               const SizedBox(height: 8.0),
                               IconButton.filledTonal(
                                 onPressed: _onMapZoomInTap,
-                                icon: const Icon(Icons.add),
-                                tooltip: "Zoom In",
+                                icon: const Icon(Icons.zoom_in),
+                                tooltip: appL10n.zoomIn,
                               ),
                               const SizedBox(height: 8.0),
                               IconButton.filledTonal(
                                 onPressed: _onMapZoomOutTap,
-                                icon: const Icon(Icons.remove),
-                                tooltip: "Zoom Out",
+                                icon: const Icon(Icons.zoom_out),
+                                tooltip: appL10n.zoomOut,
                               ),
                             ],
                           ],
@@ -319,14 +357,19 @@ class _CustomMapsDialogState extends State<CustomMapsDialog> {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      // title
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16.0),
                         child: Text(
-                          "Set Location",
+                          readonly
+                              ? title ?? appL10n.location
+                              : appL10n.setLocation,
                           style: textTheme.headlineSmall,
                         ),
                       ),
                       const SizedBox(height: 8.0),
+
+                      // location details
                       if (_isFetchingMapLocation)
                         const Center(child: CircularProgressIndicator()),
                       if (!_isFetchingMapLocation) ...[
@@ -349,14 +392,16 @@ class _CustomMapsDialogState extends State<CustomMapsDialog> {
                                 )
                               : null,
                         ),
-                        const SizedBox(height: 8.0),
-                        Align(
-                          alignment: Alignment.center,
-                          child: FilledButton(
-                            onPressed: () => Navigator.pop(context, location),
-                            child: const Text("Confirm"),
-                          ),
-                        )
+                        if (!readonly) ...[
+                          const SizedBox(height: 8.0),
+                          Align(
+                            alignment: Alignment.center,
+                            child: FilledButton(
+                              onPressed: () => Navigator.pop(context, location),
+                              child: Text(appL10n.confirm),
+                            ),
+                          )
+                        ]
                       ],
                     ],
                   ),

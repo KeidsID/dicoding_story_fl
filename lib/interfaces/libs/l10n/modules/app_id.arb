@@ -2,11 +2,19 @@
   "@@locale": "id",
   "alreadyHaveAnAccount": "Sudah punya akun",
   "@alreadyHaveAnAccount": {},
+  "appIconCredits": "Ikon aplikasi dari Ardly di Flaticon",
+  "@appIconCredits": {
+    "description": "App icon license requirements."
+  },
   "appTheme": "Tema Aplikasi",
   "@appTheme": {},
   "camera": "Kamera",
   "@camera": {},
-  "flThemeMode": "{themeModeName, select, other{Pengaturan Perangkat} light{Terang} dark{Gelap}}",
+  "confirm": "Konfirmasi",
+  "@confirm": {},
+  "deviceLocation": "Lokasi Perangkat",
+  "@deviceLocation": {},
+  "flThemeMode": "{themeModeName, select, other{Sistem} light{Terang} dark{Gelap}}",
   "@flThemeMode": {
     "description": "Flutter [ThemeMode] enum localization. Provide [ThemeMode.name] on [themeModeName] argument.",
     "placeholders": {
@@ -24,6 +32,8 @@
   "gallery": "Galeri",
   "@gallery": {},
   "language": "Bahasa",
+  "location": "Lokasi",
+  "@location": {},
   "@language": {},
   "login": "Masuk",
   "@login": {},
@@ -54,6 +64,8 @@
   "@postStory": {},
   "profile": "Profil",
   "@profile": {},
+  "setLocation": "Atur Lokasi",
+  "@setLocation": {},
   "register": "Daftar",
   "@register": {},
   "registerForm": "Form Pendaftaran",
@@ -63,5 +75,9 @@
   "tellUsYourStory": "Ceritakan cerita Anda",
   "@tellUsYourStory": {},
   "yourProfile": "Profil Anda",
-  "@yourProfile": {}
+  "@yourProfile": {},
+  "zoomIn": "Perbesar",
+  "@zoomIn": {},
+  "zoomOut": "Perkecil",
+  "@zoomOut": {}
 }

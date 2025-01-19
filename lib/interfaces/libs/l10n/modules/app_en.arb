@@ -1,14 +1,18 @@
 {
   "@@locale": "en",
   "alreadyHaveAnAccount": "Already have an account",
+  "appIconCredits": "App icon by Ardly from Flaticon",
   "appTheme": "App Theme",
   "camera": "Camera",
-  "flThemeMode": "{themeModeName, select, other{Device Settings} light{Light} dark{Dark}}",
+  "confirm": "Confirm",
+  "deviceLocation": "Device Location",
+  "flThemeMode": "{themeModeName, select, other{System} light{Light} dark{Dark}}",
   "from": "From",
   "fromCamera": "From Camera",
   "fromGallery": "From Gallery",
   "gallery": "Gallery",
   "language": "Language",
+  "location": "Location",
   "login": "Log In",
   "logout": "Log Out",
   "needAnAccount": "Need an account",
@@ -17,9 +21,12 @@
   "pickAnImageForYourStory": "Pick an image for your Story",
   "postStory": "Post Story",
   "profile": "Profile",
+  "setLocation": "Set Location",
   "register": "Register",
   "registerForm": "Register Form",
   "replaceImage": "Replace image",
   "tellUsYourStory": "Tell us your story",
-  "yourProfile": "Your Profile"
+  "yourProfile": "Your Profile",
+  "zoomIn": "Zoom In",
+  "zoomOut": "Zoom Out"
 }

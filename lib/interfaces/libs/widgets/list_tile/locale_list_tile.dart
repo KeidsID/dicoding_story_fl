@@ -7,6 +7,14 @@ import "package:dicoding_story_fl/interfaces/libs/providers.dart";
 class LocaleListTile extends StatelessWidget {
   const LocaleListTile({super.key});
 
+  String _handleLanguageName(BuildContext context, String languageCode) {
+    return switch (languageCode) {
+      "en" => "English",
+      "id" => "Bahasa Indonesia",
+      _ => AppL10n.of(context)!.flThemeMode(ThemeMode.system.name),
+    };
+  }
+
   @override
   Widget build(BuildContext context) {
     final appL10n = AppL10n.of(context)!;
@@ -17,26 +25,18 @@ class LocaleListTile extends StatelessWidget {
       trailing: Builder(builder: (context) {
         final localeProvider = context.watch<LocaleProvider>();
 
-        String localeString(String localeString) {
-          return switch (localeString) {
-            "en" => "English",
-            "id" => "Bahasa Indonesia",
-            _ => appL10n.flThemeMode(ThemeMode.system.name),
-          };
-        }
-
         return DropdownButton<Locale?>(
           value: localeProvider.value,
           onChanged: (value) => localeProvider.value = value,
           items: [
             DropdownMenuItem(
               value: null,
-              child: Text(localeString("system")),
+              child: Text(_handleLanguageName(context, "system")),
             ),
-            ...AppL10n.supportedLocales.map((e) {
+            ...AppL10n.supportedLocales.map((locale) {
               return DropdownMenuItem(
-                value: e,
-                child: Text(localeString("$e")),
+                value: locale,
+                child: Text(_handleLanguageName(context, "$locale")),
               );
             })
           ],

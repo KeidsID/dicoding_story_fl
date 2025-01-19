@@ -27,14 +27,14 @@ class ThemeListTile extends StatelessWidget {
 
         return DropdownButton<ThemeMode>(
           value: themeModeProvider.value,
-          items: ThemeMode.values.map((e) {
+          items: ThemeMode.values.map((themeMode) {
             return DropdownMenuItem<ThemeMode>(
-              value: e,
+              value: themeMode,
               child: Row(
                 children: [
-                  Icon(icons[e.index]),
+                  Icon(icons[themeMode.index]),
                   const SizedBox(width: 8.0),
-                  Text(appL10n.flThemeMode(e.name)),
+                  Text(appL10n.flThemeMode(themeMode.name)),
                 ],
               ),
             );
