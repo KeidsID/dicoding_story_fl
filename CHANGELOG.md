@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.0](https://github.com/KeidsID/dicoding_story_fl/compare/dicoding_story_fl-v1.3.5...dicoding_story_fl-v1.4.0) (2025-01-19)
+
+
+### Features
+
+* Story location and Maps ds-11 ([#26](https://github.com/KeidsID/dicoding_story_fl/issues/26)) ([5d8023b](https://github.com/KeidsID/dicoding_story_fl/commit/5d8023b630ef0caf3154761fd17e82d19fa16d1c))
+
 ## [1.3.5](https://github.com/KeidsID/dicoding_story_fl/compare/dicoding_story_fl-v1.3.4...dicoding_story_fl-v1.3.5) (2025-01-16)
 
 
