@@ -88,21 +88,29 @@ class _RootShellRouteScreen extends StatefulWidget {
 class _RootShellRouteScreenState extends State<_RootShellRouteScreen> {
   bool isExtended = true;
 
+  void _handlePostNavigation() {
+    if (!isExtended) return;
+
+    setState(() => isExtended = false);
+  }
+
   @override
   Widget build(BuildContext context) {
     final navigationDelegates = widget.navigationDelegates;
 
     return Scaffold(
       body: _RootShellRouteScreenBody(
+        navigationDelegates: navigationDelegates,
         isExtended: isExtended,
         onNavigationRailTrailingTap: () {
           setState(() => isExtended = !isExtended);
         },
-        navigationDelegates: navigationDelegates,
+        onPostNavigation: _handlePostNavigation,
         child: widget.child,
       ),
       bottomNavigationBar: _RootShellRouteScreenBottomNavBar(
         navigationDelegates: navigationDelegates,
+        onPostNavigation: _handlePostNavigation,
       ),
       floatingActionButton: _RootShellRouteScreenFAB(
         navigationDelegates: navigationDelegates,
@@ -159,16 +167,17 @@ mixin _RootShellRouteScreenNavHelperMixin on Widget {
 class _RootShellRouteScreenBody extends StatelessWidget
     with _RootShellRouteScreenNavHelperMixin {
   const _RootShellRouteScreenBody({
+    required this.navigationDelegates,
     this.isExtended = false,
     this.onNavigationRailTrailingTap,
-    required this.navigationDelegates,
+    this.onPostNavigation,
     this.child,
   });
 
+  final List<_RootShellRouteScreenNavDelegate> navigationDelegates;
   final bool isExtended;
   final VoidCallback? onNavigationRailTrailingTap;
-
-  final List<_RootShellRouteScreenNavDelegate> navigationDelegates;
+  final VoidCallback? onPostNavigation;
   final Widget? child;
 
   Widget _buildNavigationRail(BuildContext context) {
@@ -187,6 +196,8 @@ class _RootShellRouteScreenBody extends StatelessWidget
               final routePath = navigationDelegates[index].routePath;
 
               context.go(routePath);
+
+              onPostNavigation?.call();
             },
             destinations: navigationDelegates.map((e) {
               return NavigationRailDestination(
@@ -234,9 +245,11 @@ class _RootShellRouteScreenBottomNavBar extends StatelessWidget
     with _RootShellRouteScreenNavHelperMixin {
   const _RootShellRouteScreenBottomNavBar({
     required this.navigationDelegates,
+    this.onPostNavigation,
   });
 
   final List<_RootShellRouteScreenNavDelegate> navigationDelegates;
+  final VoidCallback? onPostNavigation;
 
   Widget _buildBottomNavigationBar(BuildContext context) {
     final currentNavIndex = _getCurrentNavigationIndex(
@@ -250,6 +263,8 @@ class _RootShellRouteScreenBottomNavBar extends StatelessWidget
         final routePath = navigationDelegates[index].routePath;
 
         context.go(routePath);
+
+        onPostNavigation?.call();
       },
       items: navigationDelegates.map((e) {
         return BottomNavigationBarItem(

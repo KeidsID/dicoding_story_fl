@@ -4,29 +4,25 @@ part "location_data_entity.freezed.dart";
 
 @Freezed(copyWith: true)
 class LocationData with _$LocationData {
-  const factory LocationData({
-    /// Stands for latitude.
-    required double lat,
+  const factory LocationData(
+    /// Latitude in degrees
+    double latitude,
 
-    /// Stands for longitude.
-    required double lon,
+    /// Longitude in degrees.
+    double longitude, {
     LocationPlaceData? placeData,
   }) = _LocationData;
 
   const LocationData._();
 
-  /// [lat], [lon] formatted as "lat, lon".
-  String get latLon => "$lat, $lon";
+  /// [latitude] and [longitude] formatted as "latitude, longitude".
+  String get latLon => "$latitude, $longitude";
 
   /// Get address from [placeData].
-  ///
-  /// return [latLon] if address not found.
-  String get address => placeData?.address ?? latLon;
+  String? get address => placeData?.address;
 
   /// Get display name from [placeData].
-  ///
-  /// return [address] if display name not found.
-  String get displayName => placeData?.displayName ?? address;
+  String? get displayName => placeData?.displayName;
 }
 
 /// [g-maps-places-api]: https://developers.google.com/maps/documentation/places/web-service

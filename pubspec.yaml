@@ -22,6 +22,15 @@ dependencies:
   camera_windows: ^0.2.6+1
   image_picker: ^1.1.2
 
+  # maps
+  flutter_google_maps_webservices: ^1.1.1
+  location: ^6.0.2
+  google_maps_flutter: ^2.6.1
+
+  # injectable
+  get_it: ^7.7.0
+  injectable: ^2.4.2
+
   # dart
   chopper: ^7.4.0
   equatable: ^2.0.7
@@ -30,10 +39,6 @@ dependencies:
   json_annotation: ^4.9.0
   logger: ^2.5.0
   logging: ^1.2.0
-
-  # injectable
-  get_it: ^7.7.0
-  injectable: ^2.4.2
 
   # flutter
   cached_network_image: ^3.4.0
@@ -44,6 +49,7 @@ dependencies:
   provider: ^6.1.2
   shared_preferences: ^2.2.3
   url_launcher: ^6.3.1
+  envied: ^1.0.1
 
 dev_dependencies:
   flutter_test:
@@ -66,6 +72,7 @@ dev_dependencies:
   husky: ^0.1.7
   commitlint_cli: ^0.8.1
   danger_core: ^2.0.0
+  envied_generator: ^1.0.1
 
 flutter:
   uses-material-design: true

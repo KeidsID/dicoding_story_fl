@@ -6,8 +6,11 @@
 !**/l10n/gen/untranslated.json
 service_locator.config.dart
 
-# Miscellaneous
+# secrets
+*.env
 secrets/
+
+# Miscellaneous
 examples/
 *.class
 *.log

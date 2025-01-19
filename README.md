@@ -72,14 +72,21 @@ Most of them need to generate its utilities with [build_runner][build-runner].
    dart run husky install
    ```
 
-3. Build project environment.
+3. Create `.env` file. Use [`.env.example`](./.env.example) as a template.
+
+4. You may also need to change Google Maps API key on android, ios, and web
+   configs if you need to debug the app custom maps.
+
+   Docs: <https://pub.dev/packages/google_maps_flutter>
+
+5. Build project environment.
 
    ```sh
    dart run build_runner build -d # generate code utils
    flutter gen-l10n # generate localizations
    ```
 
-4. Now you're good to go!
+6. Now you're good to go!
 
    ```sh
    # Check connected devices
@@ -95,8 +102,10 @@ Most of them need to generate its utilities with [build_runner][build-runner].
 ### API Documentation
 
 [dicoding-story-api]: https://story-api.dicoding.dev/v1
+[google-maps-docs]: https://developers.google.com/maps/get-started
 
 - [Dicoding Story API Docs][dicoding-story-api].
+- [Google Maps API Docs][google-maps-docs].
 
 ### Project Structures
 

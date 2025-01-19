@@ -1,7 +1,6 @@
 import "package:flutter/foundation.dart";
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";
-import "package:package_info_plus/package_info_plus.dart";
 import "package:provider/provider.dart";
 
 import "interfaces/libs/l10n.dart";
@@ -36,7 +35,6 @@ class MainApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider.value(value: AuthProvider()),
         ChangeNotifierProvider.value(value: StoriesProvider()),
-        Provider.value(value: ServiceLocator.find<PackageInfo>()),
       ],
       builder: (context, _) {
         /// To make sure redirect did'nt triggered on theme changes.

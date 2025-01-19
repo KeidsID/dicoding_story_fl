@@ -3,12 +3,13 @@ import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
 import "package:provider/provider.dart";
 
-import "package:dicoding_story_fl/domain/entities.dart";
 import "package:dicoding_story_fl/interfaces/libs/constants.dart";
 import "package:dicoding_story_fl/interfaces/libs/l10n/modules.dart";
 import "package:dicoding_story_fl/interfaces/libs/providers.dart";
 import "package:dicoding_story_fl/interfaces/libs/widgets.dart";
 import "package:dicoding_story_fl/interfaces/modules.dart";
+import "package:dicoding_story_fl/libs/constants.dart";
+import "package:dicoding_story_fl/libs/extensions.dart";
 
 /// [SignUpRoute] build decorator.
 const signUpRouteBuild = TypedGoRoute<SignUpRoute>(
@@ -36,6 +37,36 @@ class _SignUpRouteScreenState extends State<_SignUpRouteScreen> {
   late TextEditingController emailController;
   late TextEditingController passwordController;
 
+  double get _maxWidth => 400.0;
+  EdgeInsetsGeometry get _padding => const EdgeInsets.all(16.0);
+
+  Future<void> _handleSignUp(BuildContext context) async {
+    final authProv = context.read<AuthProvider>();
+
+    try {
+      await authProv.register(
+        username: nameController.text,
+        email: emailController.text,
+        password: passwordController.text,
+      );
+    } catch (error, trace) {
+      final exception = error.toAppException(
+        message: "Failed to sign up",
+        trace: trace,
+      );
+
+      kLogger.w("Sign up fail", error: exception, stackTrace: exception.trace);
+
+      if (context.mounted) {
+        final appL10n = AppL10n.of(context);
+
+        context.scaffoldMessenger?.showSnackBar(SnackBar(
+          content: Text(appL10n?.signUpErrorMessage ?? "Sign up fail"),
+        ));
+      }
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -52,28 +83,6 @@ class _SignUpRouteScreenState extends State<_SignUpRouteScreen> {
     nameController.dispose();
     emailController.dispose();
     passwordController.dispose();
-  }
-
-  double get _maxWidth => 400.0;
-  EdgeInsetsGeometry get _padding => const EdgeInsets.all(16.0);
-
-  Future<void> _handleSignUp() async {
-    final showSnackBar = context.scaffoldMessenger?.showSnackBar;
-    final authProv = context.read<AuthProvider>();
-
-    try {
-      await authProv.register(
-        username: nameController.text,
-        email: emailController.text,
-        password: passwordController.text,
-      );
-    } on AppException catch (err) {
-      showSnackBar?.call(SnackBar(content: Text(err.message)));
-    } catch (err) {
-      showSnackBar?.call(const SnackBar(
-        content: Text("No internet connection"),
-      ));
-    }
   }
 
   @override
@@ -112,7 +121,7 @@ class _SignUpRouteScreenState extends State<_SignUpRouteScreen> {
               const SizedBox(height: 16.0),
               PasswordTextField(
                 controller: passwordController,
-                onSubmitted: (value) => _handleSignUp(),
+                onSubmitted: (value) => _handleSignUp(context),
               ),
               const SizedBox(height: 32.0),
 
@@ -125,7 +134,7 @@ class _SignUpRouteScreenState extends State<_SignUpRouteScreen> {
                 }
 
                 return FilledButton(
-                  onPressed: () => _handleSignUp(),
+                  onPressed: () => _handleSignUp(context),
                   child: Text(appL10n.register),
                 );
               }),

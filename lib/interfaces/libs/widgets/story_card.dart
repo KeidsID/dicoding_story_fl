@@ -9,6 +9,11 @@ class StoryCard extends StatelessWidget {
   const StoryCard(this.story, {super.key, this.onTap});
 
   final Story story;
+  String get _address {
+    final location = story.location;
+
+    return location?.displayName ?? location?.address ?? location?.latLon ?? "";
+  }
 
   /// Called when the user taps this card.
   final VoidCallback? onTap;
@@ -19,7 +24,8 @@ class StoryCard extends StatelessWidget {
 
     final child = ScrollConfiguration(
       behavior: context.scrollBehavior.copyWith(
-        dragDevices: {}, // Disable drag. Only accept mouse scroll
+        physics: const NeverScrollableScrollPhysics(),
+        scrollbars: false,
       ),
       child: SingleChildScrollView(
         child: Column(
@@ -51,6 +57,12 @@ class StoryCard extends StatelessWidget {
                           .applyOpacity(opacity: 0.5),
                     ],
                   ),
+                  if (_address.isNotEmpty)
+                    AddressSection(
+                      _address,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   const SizedBox(height: 8.0),
 
                   //
