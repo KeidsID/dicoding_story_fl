@@ -4,6 +4,7 @@ import "package:flutter_google_maps_webservices/geocoding.dart"
     as lib_geocoding;
 import "package:injectable/injectable.dart";
 import "package:location/location.dart" as lib_location;
+import "package:package_info_plus/package_info_plus.dart";
 
 import "package:dicoding_story_fl/domain/entities.dart";
 import "package:dicoding_story_fl/domain/services.dart";
@@ -14,13 +15,27 @@ import "package:dicoding_story_fl/infrastructures/libs/constants.dart"
 
 @LazySingleton(as: MapsService)
 final class MapsServiceImpl implements MapsService {
-  MapsServiceImpl(this._configService);
+  MapsServiceImpl(this._packageInfo, this._configService);
+
+  final PackageInfo _packageInfo;
 
   final ConfigService _configService;
   lib_location.Location get _locationService => lib_location.Location.instance;
   lib_geocoding.GoogleMapsGeocoding get _geocodingService {
-    return _geocodingServiceInstance ??=
-        lib_geocoding.GoogleMapsGeocoding(apiKey: _googleMapsApiKey);
+    final bundleId = _packageInfo.packageName;
+    final androidSHA = _packageInfo.buildSignature;
+
+    return _geocodingServiceInstance ??= lib_geocoding.GoogleMapsGeocoding(
+      apiKey: _googleMapsApiKey,
+      apiHeaders: {
+        if (defaultTargetPlatform == TargetPlatform.android) ...{
+          "X-Android-Package": bundleId,
+          "X-Android-Cert": androidSHA,
+        },
+        if (defaultTargetPlatform == TargetPlatform.iOS)
+          "X-Ios-Bundle-Identifier": bundleId,
+      },
+    );
   }
 
   /// This act as a singleton state.
@@ -31,7 +46,11 @@ final class MapsServiceImpl implements MapsService {
   GoogleMapsNewPlacesRemoteData get _newPlacesApiService {
     return _newPlacesApiServiceInstance ??=
         GoogleMapsNewPlacesRemoteData.create(
-      GoogleMapsNewPlacesApiClient(apiKey: _googleMapsApiKey),
+      GoogleMapsNewPlacesApiClient(
+        apiKey: _googleMapsApiKey,
+        bundleId: _packageInfo.packageName,
+        androidSHA: _packageInfo.buildSignature,
+      ),
     );
   }
 

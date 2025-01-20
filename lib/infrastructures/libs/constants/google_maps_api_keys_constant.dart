@@ -7,5 +7,5 @@
 abstract final class GoogleMapsApiKeys {
   static const android = "AIzaSyBHiULWIzUmlHFAgbHrcAlRkSz9bftnfyI";
   static const ios = "AIzaSyDVlWW9LW3Sz7_4tMQDb8jR1EBoQLH0zeA";
-  static const web = "AIzaSyA9oidTroejuUqiuQFU44B7xr7aqVAigLE";
+  static const web = "AIzaSyDFBxnhOG0Rw4Ri7Ci7vYouz22jbOCkQAs";
 }
