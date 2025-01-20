@@ -5,6 +5,8 @@ import "package:flutter/foundation.dart";
 final class GoogleMapsNewPlacesApiClient extends ChopperClient {
   GoogleMapsNewPlacesApiClient({
     required String apiKey,
+    required String bundleId,
+    required String androidSHA,
     super.client,
     super.authenticator,
     super.services,
@@ -18,7 +20,15 @@ final class GoogleMapsNewPlacesApiClient extends ChopperClient {
                 level: Level.basic,
                 logger: chopperLogger,
               ),
-            HeadersInterceptor({"X-Goog-Api-Key": apiKey}),
+            HeadersInterceptor({
+              "X-Goog-Api-Key": apiKey,
+              if (defaultTargetPlatform == TargetPlatform.android) ...{
+                "X-Android-Package": bundleId,
+                "X-Android-Cert": androidSHA,
+              },
+              if (defaultTargetPlatform == TargetPlatform.iOS)
+                "X-Ios-Bundle-Identifier": bundleId,
+            }),
           ],
         );
 }
