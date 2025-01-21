@@ -1,1 +1,1 @@
-export "clients/google_maps_new_places_api_client.dart";
+export "clients/google_maps_api_client.dart";

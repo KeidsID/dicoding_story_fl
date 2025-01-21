@@ -1,11 +1,23 @@
 import "package:chopper/chopper.dart";
 
+import "../libs/clients.dart";
+
 part "google_maps_new_places_remote_data.chopper.dart";
 
 @chopperApi
 abstract class GoogleMapsNewPlacesRemoteData extends ChopperService {
-  static GoogleMapsNewPlacesRemoteData create([ChopperClient? client]) =>
-      _$GoogleMapsNewPlacesRemoteData(client);
+  static GoogleMapsNewPlacesRemoteData create({
+    required String apiKey,
+    String? bundleId,
+    String? androidSHA,
+  }) {
+    return _$GoogleMapsNewPlacesRemoteData(GoogleMapsApiClient(
+      type: GoogleMapsApiClientType.newPlaces,
+      apiKey: apiKey,
+      bundleId: bundleId,
+      androidSHA: androidSHA,
+    ));
+  }
 
   /// https://developers.google.com/maps/documentation/places/web-service/place-details
   @Get(path: "/places/{placeId}")

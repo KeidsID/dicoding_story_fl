@@ -1,3 +1,5 @@
+import "package:dicoding_story_fl/libs/constants.dart";
+import "package:dicoding_story_fl/libs/extensions.dart";
 import "package:injectable/injectable.dart";
 
 import "package:dicoding_story_fl/domain/entities.dart";
@@ -25,12 +27,24 @@ final class GetStoriesUseCase
 
     if (hasCoordinates) {
       return Future.wait(stories.map((e) async {
-        final location = await _mapsService.reverseGeocoding(
-          e.lat ?? 0.0,
-          e.lon ?? 0.0,
-        );
+        try {
+          final location = await _mapsService.reverseGeocoding(
+            e.lat ?? 0.0,
+            e.lon ?? 0.0,
+          );
 
-        return e.copyWith(location: location);
+          return e.copyWith(location: location);
+        } catch (error, trace) {
+          final exception = error.toAppException(trace: trace);
+
+          kLogger.w(
+            "Fail to load story address",
+            error: exception,
+            stackTrace: exception.trace,
+          );
+
+          return e.copyWith(location: LocationData(e.lat!, e.lon!));
+        }
       }));
     }
 

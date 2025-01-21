@@ -1,4 +1,6 @@
 import "package:dicoding_story_fl/domain/services.dart";
+import "package:dicoding_story_fl/libs/constants.dart";
+import "package:dicoding_story_fl/libs/extensions.dart";
 import "package:injectable/injectable.dart";
 
 import "package:dicoding_story_fl/domain/entities.dart";
@@ -20,10 +22,23 @@ final class GetStoryByIdUseCase implements UseCase<String, Story> {
     final longitude = story.lon ?? 0.0;
 
     return story.copyWith(
-      location: await _mapsService.reverseGeocoding(
-        latitude,
-        longitude,
-      ),
+      location: await _loadAddress(latitude, longitude),
     );
+  }
+
+  Future<LocationData> _loadAddress(double latitude, double longitude) async {
+    try {
+      return await _mapsService.reverseGeocoding(latitude, longitude);
+    } catch (error, trace) {
+      final exception = error.toAppException(trace: trace);
+
+      kLogger.w(
+        "fail to load story address",
+        error: exception,
+        stackTrace: exception.trace,
+      );
+
+      return LocationData(latitude, longitude);
+    }
   }
 }
