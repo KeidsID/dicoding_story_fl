@@ -1,7 +1,5 @@
 import "package:chopper/chopper.dart";
 import "package:flutter/foundation.dart";
-import "package:flutter_google_maps_webservices/geocoding.dart"
-    as lib_geocoding;
 import "package:injectable/injectable.dart";
 import "package:location/location.dart" as lib_location;
 import "package:package_info_plus/package_info_plus.dart";
@@ -20,37 +18,30 @@ final class MapsServiceImpl implements MapsService {
   final PackageInfo _packageInfo;
 
   final ConfigService _configService;
+
   lib_location.Location get _locationService => lib_location.Location.instance;
-  lib_geocoding.GoogleMapsGeocoding get _geocodingService {
+  GoogleMapsGeocodingRemoteData get _geocodingService {
     final bundleId = _packageInfo.packageName;
     final androidSHA = _packageInfo.buildSignature;
 
-    return _geocodingServiceInstance ??= lib_geocoding.GoogleMapsGeocoding(
+    return _geocodingServiceInstance ??= GoogleMapsGeocodingRemoteData.create(
       apiKey: _googleMapsApiKey,
-      apiHeaders: {
-        if (defaultTargetPlatform == TargetPlatform.android) ...{
-          "X-Android-Package": bundleId,
-          "X-Android-Cert": androidSHA,
-        },
-        if (defaultTargetPlatform == TargetPlatform.iOS)
-          "X-Ios-Bundle-Identifier": bundleId,
-      },
+      bundleId: bundleId,
+      androidSHA: androidSHA,
     );
   }
 
   /// This act as a singleton state.
   ///
   /// Use [_geocodingService] instead.
-  lib_geocoding.GoogleMapsGeocoding? _geocodingServiceInstance;
+  GoogleMapsGeocodingRemoteData? _geocodingServiceInstance;
 
   GoogleMapsNewPlacesRemoteData get _newPlacesApiService {
     return _newPlacesApiServiceInstance ??=
         GoogleMapsNewPlacesRemoteData.create(
-      GoogleMapsNewPlacesApiClient(
-        apiKey: _googleMapsApiKey,
-        bundleId: _packageInfo.packageName,
-        androidSHA: _packageInfo.buildSignature,
-      ),
+      apiKey: _googleMapsApiKey,
+      bundleId: _packageInfo.packageName,
+      androidSHA: _packageInfo.buildSignature,
     );
   }
 
@@ -88,31 +79,39 @@ final class MapsServiceImpl implements MapsService {
     String address, {
     String? languageCode,
   }) async {
-    final response = await _geocodingService.searchByAddress(
-      address,
-      language: languageCode,
-    );
-    final isFail = response.status != lib_geocoding.GoogleResponseStatus.okay;
+    try {
+      final response = await _geocodingService.geocoding(
+        address,
+        languageCode: languageCode,
+      );
+      final responseBody = response.body!;
 
-    if (isFail) {
-      throw AppException(
-        name: "MapsServiceImpl.geocoding",
-        message: response.errorMessage ?? "Failed to geocoding",
-        error: response,
+      final results = responseBody["results"] as List;
+      final result = results.first as Map<String, dynamic>;
+
+      final rawLocation =
+          result["geometry"]["location"] as Map<String, dynamic>;
+      final latitude = rawLocation["lat"] as double;
+      final longitude = rawLocation["lng"] as double;
+      final placeId = result["place_id"] as String;
+      final formattedAddress = result["formatted_address"] as String;
+
+      return LocationData(
+        latitude,
+        longitude,
+        placeData: LocationPlaceData(
+          id: placeId,
+          address: formattedAddress,
+        ),
+      );
+    } on ChopperHttpException catch (exception, trace) {
+      throw handleApiErrorResponse(exception, trace);
+    } catch (error, trace) {
+      throw error.toAppException(
+        message: "Failed to geocoding",
+        trace: trace,
       );
     }
-
-    final result = response.results.first;
-    final rawLocation = result.geometry.location;
-
-    return LocationData(
-      rawLocation.lat,
-      rawLocation.lng,
-      placeData: LocationPlaceData(
-        id: result.placeId,
-        address: result.formattedAddress,
-      ),
-    );
   }
 
   @override
@@ -122,42 +121,46 @@ final class MapsServiceImpl implements MapsService {
     String? languageCode,
     bool includeDisplayName = true,
   }) async {
-    final response = await _geocodingService.searchByLocation(
-      lib_geocoding.Location(lat: latitude, lng: longitude),
-      language: languageCode,
-    );
-    final isFail = response.status != lib_geocoding.GoogleResponseStatus.okay;
-
-    if (isFail) {
-      throw AppException(
-        name: "MapsServiceImpl.reverseGeocoding",
-        message: response.errorMessage ?? "Failed to reverse geocoding",
-        error: response,
-      );
-    }
-
-    final result = response.results.first;
-    final placeId = result.placeId;
-    final rawLocation = result.geometry.location;
-
     try {
-      final Map<String, dynamic>? placeDetailResponseBody = includeDisplayName
-          ? (await _newPlacesApiService.placeDetails(
-              placeId,
-              fieldMask: "displayName",
-              languageCode: languageCode,
-            ))
-              .body
-          : null;
+      final response = await _geocodingService.reverseGeocoding(
+        "$latitude,$longitude",
+        languageCode: languageCode,
+      );
+      final responseBody = response.body!;
+
+      final results = responseBody["results"] as List;
+      final result = results.first as Map<String, dynamic>;
+
+      final rawLocation =
+          result["geometry"]["location"] as Map<String, dynamic>;
+      final lat = rawLocation["lat"] as double;
+      final lon = rawLocation["lng"] as double;
+      final placeId = result["place_id"] as String?;
+      final formattedAddress = result["formatted_address"] as String;
+
+      final Map<String, dynamic>? placeDetailResponseBody =
+          includeDisplayName && placeId != null
+              ? (await _newPlacesApiService.placeDetails(
+                  placeId,
+                  fieldMask: "displayName",
+                  languageCode: languageCode,
+                ))
+                  .body
+              : null;
+
+      final displayName =
+          placeDetailResponseBody?["displayName"]["text"] as String?;
 
       return LocationData(
-        rawLocation.lat,
-        rawLocation.lng,
-        placeData: LocationPlaceData(
-          id: result.placeId,
-          address: result.formattedAddress,
-          displayName: placeDetailResponseBody?["displayName"]["text"],
-        ),
+        lat,
+        lon,
+        placeData: placeId == null
+            ? null
+            : LocationPlaceData(
+                id: placeId,
+                address: formattedAddress,
+                displayName: displayName,
+              ),
       );
     } on ChopperHttpException catch (exception, trace) {
       throw handleApiErrorResponse(exception, trace);

@@ -23,7 +23,6 @@ dependencies:
   image_picker: ^1.1.2
 
   # maps
-  flutter_google_maps_webservices: ^1.1.1
   location: ^6.0.2
   google_maps_flutter: ^2.6.1
 
