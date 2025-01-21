@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.1](https://github.com/KeidsID/dicoding_story_fl/compare/dicoding_story_fl-v1.4.0...dicoding_story_fl-v1.4.1) (2025-01-20)
+
+
+### Bug Fixes
+
+* add missing google maps api request headers for mobile ds-11 ([#28](https://github.com/KeidsID/dicoding_story_fl/issues/28)) ([db28af5](https://github.com/KeidsID/dicoding_story_fl/commit/db28af50d066ea54163d85037f104c2c4970af9c))
+
 ## [1.4.0](https://github.com/KeidsID/dicoding_story_fl/compare/dicoding_story_fl-v1.3.5...dicoding_story_fl-v1.4.0) (2025-01-19)
 
 
