@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.2](https://github.com/KeidsID/dicoding_story_fl/compare/dicoding_story_fl-v1.4.1...dicoding_story_fl-v1.4.2) (2025-01-21)
+
+
+### Bug Fixes
+
+* omit location fetch on story if fail ds-11 ([#30](https://github.com/KeidsID/dicoding_story_fl/issues/30)) ([91e6971](https://github.com/KeidsID/dicoding_story_fl/commit/91e69715eb2d9a4b2008a6ee7a06f88f19f77629))
+
 ## [1.4.1](https://github.com/KeidsID/dicoding_story_fl/compare/dicoding_story_fl-v1.4.0...dicoding_story_fl-v1.4.1) (2025-01-20)
 
 
