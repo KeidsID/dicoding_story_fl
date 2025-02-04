@@ -19,7 +19,7 @@ export "routes/story_detail_route.dart";
 
 /// [StoriesRoute] build decorator.
 const storiesRouteBuild = TypedGoRoute<StoriesRoute>(
-  path: "${AppRoutePaths.stories}${AppRouteStoriesPaths.root}",
+  path: "${AppRoutePaths.stories}${StoriesRoutePaths.root}",
   routes: [postStoryRouteBuild, storyDetailRouteBuild],
 );
 

@@ -16,7 +16,7 @@ import "package:dicoding_story_fl/libs/extensions.dart";
 
 /// [PostStoryRoute] build decorator.
 const postStoryRouteBuild = TypedGoRoute<PostStoryRoute>(
-  path: AppRouteStoriesPaths.post,
+  path: StoriesRoutePaths.post,
 );
 
 final class PostStoryRoute extends GoRouteData {
@@ -147,7 +147,7 @@ class _PostStoryRouteScreenState extends State<_PostStoryRouteScreen> {
     return () async {
       final result = await showDialog<LocationData?>(
         context: context,
-        builder: (_) => GetLocationDialog(initialLocation: _locationData),
+        builder: (_) => CustomMapsDialog(initialLocation: _locationData),
       );
 
       if (result == null) return;
