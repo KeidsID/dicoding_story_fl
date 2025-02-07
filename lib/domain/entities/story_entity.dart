@@ -1,5 +1,5 @@
-import "package:flutter/foundation.dart";
 import "package:freezed_annotation/freezed_annotation.dart";
+import "package:equatable/equatable.dart";
 
 import "package:dicoding_story_fl/libs/decorators.dart";
 import "location_data_entity.dart";
@@ -7,8 +7,8 @@ import "location_data_entity.dart";
 part "story_entity.freezed.dart";
 part "story_entity.g.dart";
 
-@Freezed(copyWith: true)
-class Story with _$Story {
+@Freezed(copyWith: true, equal: false)
+class Story with _$Story, EquatableMixin {
   const factory Story({
     required String id,
     @JsonKey(name: "name") required String owner,
@@ -22,5 +22,10 @@ class Story with _$Story {
     @ignoreJsonSerializable LocationData? location,
   }) = _Story;
 
+  const Story._();
+
   factory Story.fromJson(Map<String, Object?> json) => _$StoryFromJson(json);
+
+  @override
+  List<Object?> get props => [id];
 }

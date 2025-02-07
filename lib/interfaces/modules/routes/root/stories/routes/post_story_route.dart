@@ -1,4 +1,5 @@
 import "package:dicoding_story_fl/domain/entities.dart";
+import "package:dicoding_story_fl/interfaces/modules.dart";
 import "package:fl_utilities/fl_utilities.dart";
 import "package:flex_color_scheme/flex_color_scheme.dart";
 import "package:flutter/material.dart";
@@ -16,23 +17,27 @@ import "package:dicoding_story_fl/libs/extensions.dart";
 
 /// [PostStoryRoute] build decorator.
 const postStoryRouteBuild = TypedGoRoute<PostStoryRoute>(
-  path: AppRouteStoriesPaths.post,
+  path: StoriesRoutePaths.post,
 );
 
 final class PostStoryRoute extends GoRouteData {
-  const PostStoryRoute();
+  const PostStoryRoute([this.description]);
+
+  final String? description;
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
     return ChangeNotifierProvider.value(
       value: PickedImageProvider(),
-      child: const _PostStoryRouteScreen(),
+      child: _PostStoryRouteScreen(description),
     );
   }
 }
 
 class _PostStoryRouteScreen extends StatefulWidget {
-  const _PostStoryRouteScreen();
+  const _PostStoryRouteScreen([this.description]);
+
+  final String? description;
 
   @override
   State<_PostStoryRouteScreen> createState() => _PostStoryRouteScreenState();
@@ -161,7 +166,7 @@ class _PostStoryRouteScreenState extends State<_PostStoryRouteScreen> {
     super.initState();
 
     _formKey = GlobalKey();
-    _descriptionController = TextEditingController();
+    _descriptionController = TextEditingController(text: widget.description);
   }
 
   @override
@@ -177,7 +182,20 @@ class _PostStoryRouteScreenState extends State<_PostStoryRouteScreen> {
     final appL10n = AppL10n.of(context)!;
 
     return Scaffold(
-      appBar: AppBar(title: Text(appL10n.postStory)),
+      appBar: AppBar(
+        leading: Builder(builder: (context) {
+          return BackButton(
+            onPressed: () {
+              // provider dispose handled here since widget dispose cause an
+              // error.
+              context.read<PickedImageProvider>().dispose();
+
+              Navigator.pop(context);
+            },
+          );
+        }),
+        title: Text(appL10n.postStory),
+      ),
       body: Builder(
         builder: (context) {
           final pickedImageProv = context.watch<PickedImageProvider>();
@@ -263,6 +281,9 @@ class _PostStoryRouteScreenState extends State<_PostStoryRouteScreen> {
               formKey: _formKey,
               descController: _descriptionController,
               descIsEnabled: !isLoading,
+              onDescChanged: (value) {
+                PostStoryRoute(value).go(context);
+              }.debounce(),
               address: _locationData?.displayName ??
                   _locationData?.address ??
                   _locationData?.latLon,
@@ -304,6 +325,7 @@ class _PostStoryFormDelegate {
     this.formKey,
     this.descController,
     this.descIsEnabled,
+    this.onDescChanged,
     this.address,
     this.onPostButtonTap,
     this.onAddressSectionTap,
@@ -315,6 +337,7 @@ class _PostStoryFormDelegate {
   final Key? formKey;
   final TextEditingController? descController;
   final bool? descIsEnabled;
+  final ValueChanged<String>? onDescChanged;
   final String? address;
 
   final VoidCallback? onPostButtonTap;
@@ -377,6 +400,7 @@ abstract base class _PostStoryFormBase extends StatelessWidget {
         keyboardType: TextInputType.multiline,
         maxLines: null,
         decoration: InputDecoration(hintText: "${appL10n.tellUsYourStory}..."),
+        onChanged: delegate.onDescChanged,
         validator: (text) {
           if (text == null || text.isEmpty) return appL10n.cannotBeEmpty;
 

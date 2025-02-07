@@ -1,11 +1,15 @@
+import "dart:convert";
+
 import "package:camera/camera.dart";
 import "package:flutter/foundation.dart";
 import "package:flutter/material.dart";
 import "package:image_picker/image_picker.dart";
+import "package:shared_preferences/shared_preferences.dart";
 
 import "package:dicoding_story_fl/interfaces/libs/widgets.dart";
 import "package:dicoding_story_fl/libs/constants.dart";
 import "package:dicoding_story_fl/libs/extensions.dart";
+import "package:dicoding_story_fl/service_locator.dart";
 
 import "../libs/types.dart";
 
@@ -15,15 +19,42 @@ import "../libs/types.dart";
 final class PickedImageProvider extends AsyncValueNotifier<XFile?> {
   /// {@macro dicoding_story_fl.interfaces.ux.providers.PickedImageProvider}
   PickedImageProvider() : super(null) {
+    cacheService = ServiceLocator.find<SharedPreferences>();
+
+    final cachedImageBytes = cacheService.getString(cacheKey);
+
+    if (cachedImageBytes != null) {
+      final imageBytes = jsonDecode(cachedImageBytes) as List;
+
+      value = XFile.fromData(
+        Uint8List.fromList(
+          imageBytes.map((e) => e is int ? e : int.parse(e)).toList(),
+        ),
+      );
+    }
+
     if (defaultTargetPlatform == TargetPlatform.android) {
       Future.microtask(() => _retrieveLostData()).then((_) => null);
     }
   }
 
+  @override
+  void dispose() {
+    cacheService.remove(cacheKey);
+
+    super.dispose();
+  }
+
+  late final SharedPreferences cacheService;
+  final cacheKey = "providers.picked_image_provider";
+
   /// Reset [value] to `null`.
   ///
   /// Incase you need it.
-  void resetValue() => value = null;
+  void resetValue() {
+    cacheService.remove(cacheKey);
+    value = null;
+  }
 
   /// Pick image from gallery or camera.
   ///
@@ -47,6 +78,10 @@ final class PickedImageProvider extends AsyncValueNotifier<XFile?> {
 
       if (dialogResult == null) return null;
 
+      cacheService.setString(
+        cacheKey,
+        jsonEncode((await dialogResult.readAsBytes()).toList()),
+      );
       value = dialogResult;
 
       return dialogResult;
@@ -60,6 +95,10 @@ final class PickedImageProvider extends AsyncValueNotifier<XFile?> {
 
       if (image == null) return null;
 
+      cacheService.setString(
+        cacheKey,
+        jsonEncode((await image.readAsBytes()).toList()),
+      );
       value = image;
 
       return image;
@@ -84,7 +123,7 @@ final class PickedImageProvider extends AsyncValueNotifier<XFile?> {
     }
   }
 
-  /// `Android` only.
+  /// `Android` data recovery.
   Future<void> _retrieveLostData() async {
     isLoading = true;
 

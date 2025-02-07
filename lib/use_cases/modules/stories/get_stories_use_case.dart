@@ -43,7 +43,7 @@ final class GetStoriesUseCase
             stackTrace: exception.trace,
           );
 
-          return e.copyWith(location: LocationData(e.lat!, e.lon!));
+          return e.copyWith(location: null);
         }
       }));
     }

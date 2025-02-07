@@ -19,7 +19,7 @@ export "routes/story_detail_route.dart";
 
 /// [StoriesRoute] build decorator.
 const storiesRouteBuild = TypedGoRoute<StoriesRoute>(
-  path: "${AppRoutePaths.stories}${AppRouteStoriesPaths.root}",
+  path: "${AppRoutePaths.stories}${StoriesRoutePaths.root}",
   routes: [postStoryRouteBuild, storyDetailRouteBuild],
 );
 
@@ -59,7 +59,7 @@ class _StoriesRouteScreenState extends State<_StoriesRouteScreen> {
       final scrollPosition = _scrollController.position.pixels;
       final maxScrollPosition = _scrollController.position.maxScrollExtent;
 
-      if (scrollPosition >= maxScrollPosition) {
+      if (scrollPosition >= maxScrollPosition - 600.0) {
         Future.microtask(_handleFetchStories);
       }
     });

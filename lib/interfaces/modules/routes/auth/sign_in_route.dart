@@ -13,7 +13,7 @@ import "package:dicoding_story_fl/libs/extensions.dart";
 
 /// [SignInRoute] build decorator.
 const signInRouteBuild = TypedGoRoute<SignInRoute>(
-  path: "${AppRoutePaths.auth}${AppRouteAuthPaths.signIn}",
+  path: "${AppRoutePaths.auth}${AuthRoutePaths.signIn}",
 );
 
 final class SignInRoute extends GoRouteData {

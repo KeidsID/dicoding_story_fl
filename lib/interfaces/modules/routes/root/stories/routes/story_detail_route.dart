@@ -10,7 +10,7 @@ import "package:dicoding_story_fl/interfaces/libs/providers.dart";
 import "package:dicoding_story_fl/interfaces/libs/widgets.dart";
 
 const storyDetailRouteBuild = TypedGoRoute<StoryDetailRoute>(
-  path: AppRouteStoriesPaths.view$storyId,
+  path: StoriesRoutePaths.view$storyId,
 );
 
 final class StoryDetailRoute extends GoRouteData {
@@ -116,9 +116,11 @@ mixin _StoryDetailRouteScreenHelperMixin {
     showDialog(
       context: context,
       builder: (_) {
-        return CustomMapsDialog(
-          initialLocation: initialLocation,
-          readonly: true,
+        return Dialog.fullscreen(
+          child: CustomMapsView(
+            initialLocation: initialLocation,
+            readonly: true,
+          ),
         );
       },
     );

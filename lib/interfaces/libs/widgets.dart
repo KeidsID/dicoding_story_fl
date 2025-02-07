@@ -1,7 +1,7 @@
 export "widgets/list_tile/app_about_list_tile.dart";
 export "widgets/list_tile/locale_list_tile.dart";
 export "widgets/list_tile/theme_list_tile.dart";
-export "widgets/maps/custom_maps_dialog.dart";
+export "widgets/maps/custom_maps_view.dart";
 export "widgets/maps/get_location_dialog.dart";
 export "widgets/media/common_network_image.dart";
 export "widgets/media/custom_camera.dart";

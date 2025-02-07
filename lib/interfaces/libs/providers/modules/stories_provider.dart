@@ -31,14 +31,24 @@ final class StoriesProvider extends AsyncValueNotifier<List<Story>> {
     isLoading = true;
 
     try {
-      final stories = await ServiceLocator.find<GetStoriesUseCase>()
-          .execute(GetStoriesRequestDto(
-        page: page,
-        size: storiesCount,
-        hasCoordinates: true,
-      ));
+      final getStoriesUseCase = ServiceLocator.find<GetStoriesUseCase>();
 
-      if (stories.length < storiesCount) {
+      final halfStoriesCount = storiesCount ~/ 2;
+
+      final List<Story> stories = {
+        ...(await getStoriesUseCase.execute(GetStoriesRequestDto(
+          page: page,
+          size: halfStoriesCount,
+          hasCoordinates: true,
+        ))),
+        ...(await getStoriesUseCase.execute(GetStoriesRequestDto(
+          page: page,
+          size: halfStoriesCount,
+        ))),
+      }.toList()
+        ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+
+      if (stories.length < halfStoriesCount) {
         _isLatestPage = true;
       } else {
         _page++;
