@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.4](https://github.com/KeidsID/dicoding_story_fl/compare/dicoding_story_fl-v1.4.3...dicoding_story_fl-v1.4.4) (2025-02-07)
+
+
+### Bug Fixes
+
+* switch Geocoding API provider ds-32 ([#36](https://github.com/KeidsID/dicoding_story_fl/issues/36)) ([fb4c124](https://github.com/KeidsID/dicoding_story_fl/commit/fb4c124aa492a31e7a1a5d93ec7ce35881d0edd8))
+
 ## [1.4.3](https://github.com/KeidsID/dicoding_story_fl/compare/dicoding_story_fl-v1.4.2...dicoding_story_fl-v1.4.3) (2025-02-07)
 
 
