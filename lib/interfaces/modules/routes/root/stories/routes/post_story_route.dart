@@ -152,7 +152,7 @@ class _PostStoryRouteScreenState extends State<_PostStoryRouteScreen> {
     return () async {
       final result = await showDialog<LocationData?>(
         context: context,
-        builder: (_) => CustomMapsDialog(initialLocation: _locationData),
+        builder: (_) => GetLocationDialog(initialLocation: _locationData),
       );
 
       if (result == null) return;

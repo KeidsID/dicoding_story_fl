@@ -116,9 +116,11 @@ mixin _StoryDetailRouteScreenHelperMixin {
     showDialog(
       context: context,
       builder: (_) {
-        return CustomMapsDialog(
-          initialLocation: initialLocation,
-          readonly: true,
+        return Dialog.fullscreen(
+          child: CustomMapsView(
+            initialLocation: initialLocation,
+            readonly: true,
+          ),
         );
       },
     );

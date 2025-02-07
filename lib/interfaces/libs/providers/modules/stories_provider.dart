@@ -33,26 +33,28 @@ final class StoriesProvider extends AsyncValueNotifier<List<Story>> {
     try {
       final getStoriesUseCase = ServiceLocator.find<GetStoriesUseCase>();
 
-      final Set<Story> stories = {
+      final halfStoriesCount = storiesCount ~/ 2;
+
+      final List<Story> stories = {
         ...(await getStoriesUseCase.execute(GetStoriesRequestDto(
           page: page,
-          size: (storiesCount / 2).round(),
+          size: halfStoriesCount,
           hasCoordinates: true,
         ))),
         ...(await getStoriesUseCase.execute(GetStoriesRequestDto(
           page: page,
-          size: (storiesCount / 2).round(),
+          size: halfStoriesCount,
         ))),
-      };
+      }.toList()
+        ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
 
-      if (stories.length < storiesCount) {
+      if (stories.length < halfStoriesCount) {
         _isLatestPage = true;
       } else {
         _page++;
       }
 
-      value = [...value!, ...stories]
-        ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+      value = [...value!, ...stories];
     } catch (err, trace) {
       final parsedError = err.toAppException(trace: trace);
 
