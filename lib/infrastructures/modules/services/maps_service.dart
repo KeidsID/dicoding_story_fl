@@ -21,14 +21,7 @@ final class MapsServiceImpl implements MapsService {
 
   lib_location.Location get _locationService => lib_location.Location.instance;
   GoogleMapsGeocodingRemoteData get _geocodingService {
-    final bundleId = _packageInfo.packageName;
-    final androidSHA = _packageInfo.buildSignature;
-
-    return _geocodingServiceInstance ??= GoogleMapsGeocodingRemoteData.create(
-      apiKey: _googleMapsApiKey,
-      bundleId: bundleId,
-      androidSHA: androidSHA,
-    );
+    return _geocodingServiceInstance ??= GoogleMapsGeocodingRemoteData.create();
   }
 
   /// This act as a singleton state.
@@ -123,7 +116,8 @@ final class MapsServiceImpl implements MapsService {
   }) async {
     try {
       final response = await _geocodingService.reverseGeocoding(
-        "$latitude,$longitude",
+        "$latitude",
+        "$longitude",
         languageCode: languageCode,
       );
       final responseBody = response.body!;
