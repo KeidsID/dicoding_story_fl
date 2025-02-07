@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.3](https://github.com/KeidsID/dicoding_story_fl/compare/dicoding_story_fl-v1.4.2...dicoding_story_fl-v1.4.3) (2025-02-07)
+
+
+### Bug Fixes
+
+* custom maps dialog confirmation failure ds-33 ([#34](https://github.com/KeidsID/dicoding_story_fl/issues/34)) ([f057362](https://github.com/KeidsID/dicoding_story_fl/commit/f0573620a8940117102c6439fba75e382898e411))
+
 ## [1.4.2](https://github.com/KeidsID/dicoding_story_fl/compare/dicoding_story_fl-v1.4.1...dicoding_story_fl-v1.4.2) (2025-01-21)
 
 
