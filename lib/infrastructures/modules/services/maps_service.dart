@@ -21,13 +21,27 @@ final class MapsServiceImpl implements MapsService {
 
   lib_location.Location get _locationService => lib_location.Location.instance;
   GoogleMapsGeocodingRemoteData get _geocodingService {
-    return _geocodingServiceInstance ??= GoogleMapsGeocodingRemoteData.create();
+    return _geocodingServiceInstance ??= GoogleMapsGeocodingRemoteData.create(
+      _googleMapsApiKey,
+      bundleId: _packageInfo.packageName,
+      androidSHA: _packageInfo.buildSignature,
+    );
   }
 
   /// This act as a singleton state.
   ///
   /// Use [_geocodingService] instead.
   GoogleMapsGeocodingRemoteData? _geocodingServiceInstance;
+
+  GeocodingProxyRemoteData get _geocodingProxyService {
+    return _geocodingProxyServiceInstance ??=
+        GeocodingProxyRemoteData.create(_configService);
+  }
+
+  /// This act as a singleton state.
+  ///
+  /// Use [_geocodingProxyService] instead.
+  GeocodingProxyRemoteData? _geocodingProxyServiceInstance;
 
   GoogleMapsNewPlacesRemoteData get _newPlacesApiService {
     return _newPlacesApiServiceInstance ??=
@@ -73,10 +87,15 @@ final class MapsServiceImpl implements MapsService {
     String? languageCode,
   }) async {
     try {
-      final response = await _geocodingService.geocoding(
-        address,
-        languageCode: languageCode,
-      );
+      final response = await (kDebugMode
+          ? _geocodingService.geocoding(
+              address,
+              languageCode: languageCode,
+            )
+          : _geocodingProxyService.geocoding(
+              address,
+              languageCode: languageCode,
+            ));
       final responseBody = response.body!;
 
       final results = responseBody["results"] as List;
@@ -115,11 +134,16 @@ final class MapsServiceImpl implements MapsService {
     bool includeDisplayName = true,
   }) async {
     try {
-      final response = await _geocodingService.reverseGeocoding(
-        "$latitude",
-        "$longitude",
-        languageCode: languageCode,
-      );
+      final response = await (kDebugMode
+          ? _geocodingService.reverseGeocoding(
+              "$latitude,$longitude",
+              languageCode: languageCode,
+            )
+          : _geocodingProxyService.reverseGeocoding(
+              "$latitude",
+              "$longitude",
+              languageCode: languageCode,
+            ));
       final responseBody = response.body!;
 
       final results = responseBody["results"] as List;
