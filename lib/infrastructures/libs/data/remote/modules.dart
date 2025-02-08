@@ -7,6 +7,7 @@ import "libs/constants.dart";
 export "libs/clients.dart";
 export "libs/utils.dart";
 export "modules/auth_remote_data.dart";
+export "modules/geocoding_proxy_remote_data.dart";
 export "modules/google_maps_geocoding_remote_data.dart";
 export "modules/google_maps_new_places_remote_data.dart";
 export "modules/stories_remote_data.dart";

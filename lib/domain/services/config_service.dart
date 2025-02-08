@@ -16,5 +16,11 @@ class ConfigServiceEnv with _$ConfigServiceEnv {
     ///
     /// * See: https://cloud.google.com/docs/authentication/api-keys#securing
     @Default("") String debugGoogleMapsApiKey,
+
+    /// Alternative gmaps api used for production.
+    ///
+    /// Clone https://github.com/KeidsID/nest-gmaps-api then deploy your own
+    /// gmaps proxy server.
+    @Default("") String gmapsProxyServer,
   }) = _ConfigServiceEnv;
 }

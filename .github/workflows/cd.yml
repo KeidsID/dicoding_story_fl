@@ -44,13 +44,8 @@ jobs:
     env:
       JDK_VERSION: 17
       JDK_DISTRIBUTION: microsoft
-
-    outputs:
-      release-tag: ${{ needs.release.outputs.created_tag }}
-      fl-cache-key: ${{ steps.fl-setup.outputs.CACHE-KEY }}
-      fl-pub-cache-key: ${{ steps.fl-setup.outputs.PUB-CACHE-KEY }}
-      jdk-version: ${{ steps.jdk.outputs.version }}
-      jdk-distro: ${{ env.JDK_DISTRIBUTION }}
+      ENV_CACHE_PATH: |
+        .env
 
     steps:
       - name: 📚 Code Checkout
@@ -82,8 +77,32 @@ jobs:
       - name: 🔍 flutter doctor
         run: flutter doctor -v
 
+      - id: env-cache-key
+        run: |
+          echo "cacheKey=cd-env-${{ hashFiles('./pubspec.lock') }}" >> $GITHUB_OUTPUT
+      - name: ♻️ Restore prod ".env" file cache
+        id: env-cache
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.ENV_CACHE_PATH }}
+          key: ${{ steps.env-cache-key.outputs.cacheKey }}
+
+      - name: 🏗️ Build prod ".env" file
+        if: steps.env-cache.outputs.cache-hit != 'true'
+        run: |
+          echo "${{ secrets.BASE64_PROD_ENV }}" | base64 --decode > .env
+
       - name: 📦 Get dependencies
         run: flutter pub get
+
+    outputs:
+      release-tag: ${{ needs.release.outputs.created_tag }}
+      fl-cache-key: ${{ steps.fl-setup.outputs.CACHE-KEY }}
+      fl-pub-cache-key: ${{ steps.fl-setup.outputs.PUB-CACHE-KEY }}
+      jdk-version: ${{ steps.jdk.outputs.version }}
+      jdk-distro: ${{ env.JDK_DISTRIBUTION }}
+      env-cache-key: ${{ steps.env-cache-key.outputs.cacheKey }}
+      env-cache-path: ${{ env.ENV_CACHE_PATH }}
 
   web-github-pages:
     name: 🚀 Web Deploy on Github Pages
@@ -105,6 +124,12 @@ jobs:
           cache: true
           cache-key: ${{needs.dependencies.outputs.fl-cache-key}}
           pub-cache-key: ${{needs.dependencies.outputs.fl-pub-cache-key}}
+
+      - name: ♻️ Restore prod ".env" file cache
+        uses: actions/cache@v3
+        with:
+          path: ${{ needs.dependencies.outputs.env-cache-path }}
+          key: ${{ needs.dependencies.outputs.env-cache-key }}
 
       - name: 🏗️ Build code utils
         run: |
@@ -172,6 +197,12 @@ jobs:
 
       - name: 📝 Accept Android licenses
         run: "yes | flutter doctor --android-licenses"
+
+      - name: ♻️ Restore prod ".env" file cache
+        uses: actions/cache@v3
+        with:
+          path: ${{ needs.dependencies.outputs.env-cache-path }}
+          key: ${{ needs.dependencies.outputs.env-cache-key }}
 
       - name: 🏗️ Build code utils
         run: |

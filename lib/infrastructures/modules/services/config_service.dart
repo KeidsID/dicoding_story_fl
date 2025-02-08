@@ -11,6 +11,7 @@ final class ConfigServiceImpl implements ConfigService {
   ConfigServiceEnv get env {
     return ConfigServiceEnv(
       debugGoogleMapsApiKey: _Env.debugGoogleMapsKey,
+      gmapsProxyServer: _Env.gmapsProxyServer,
     );
   }
 }
@@ -19,4 +20,7 @@ final class ConfigServiceImpl implements ConfigService {
 abstract final class _Env {
   @EnviedField(defaultValue: "")
   static final String debugGoogleMapsKey = __Env.debugGoogleMapsKey;
+
+  @EnviedField(defaultValue: "")
+  static final String gmapsProxyServer = __Env.gmapsProxyServer;
 }
