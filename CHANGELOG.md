@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.0](https://github.com/KeidsID/dicoding_story_fl/compare/dicoding_story_fl-v1.4.4...dicoding_story_fl-v1.5.0) (2025-02-09)
+
+
+### Features
+
+* splash screen ds-38 ([#41](https://github.com/KeidsID/dicoding_story_fl/issues/41)) ([67d99d0](https://github.com/KeidsID/dicoding_story_fl/commit/67d99d0748a7fda77703871efadbcc6e79bc4c09))
+
 ## [1.4.4](https://github.com/KeidsID/dicoding_story_fl/compare/dicoding_story_fl-v1.4.3...dicoding_story_fl-v1.4.4) (2025-02-07)
 
 
