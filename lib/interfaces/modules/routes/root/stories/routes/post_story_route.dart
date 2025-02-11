@@ -268,19 +268,22 @@ class _PostStoryRouteScreenState extends State<_PostStoryRouteScreen> {
 
             return _PostStoryForm(_PostStoryFormDelegate(
               pickedImage,
-              onImageTap: isLoading ? null : _handleRepickImage(context),
               formKey: _formKey,
-              descController: _descriptionController,
-              descIsEnabled: !isLoading,
-              onDescChanged: (value) {
-                PostStoryRoute(value).go(context);
-              }.debounce(),
-              address: _locationData?.displayName ??
-                  _locationData?.address ??
-                  _locationData?.latLon,
+              onImageTap: isLoading ? null : _handleRepickImage(context),
+              descriptionFieldDelegate: _DescriptionFieldDelegate(
+                controller: _descriptionController,
+                enabled: !isLoading,
+                onChanged: (value) {
+                  PostStoryRoute(value).go(context);
+                }.debounce(),
+              ),
+              addressSectionDelegate: _AddressSectionDelegate(
+                address: _locationData?.displayName ??
+                    _locationData?.address ??
+                    _locationData?.latLon,
+                onTap: isLoading ? null : _handleLocationSet(context),
+              ),
               onPostButtonTap: isLoading ? null : _handlePostStory(context),
-              onAddressSectionTap:
-                  isLoading ? null : _handleLocationSet(context),
             ));
           });
         },
@@ -312,27 +315,40 @@ class _PostStoryForm extends StatelessWidget {
 class _PostStoryFormDelegate {
   const _PostStoryFormDelegate(
     this.imageFile, {
-    this.onImageTap,
     this.formKey,
-    this.descController,
-    this.descIsEnabled,
-    this.onDescChanged,
-    this.address,
+    this.onImageTap,
+    this.descriptionFieldDelegate = const _DescriptionFieldDelegate(),
+    this.addressSectionDelegate = const _AddressSectionDelegate(),
     this.onPostButtonTap,
-    this.onAddressSectionTap,
   });
 
   final XFile imageFile;
   final VoidCallback? onImageTap;
 
   final Key? formKey;
-  final TextEditingController? descController;
-  final bool? descIsEnabled;
-  final ValueChanged<String>? onDescChanged;
-  final String? address;
+  final _DescriptionFieldDelegate descriptionFieldDelegate;
+  final _AddressSectionDelegate addressSectionDelegate;
 
   final VoidCallback? onPostButtonTap;
-  final VoidCallback? onAddressSectionTap;
+}
+
+class _DescriptionFieldDelegate {
+  const _DescriptionFieldDelegate({
+    this.controller,
+    this.enabled,
+    this.onChanged,
+  });
+
+  final TextEditingController? controller;
+  final bool? enabled;
+  final ValueChanged<String>? onChanged;
+}
+
+class _AddressSectionDelegate {
+  const _AddressSectionDelegate({this.address, this.onTap});
+
+  final String? address;
+  final VoidCallback? onTap;
 }
 
 abstract base class _PostStoryFormBase extends StatelessWidget {
@@ -368,30 +384,33 @@ abstract base class _PostStoryFormBase extends StatelessWidget {
   }
 
   Widget get _addressSection {
-    final address = delegate.address;
-    final onAddressSectionTap = delegate.onAddressSectionTap;
+    final _AddressSectionDelegate(:address, :onTap) =
+        delegate.addressSectionDelegate;
 
     return Builder(builder: (context) {
       return AddressSection(
         address ?? "Set Location",
-        onTap: onAddressSectionTap,
+        onTap: onTap,
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
       );
     });
   }
 
-  Widget get _descFormField {
+  Widget get _descriptionFormField {
+    final _DescriptionFieldDelegate(:controller, :enabled, :onChanged) =
+        delegate.descriptionFieldDelegate;
+
     return Builder(builder: (context) {
       final appL10n = AppL10n.of(context)!;
 
       return TextFormField(
-        controller: delegate.descController,
-        enabled: delegate.descIsEnabled,
+        controller: controller,
+        enabled: enabled,
         keyboardType: TextInputType.multiline,
         maxLines: null,
         decoration: InputDecoration(hintText: "${appL10n.tellUsYourStory}..."),
-        onChanged: delegate.onDescChanged,
+        onChanged: onChanged,
         validator: (text) {
           if (text == null || text.isEmpty) return appL10n.cannotBeEmpty;
 
@@ -402,10 +421,15 @@ abstract base class _PostStoryFormBase extends StatelessWidget {
   }
 
   Widget get _postButton {
+    if (delegate.onPostButtonTap == null) {
+      return const CircularProgressIndicator();
+    }
+
     return FilledButton(
       onPressed: delegate.onPostButtonTap,
-      child:
-          Builder(builder: (context) => Text(AppL10n.of(context)!.postStory)),
+      child: Builder(
+        builder: (context) => Text(AppL10n.of(context)!.postStory),
+      ),
     );
   }
 }
@@ -437,7 +461,7 @@ final class _PostStoryFormScreenSmall extends _PostStoryFormBase {
                 const SizedBox(height: 16.0),
 
                 //
-                _descFormField,
+                _descriptionFormField,
                 const SizedBox(height: 16.0),
                 Align(alignment: Alignment.center, child: _postButton),
               ],
@@ -479,7 +503,7 @@ final class _PostStoryFormScreenWide extends _PostStoryFormBase {
                     const SizedBox(height: 16.0),
 
                     //
-                    _descFormField,
+                    _descriptionFormField,
                     const SizedBox(height: 16.0),
                     Align(alignment: Alignment.center, child: _postButton),
                   ],
