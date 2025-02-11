@@ -1,3 +1,4 @@
+import "package:dicoding_story_fl/interfaces/libs/widgets.dart";
 import "package:flutter/material.dart";
 import "package:package_info_plus/package_info_plus.dart";
 import "package:url_launcher/url_launcher.dart";
@@ -53,10 +54,7 @@ class AppAboutListTile extends StatelessWidget {
     return AboutListTile(
       icon: const Icon(Icons.info_outline),
       applicationName: kAppName,
-      applicationIcon: const Image(
-        image: AssetImages.appIconL,
-        width: 80.0,
-      ),
+      applicationIcon: AppImage.asset(AssetImagePaths.appIconL, width: 80.0),
       applicationVersion: "v$appVersion"
           "${appBuildNumber.isNotEmpty ? "+$appBuildNumber" : ""}",
       applicationLegalese: "MIT License\n\n"

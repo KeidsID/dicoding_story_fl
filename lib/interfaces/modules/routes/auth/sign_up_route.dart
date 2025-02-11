@@ -88,8 +88,10 @@ class _SignUpRouteScreenState extends State<_SignUpRouteScreen> {
   @override
   Widget build(BuildContext context) {
     final appL10n = AppL10n.of(context)!;
-
     final headerTextStyle = context.textTheme.headlineLarge;
+
+    final authProv = context.watch<AuthProvider>();
+    final isLoading = authProv.isLoading;
 
     return Center(
       child: SizedBox(
@@ -106,6 +108,7 @@ class _SignUpRouteScreenState extends State<_SignUpRouteScreen> {
               // inputs
               TextField(
                 controller: nameController,
+                enabled: !isLoading,
                 keyboardType: TextInputType.name,
                 textInputAction: TextInputAction.next,
                 decoration: const InputDecoration(
@@ -116,45 +119,36 @@ class _SignUpRouteScreenState extends State<_SignUpRouteScreen> {
               const SizedBox(height: 16.0),
               EmailTextField(
                 controller: emailController,
+                enabled: !isLoading,
                 textInputAction: TextInputAction.next,
               ),
               const SizedBox(height: 16.0),
               PasswordTextField(
                 controller: passwordController,
+                enabled: !isLoading,
                 onSubmitted: (value) => _handleSignUp(context),
               ),
               const SizedBox(height: 32.0),
 
               // actions
-              Builder(builder: (context) {
-                final authProv = context.watch<AuthProvider>();
-
-                if (authProv.isLoading) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-
-                return FilledButton(
+              if (isLoading) const CircularProgressIndicator(),
+              if (!isLoading) ...[
+                FilledButton(
                   onPressed: () => _handleSignUp(context),
                   child: Text(appL10n.register),
-                );
-              }),
-              const SizedBox(height: 8.0),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text("${appL10n.alreadyHaveAnAccount}?"),
-                  Builder(builder: (context) {
-                    final authProv = context.watch<AuthProvider>();
-
-                    return TextButton(
-                      onPressed: authProv.isLoading
-                          ? null
-                          : () => const SignInRoute().go(context),
+                ),
+                const SizedBox(height: 8.0),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text("${appL10n.alreadyHaveAnAccount}?"),
+                    TextButton(
+                      onPressed: () => const SignInRoute().go(context),
                       child: Text(appL10n.login),
-                    );
-                  }),
-                ],
-              ),
+                    ),
+                  ],
+                ),
+              ],
             ],
           ),
         ),

@@ -82,8 +82,10 @@ class _SignInRouteScreenState extends State<_SignInRouteScreen> {
   @override
   Widget build(BuildContext context) {
     final appL10n = AppL10n.of(context)!;
-
     final headerTextStyle = context.textTheme.headlineLarge;
+
+    final authProv = context.watch<AuthProvider>();
+    final isLoading = authProv.isLoading;
 
     return Center(
       child: SizedBox(
@@ -100,45 +102,36 @@ class _SignInRouteScreenState extends State<_SignInRouteScreen> {
               // inputs
               EmailTextField(
                 controller: emailController,
+                enabled: !isLoading,
                 textInputAction: TextInputAction.next,
               ),
               const SizedBox(height: 16.0),
               PasswordTextField(
                 controller: passwordController,
+                enabled: !isLoading,
                 onSubmitted: (value) => _handleSignIn(context),
               ),
               const SizedBox(height: 32.0),
 
               // actions
-              Builder(builder: (context) {
-                final authProv = context.watch<AuthProvider>();
-
-                if (authProv.isLoading) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-
-                return FilledButton(
+              if (isLoading) const CircularProgressIndicator(),
+              if (!isLoading) ...[
+                FilledButton(
                   onPressed: () => _handleSignIn(context),
                   child: Text(appL10n.login),
-                );
-              }),
-              const SizedBox(height: 8.0),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text("${appL10n.needAnAccount}?"),
-                  Builder(builder: (context) {
-                    final authProv = context.watch<AuthProvider>();
-
-                    return TextButton(
-                      onPressed: authProv.isLoading
-                          ? null
-                          : () => const SignUpRoute().go(context),
+                ),
+                const SizedBox(height: 8.0),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text("${appL10n.needAnAccount}?"),
+                    TextButton(
+                      onPressed: () => const SignUpRoute().go(context),
                       child: Text(appL10n.register),
-                    );
-                  }),
-                ],
-              ),
+                    ),
+                  ],
+                ),
+              ],
             ],
           ),
         ),

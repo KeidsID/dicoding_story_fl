@@ -4,6 +4,7 @@ class PasswordTextField extends StatefulWidget {
   const PasswordTextField({
     super.key,
     this.controller,
+    this.enabled = true,
     this.onSubmitted,
   });
 
@@ -11,6 +12,7 @@ class PasswordTextField extends StatefulWidget {
   ///
   /// If null, this widget will create its own [TextEditingController].
   final TextEditingController? controller;
+  final bool enabled;
 
   /// {@macro flutter.widgets.editableText.onSubmitted}
   final ValueChanged<String>? onSubmitted;
@@ -20,14 +22,14 @@ class PasswordTextField extends StatefulWidget {
 }
 
 class _PasswordTextFieldState extends State<PasswordTextField> {
+  bool get enabled => widget.enabled;
+
   bool isVisible = false;
 
   @override
   Widget build(BuildContext context) {
     return TextField(
       controller: widget.controller,
-      obscureText: !isVisible,
-      onSubmitted: widget.onSubmitted,
       decoration: InputDecoration(
         label: const Text("Password"),
         suffixIcon: IconButton(
@@ -37,6 +39,9 @@ class _PasswordTextFieldState extends State<PasswordTextField> {
           ),
         ),
       ),
+      obscureText: !isVisible,
+      enabled: enabled,
+      onSubmitted: widget.onSubmitted,
     );
   }
 }

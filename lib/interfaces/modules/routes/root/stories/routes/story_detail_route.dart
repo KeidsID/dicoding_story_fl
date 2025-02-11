@@ -1,3 +1,4 @@
+import "package:dicoding_story_fl/interfaces/libs/extensions.dart";
 import "package:fl_utilities/fl_utilities.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
@@ -89,7 +90,7 @@ mixin _StoryDetailRouteScreenHelperMixin {
             child: Stack(
               fit: StackFit.expand,
               children: [
-                Image(image: image, fit: BoxFit.contain),
+                AppImage(image: image, fit: BoxFit.contain),
                 //
                 Padding(
                   padding: const EdgeInsets.all(16.0),
@@ -150,15 +151,14 @@ class _StoryDetailRouteScreenSmall extends StatelessWidget
           children: [
             AspectRatio(
               aspectRatio: 3 / 2,
-              child: CommonNetworkImage(
-                imageUrl: story.photoUrl,
-                imageBuilder: (context, image) {
-                  return InkWell(
-                    onTap: () => _showImageDialog(context, image),
-                    child: Ink.image(image: image, fit: BoxFit.cover),
-                  );
-                },
-              ),
+              child: Builder(builder: (context) {
+                final image = NetworkImage(story.photoUrl);
+
+                return InkWell(
+                  onTap: () => _showImageDialog(context, image),
+                  child: AppImage(image: image, fit: BoxFit.cover).toInk(),
+                );
+              }),
             ),
             const Flexible(child: Divider(height: 2.0, thickness: 2.0)),
             Padding(
@@ -227,15 +227,14 @@ class _StoryDetailRouteScreenWide extends StatelessWidget
               child: Stack(
                 fit: StackFit.expand,
                 children: [
-                  CommonNetworkImage(
-                    imageUrl: story.photoUrl,
-                    imageBuilder: (context, image) {
-                      return InkWell(
-                        onTap: () => _showImageDialog(context, image),
-                        child: Ink.image(image: image, fit: BoxFit.cover),
-                      );
-                    },
-                  ),
+                  Builder(builder: (context) {
+                    final image = NetworkImage(story.photoUrl);
+
+                    return InkWell(
+                      onTap: () => _showImageDialog(context, image),
+                      child: AppImage(image: image, fit: BoxFit.cover).toInk(),
+                    );
+                  }),
 
                   //
                   Align(
