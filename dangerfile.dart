@@ -50,7 +50,7 @@ final config = PRConfig(
   titlePattern: RegExp(
     '^(${GitlintConfig.types.join("|")})'
     '(\\((${GitlintConfig.scopes.join(("|"))})(\\/(${GitlintConfig.scopes.join(("|"))}))*\\))?'
-    ": (.*\\S )?"
+    "(!|): (.*\\S )?"
     '(${GitlintConfig.issuePrefixes.join("|")})-\\d{1,6}((\\.\\d+){1,2})?\$',
   ),
   branchPattern: RegExp(
