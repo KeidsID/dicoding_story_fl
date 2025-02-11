@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.0.0](https://github.com/KeidsID/dicoding_story_fl/compare/dicoding_story_fl-v1.5.0...dicoding_story_fl-v2.0.0) (2025-02-11)
+
+
+### ⚠ BREAKING CHANGES
+
+* remove `cached_network_image` support ds-40 ([#44](https://github.com/KeidsID/dicoding_story_fl/issues/44))
+
+### Code Refactoring
+
+* remove `cached_network_image` support ds-40 ([#44](https://github.com/KeidsID/dicoding_story_fl/issues/44)) ([77f658a](https://github.com/KeidsID/dicoding_story_fl/commit/77f658acd37cc512946f0d43227da239f3a9f6a3))
+
 ## [1.5.0](https://github.com/KeidsID/dicoding_story_fl/compare/dicoding_story_fl-v1.4.4...dicoding_story_fl-v1.5.0) (2025-02-09)
 
 
