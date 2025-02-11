@@ -129,7 +129,11 @@ class _PostStoryRouteScreenState extends State<_PostStoryRouteScreen> {
               lon: _locationData?.longitude,
             );
 
-        if (context.mounted) context.pop();
+        if (context.mounted) {
+          context.read<PickedImageProvider>().dispose();
+
+          context.pop();
+        }
       } catch (err, trace) {
         final exception = err.toAppException(trace: trace);
 
@@ -182,20 +186,7 @@ class _PostStoryRouteScreenState extends State<_PostStoryRouteScreen> {
     final appL10n = AppL10n.of(context)!;
 
     return Scaffold(
-      appBar: AppBar(
-        leading: Builder(builder: (context) {
-          return BackButton(
-            onPressed: () {
-              // provider dispose handled here since widget dispose cause an
-              // error.
-              context.read<PickedImageProvider>().dispose();
-
-              Navigator.pop(context);
-            },
-          );
-        }),
-        title: Text(appL10n.postStory),
-      ),
+      appBar: AppBar(title: Text(appL10n.postStory)),
       body: Builder(
         builder: (context) {
           final pickedImageProv = context.watch<PickedImageProvider>();
