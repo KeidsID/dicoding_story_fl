@@ -34,7 +34,7 @@ abstract class StoriesRemoteData extends ChopperService {
   });
 
   /// https://story-api.dicoding.dev/v1/#/?id=detail-story
-  @Get(path: "/{id}")
+  @GET(path: "/{id}")
   Future<Response<Map<String, dynamic>>> getStoryById({
     @Header("Authorization") required String bearerToken,
     @path required String id,

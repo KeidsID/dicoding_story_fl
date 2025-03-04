@@ -56,15 +56,13 @@ enum GoogleMapsApiClientType {
   newPlaces,
 }
 
-class _GoogleMapsApiClientApiKeyInterceptor implements RequestInterceptor {
+class _GoogleMapsApiClientApiKeyInterceptor implements Interceptor {
   const _GoogleMapsApiClientApiKeyInterceptor(this.apiKey);
 
   final String apiKey;
 
   @override
-  FutureOr<Request> onRequest(Request request) {
-    return request.copyWith(
-      parameters: {"key": apiKey, ...request.parameters},
-    );
+  FutureOr<Response<BodyType>> intercept<BodyType>(Chain<BodyType> chain) {
+    return chain.proceed(applyHeader(chain.request, "key", apiKey));
   }
 }

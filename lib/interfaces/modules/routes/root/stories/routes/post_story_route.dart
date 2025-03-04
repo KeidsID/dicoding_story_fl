@@ -144,7 +144,7 @@ class _PostStoryRouteScreenState extends State<_PostStoryRouteScreen> {
         );
 
         if (context.mounted) {
-          context.scaffoldMessenger?.showSnackBar(SnackBar(
+          context.scaffoldMessenger.showSnackBar(SnackBar(
             content: Text(exception.message),
           ));
         }

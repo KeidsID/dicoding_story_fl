@@ -60,7 +60,7 @@ class _SignUpRouteScreenState extends State<_SignUpRouteScreen> {
       if (context.mounted) {
         final appL10n = AppL10n.of(context);
 
-        context.scaffoldMessenger?.showSnackBar(SnackBar(
+        context.scaffoldMessenger.showSnackBar(SnackBar(
           content: Text(appL10n?.signUpErrorMessage ?? "Sign up fail"),
         ));
       }

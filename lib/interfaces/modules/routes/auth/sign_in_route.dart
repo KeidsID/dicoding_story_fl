@@ -72,7 +72,7 @@ class _SignInRouteScreenState extends State<_SignInRouteScreen> {
       if (context.mounted) {
         final appL10n = AppL10n.of(context);
 
-        context.scaffoldMessenger?.showSnackBar(SnackBar(
+        context.scaffoldMessenger.showSnackBar(SnackBar(
           content: Text(appL10n?.signInErrorMessage ?? "Sign in fail"),
         ));
       }

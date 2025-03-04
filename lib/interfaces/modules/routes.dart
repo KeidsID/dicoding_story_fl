@@ -230,7 +230,7 @@ class _RootShellRouteScreenBody extends StatelessWidget
 
   @override
   Widget build(BuildContext context) {
-    final deviceWidth = context.mediaQuery!.size.width;
+    final deviceWidth = context.mediaQuery.size.width;
     final isRenderNavRail = deviceWidth >= minWidthForNavigationRail;
 
     return SafeArea(
@@ -278,7 +278,7 @@ class _RootShellRouteScreenBottomNavBar extends StatelessWidget
 
   @override
   Widget build(BuildContext context) {
-    final deviceWidth = context.mediaQuery!.size.width;
+    final deviceWidth = context.mediaQuery.size.width;
     final isRenderNavRail = deviceWidth >= minWidthForNavigationRail;
 
     return isRenderNavRail
