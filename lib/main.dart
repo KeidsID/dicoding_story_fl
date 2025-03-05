@@ -1,6 +1,7 @@
 import "package:flutter/foundation.dart";
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";
+import "package:flutter_riverpod/flutter_riverpod.dart" show ProviderScope;
 import "package:provider/provider.dart";
 
 import "interfaces/libs/l10n.dart";
@@ -23,7 +24,7 @@ void main() async {
 
   await ServiceLocator.init();
 
-  runApp(const MainApp());
+  runApp(const ProviderScope(child: MainApp()));
 }
 
 class MainApp extends StatelessWidget {

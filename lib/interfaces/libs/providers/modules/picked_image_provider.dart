@@ -31,6 +31,8 @@ final class PickedImageProvider extends AsyncValueNotifier<XFile?> {
           imageBytes.map((e) => e is int ? e : int.parse(e)).toList(),
         ),
       );
+
+      return;
     }
 
     if (defaultTargetPlatform == TargetPlatform.android) {

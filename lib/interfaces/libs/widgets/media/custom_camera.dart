@@ -62,6 +62,9 @@ class CustomCameraState extends State<CustomCamera>
   // STATES AND METHODS
   // ---------------------------------------------------------------------------
 
+  /// The actual [controller].
+  ///
+  /// Use [setController] to initialize it.
   CameraController? _controller;
 
   /// Controller for camera widget.
@@ -203,6 +206,76 @@ class CustomCameraState extends State<CustomCamera>
   // DESCRIBE
   // ---------------------------------------------------------------------------
 
+  Widget _buildCameraWidget(BuildContext context) {
+    final theme = context.theme;
+    final textTheme = theme.textTheme;
+
+    final isSwitchCamDisable = cameras.length < 2 && isCameraInitialized;
+
+    return Row(
+      children: [
+        Expanded(
+          child: Container(
+            height: double.infinity,
+            color: theme.scaffoldBackgroundColor,
+            child: isCameraInitialized && !isSwitchingCam
+                ? controller?.buildPreview()
+                : error != null
+                    ? SizedErrorWidget.expand(error: error, trace: trace)
+                    : Center(
+                        child: cameras.isEmpty
+                            ? Text(
+                                "Camera Not Found",
+                                style: textTheme.headlineMedium,
+                              )
+                            : const CircularProgressIndicator(),
+                      ),
+          ),
+        ),
+        //
+        Container(
+          height: double.infinity,
+          padding: const EdgeInsets.all(16.0),
+          color: theme.cardColor,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              MenuAnchor(
+                menuChildren: cameras.map((e) {
+                  return MenuItemButton(
+                    onPressed: () => setController(e),
+                    child: Text(
+                      '${e.lensDirection.name.capitalize} Camera - ${e.name.split('<').first}',
+                    ),
+                  );
+                }).toList(),
+                builder: (context, menu, _) => IconButton(
+                  tooltip: "Switch Camera",
+                  onPressed: isSwitchCamDisable
+                      ? null
+                      : () => menu.isOpen ? menu.close() : menu.open(),
+                  icon: const Icon(Icons.cameraswitch_outlined),
+                ),
+              ),
+              //
+              IconButton.filledTonal(
+                iconSize: 48.0,
+                tooltip: "Take Picture",
+                onPressed: () => takePicture(),
+                icon: const Icon(Icons.camera_alt_outlined),
+              ),
+              //
+              const IconButton(
+                onPressed: null,
+                icon: Icon(Icons.settings_outlined),
+              ),
+            ],
+          ),
+        )
+      ],
+    );
+  }
+
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (!isCameraInitialized) return;
@@ -238,100 +311,36 @@ class CustomCameraState extends State<CustomCamera>
   @override
   Widget build(BuildContext context) {
     final theme = context.theme;
-    final textTheme = theme.textTheme;
 
-    final isSwitchCamDisable = cameras.length < 2 && isCameraInitialized;
+    if (cameraResult == null) return _buildCameraWidget(context);
 
-    return cameraResult != null
-        ? Column(
-            children: [
-              Expanded(
-                child: SizedBox(
-                  width: double.infinity,
-                  child: ImageFromXFile(cameraResult!, fit: BoxFit.cover),
-                ),
+    return Column(
+      children: [
+        Expanded(
+          child: SizedBox(
+            width: double.infinity,
+            child: ImageFromXFile(cameraResult!, fit: BoxFit.cover),
+          ),
+        ),
+        Container(
+          width: 600.0,
+          height: kToolbarHeight,
+          color: theme.cardColor,
+          child: Row(
+            children: <Widget>[
+              TextButton(
+                onPressed: () => setState(() => cameraResult = null),
+                child: const Text("Retry"),
               ),
-              Container(
-                width: 600.0,
-                height: kToolbarHeight,
-                color: theme.cardColor,
-                child: Row(
-                  children: <Widget>[
-                    TextButton(
-                      onPressed: () => setState(() => cameraResult = null),
-                      child: const Text("Retry"),
-                    ),
-                    TextButton(
-                      onPressed: () => onAcceptResult?.call(cameraResult!),
-                      child: const Text("Ok"),
-                    ),
-                  ].map((e) => Expanded(child: e)).toList(),
-                ),
+              TextButton(
+                onPressed: () => onAcceptResult?.call(cameraResult!),
+                child: const Text("Ok"),
               ),
-            ],
-          )
-        : Row(
-            children: [
-              Expanded(
-                child: Container(
-                  height: double.infinity,
-                  color: theme.scaffoldBackgroundColor,
-                  child: isCameraInitialized && !isSwitchingCam
-                      ? controller?.buildPreview()
-                      : error != null
-                          ? SizedErrorWidget.expand(error: error, trace: trace)
-                          : Center(
-                              child: cameras.isEmpty
-                                  ? Text(
-                                      "Camera Not Found",
-                                      style: textTheme.headlineMedium,
-                                    )
-                                  : const CircularProgressIndicator(),
-                            ),
-                ),
-              ),
-              //
-              Container(
-                height: double.infinity,
-                padding: const EdgeInsets.all(16.0),
-                color: theme.cardColor,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    MenuAnchor(
-                      menuChildren: cameras.map((e) {
-                        return MenuItemButton(
-                          onPressed: () => setController(e),
-                          child: Text(
-                            '${e.lensDirection.name.capitalize} Camera - ${e.name.split('<').first}',
-                          ),
-                        );
-                      }).toList(),
-                      builder: (context, menu, _) => IconButton(
-                        tooltip: "Switch Camera",
-                        onPressed: isSwitchCamDisable
-                            ? null
-                            : () => menu.isOpen ? menu.close() : menu.open(),
-                        icon: const Icon(Icons.cameraswitch_outlined),
-                      ),
-                    ),
-                    //
-                    IconButton.filledTonal(
-                      iconSize: 48.0,
-                      tooltip: "Take Picture",
-                      onPressed: () => takePicture(),
-                      icon: const Icon(Icons.camera_alt_outlined),
-                    ),
-                    //
-                    const IconButton(
-                      onPressed: null,
-                      icon: Icon(Icons.settings_outlined),
-                    ),
-                  ],
-                ),
-              )
-            ],
-          );
+            ].map((e) => Expanded(child: e)).toList(),
+          ),
+        ),
+      ],
+    );
   }
 }
 
