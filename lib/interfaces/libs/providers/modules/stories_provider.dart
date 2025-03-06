@@ -1,80 +1,106 @@
+import "package:freezed_annotation/freezed_annotation.dart";
+import "package:riverpod_annotation/riverpod_annotation.dart";
+import "package:flutter_riverpod/flutter_riverpod.dart";
+
 import "package:dicoding_story_fl/domain/entities.dart";
 import "package:dicoding_story_fl/libs/extensions.dart";
 import "package:dicoding_story_fl/service_locator.dart";
 import "package:dicoding_story_fl/use_cases.dart";
 
-import "../libs/types.dart";
+part "stories_provider.freezed.dart";
+part "stories_provider.g.dart";
 
-final class StoriesProvider extends AsyncValueNotifier<List<Story>> {
-  StoriesProvider({this.storiesCount = 10}) : super([]);
+/// Provide stories as infinite list.
+///
+/// Call notifier [fetchStories] to fetch new stories into the [state.value].
+///
+/// You can also post a new story via notifier [postStory].
+@Riverpod(keepAlive: true)
+class Stories extends _$Stories {
+  /// The count of stories to fetch.
+  final int _storiesCount = 10;
 
-  /// Count of stories to fetch.
-  final int storiesCount;
+  int get _halfStoriesCount => _storiesCount ~/ 2;
 
-  int _page = 1;
-  bool _isLatestPage = false;
-
-  /// Next page to fetch.
-  int get page => _page;
-
-  /// Check if it's latest fetched page.
-  ///
-  /// [fetchStories] won't fetch if it's `true`.
-  bool get isLatestPage => _isLatestPage;
-
-  /// Fetch stories and set it to [value].
-  ///
-  /// May throw a [AppException].
-  Future<void> fetchStories() async {
-    if (isLatestPage || isLoading) return;
-
-    isLoading = true;
-
+  @override
+  FutureOr<StoriesProviderValue> build() async {
     try {
-      final getStoriesUseCase = ServiceLocator.find<GetStoriesUseCase>();
+      final stories = await _getStories();
 
-      final halfStoriesCount = storiesCount ~/ 2;
-
-      final List<Story> stories = {
-        ...(await getStoriesUseCase.execute(GetStoriesRequestDto(
-          page: page,
-          size: halfStoriesCount,
-          hasCoordinates: true,
-        ))),
-        ...(await getStoriesUseCase.execute(GetStoriesRequestDto(
-          page: page,
-          size: halfStoriesCount,
-        ))),
-      }.toList()
-        ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
-
-      if (stories.length < halfStoriesCount) {
-        _isLatestPage = true;
-      } else {
-        _page++;
-      }
-
-      value = [...value!, ...stories];
+      return StoriesProviderValue(stories: stories);
     } catch (err, trace) {
-      final parsedError = err.toAppException(trace: trace);
+      final exception = err.toAppException(trace: trace);
 
-      setError(parsedError);
-      throw parsedError;
+      throw exception;
     }
   }
 
-  /// Reset provider to initial state. Then do [fetchStories] again.
-  Future<void> refresh() async {
-    _page = 1;
-    _isLatestPage = false;
-    value = [];
+  Future<List<Story>> _getStories([int page = 1]) async {
+    final useCase = ServiceLocator.find<GetStoriesUseCase>();
+    final requestDto = GetStoriesRequestDto(
+      page: page,
+      size: _halfStoriesCount,
+    );
 
-    await fetchStories();
+    return {
+      // return stories with location only.
+      ...(await useCase.execute(requestDto.copyWith(hasCoordinates: true))),
+
+      // return both stories with and without location,
+      // but did'nt include the location data on the response.
+      //
+      // Odd behavior right 🙄.
+      ...(await useCase.execute(requestDto.copyWith(size: _storiesCount))),
+    }.toList()
+      ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
   }
 
-  /// Post a new story, then call [refresh].
+  /// Fetch new stories into [state] without notifying [AsyncLoading] state.
+  /// Won't do anything if [state.value] is `null`.
   ///
-  /// May throw a [AppException].
+  /// If [StoriesProviderValue.isLatestPage] is `true`,
+  /// You need to rebuild the provider via [Ref.refresh]/[Ref.invalidate]
+  /// before recalling this method.
+  ///
+  /// May throw an [AppException].
+  Future<void> fetchStories() async {
+    final stateValue = state.valueOrNull;
+
+    if (stateValue == null) return;
+
+    final isLatestPage = stateValue.isLatestPage;
+
+    if (state.isLoading || isLatestPage) return;
+
+    // state = const AsyncLoading();
+
+    final stories = stateValue.stories;
+    final page = stateValue.page;
+    final nextPage = page + 1;
+
+    try {
+      final newStories = await _getStories(nextPage);
+
+      final isEnd = newStories.length < _halfStoriesCount;
+
+      state = AsyncData(
+        state.value!.copyWith(
+          stories: [...stories, ...newStories],
+          page: isEnd ? page : nextPage,
+          isLatestPage: isEnd,
+        ),
+      );
+    } catch (err, trace) {
+      final exception = err.toAppException(trace: trace);
+
+      state = AsyncError(exception, exception.trace ?? trace);
+      throw exception;
+    }
+  }
+
+  /// Post a new story, then rebuild the [storiesProvider].
+  ///
+  /// May throw an [AppException].
   Future<void> postStory({
     required String description,
     required List<int> imageBytes,
@@ -82,10 +108,12 @@ final class StoriesProvider extends AsyncValueNotifier<List<Story>> {
     double? lat,
     double? lon,
   }) async {
-    isLoading = true;
+    state = const AsyncLoading();
+
+    final postStory = ServiceLocator.find<PostStoryUseCase>().execute;
 
     try {
-      await ServiceLocator.find<PostStoryUseCase>().execute(PostStoryRequestDto(
+      await postStory(PostStoryRequestDto(
         description: description,
         imageBytes: imageBytes,
         imageFilename: imageFilename,
@@ -93,12 +121,29 @@ final class StoriesProvider extends AsyncValueNotifier<List<Story>> {
         lon: lon,
       ));
 
-      await refresh();
+      state = AsyncData(StoriesProviderValue(stories: await _getStories()));
     } catch (err, trace) {
-      final parsedError = err.toAppException(trace: trace);
+      final exception = err.toAppException(trace: trace);
 
-      setError(parsedError);
-      throw parsedError;
+      state = AsyncError(exception, exception.trace ?? trace);
+      throw exception;
     }
   }
+}
+
+/// [storiesProvider] state value.
+@Freezed(copyWith: true)
+class StoriesProviderValue with _$StoriesProviderValue {
+  const factory StoriesProviderValue({
+    /// Fetched stories.
+    @Default(<Story>[]) List<Story> stories,
+
+    /// Current stories page.
+    @Default(1) int page,
+
+    /// Indicate the [page] is the latest page.
+    ///
+    /// You may need to rebuild the [storiesProvider] if this value is `true`.
+    @Default(false) bool isLatestPage,
+  }) = _StoriesProviderState;
 }

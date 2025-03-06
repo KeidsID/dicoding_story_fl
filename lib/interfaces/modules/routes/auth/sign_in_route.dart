@@ -1,7 +1,7 @@
 import "package:fl_utilities/fl_utilities.dart";
 import "package:flutter/material.dart";
+import "package:flutter_riverpod/flutter_riverpod.dart";
 import "package:go_router/go_router.dart";
-import "package:provider/provider.dart";
 
 import "package:dicoding_story_fl/interfaces/libs/constants.dart";
 import "package:dicoding_story_fl/interfaces/libs/l10n/modules.dart";
@@ -25,42 +25,24 @@ final class SignInRoute extends GoRouteData {
   }
 }
 
-class _SignInRouteScreen extends StatefulWidget {
+class _SignInRouteScreen extends ConsumerStatefulWidget {
   const _SignInRouteScreen();
 
   @override
-  State<_SignInRouteScreen> createState() => _SignInRouteScreenState();
+  ConsumerState<_SignInRouteScreen> createState() => _SignInRouteScreenState();
 }
 
-class _SignInRouteScreenState extends State<_SignInRouteScreen> {
-  late TextEditingController emailController;
-  late TextEditingController passwordController;
-
-  @override
-  void initState() {
-    super.initState();
-
-    emailController = TextEditingController();
-    passwordController = TextEditingController();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-
-    emailController.dispose();
-    passwordController.dispose();
-  }
-
+class _SignInRouteScreenState extends ConsumerState<_SignInRouteScreen> {
   double get _maxWidth => 400.0;
   EdgeInsetsGeometry get _padding => const EdgeInsets.all(16.0);
+  Auth get authProviderNotifier => ref.read(authProvider.notifier);
 
   Future<void> _handleSignIn(BuildContext context) async {
     try {
-      await context.read<AuthProvider>().login(
-            email: emailController.text,
-            password: passwordController.text,
-          );
+      await authProviderNotifier.signIn(
+        email: emailController.text,
+        password: passwordController.text,
+      );
     } catch (error, trace) {
       final exception = error.toAppException(
         message: "Failed to sign in",
@@ -79,13 +61,31 @@ class _SignInRouteScreenState extends State<_SignInRouteScreen> {
     }
   }
 
+  late final TextEditingController emailController;
+  late final TextEditingController passwordController;
+
+  @override
+  void initState() {
+    super.initState();
+
+    emailController = TextEditingController();
+    passwordController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+
+    emailController.dispose();
+    passwordController.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final appL10n = AppL10n.of(context)!;
     final headerTextStyle = context.textTheme.headlineLarge;
 
-    final authProv = context.watch<AuthProvider>();
-    final isLoading = authProv.isLoading;
+    final AsyncValue(:isLoading) = ref.watch(authProvider);
 
     return Center(
       child: SizedBox(

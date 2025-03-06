@@ -1,3 +1,5 @@
+import "dart:async";
+
 import "package:dicoding_story_fl/interfaces/libs/l10n/modules.dart";
 import "package:fl_utilities/fl_utilities.dart";
 import "package:flutter/material.dart";

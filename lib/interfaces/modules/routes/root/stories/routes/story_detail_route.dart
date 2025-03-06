@@ -1,11 +1,11 @@
-import "package:dicoding_story_fl/interfaces/libs/extensions.dart";
 import "package:fl_utilities/fl_utilities.dart";
 import "package:flutter/material.dart";
+import "package:flutter_riverpod/flutter_riverpod.dart";
 import "package:go_router/go_router.dart";
-import "package:provider/provider.dart";
 
 import "package:dicoding_story_fl/domain/entities.dart";
 import "package:dicoding_story_fl/interfaces/libs/constants.dart";
+import "package:dicoding_story_fl/interfaces/libs/extensions.dart";
 import "package:dicoding_story_fl/interfaces/libs/l10n.dart";
 import "package:dicoding_story_fl/interfaces/libs/providers.dart";
 import "package:dicoding_story_fl/interfaces/libs/widgets.dart";
@@ -25,7 +25,7 @@ final class StoryDetailRoute extends GoRouteData {
   }
 }
 
-class _StoryDetailRouteScreen extends StatelessWidget {
+class _StoryDetailRouteScreen extends ConsumerWidget {
   const _StoryDetailRouteScreen(this.storyId);
 
   final String storyId;
@@ -33,41 +33,28 @@ class _StoryDetailRouteScreen extends StatelessWidget {
   double get _wideLayoutMinWidth => 800;
 
   @override
-  Widget build(BuildContext context) {
-    return ChangeNotifierProvider.value(
-      value: StoryDetailProvider(storyId),
-      builder: (context, _) {
-        final storyDetailProv = context.watch<StoryDetailProvider>();
+  Widget build(BuildContext context, WidgetRef ref) {
+    final storyDetailAsync = ref.watch(storyDetailProvider(storyId));
 
-        const loadingWidget = Center(child: CircularProgressIndicator());
-
-        if (storyDetailProv.isLoading) return loadingWidget;
-
-        if (storyDetailProv.isError) {
-          return SizedErrorWidget.expand(
-            error: storyDetailProv.error,
-            trace: storyDetailProv.trace,
-            action: ElevatedButton.icon(
-              onPressed: () => storyDetailProv.refresh(),
-              icon: const Icon(Icons.refresh_outlined),
-              label: const Text("Refresh"),
-            ),
-          );
-        }
-
-        final story = storyDetailProv.value;
-
-        if (story == null) return loadingWidget;
-
-        return LayoutBuilder(builder: (context, constraints) {
+    return switch (storyDetailAsync) {
+      AsyncData(:final value) => LayoutBuilder(builder: (context, constraints) {
           if (constraints.minWidth >= _wideLayoutMinWidth) {
-            return _StoryDetailRouteScreenWide(story);
+            return _StoryDetailRouteScreenWide(value);
           }
 
-          return _StoryDetailRouteScreenSmall(story);
-        });
-      },
-    );
+          return _StoryDetailRouteScreenSmall(value);
+        }),
+      AsyncError(:final error, :final stackTrace) => SizedErrorWidget.expand(
+          error: error,
+          trace: stackTrace,
+          action: ElevatedButton.icon(
+            onPressed: () => ref.invalidate(storyDetailProvider(storyId)),
+            icon: const Icon(Icons.refresh_outlined),
+            label: const Text("Refresh"),
+          ),
+        ),
+      _ => const Center(child: CircularProgressIndicator.adaptive()),
+    };
   }
 }
 

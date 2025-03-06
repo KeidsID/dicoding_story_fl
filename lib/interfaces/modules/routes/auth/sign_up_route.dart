@@ -1,7 +1,7 @@
 import "package:fl_utilities/fl_utilities.dart";
 import "package:flutter/material.dart";
+import "package:flutter_riverpod/flutter_riverpod.dart";
 import "package:go_router/go_router.dart";
-import "package:provider/provider.dart";
 
 import "package:dicoding_story_fl/interfaces/libs/constants.dart";
 import "package:dicoding_story_fl/interfaces/libs/l10n/modules.dart";
@@ -25,27 +25,22 @@ final class SignUpRoute extends GoRouteData {
   }
 }
 
-class _SignUpRouteScreen extends StatefulWidget {
+class _SignUpRouteScreen extends ConsumerStatefulWidget {
   const _SignUpRouteScreen();
 
   @override
-  State<_SignUpRouteScreen> createState() => _SignUpRouteScreenState();
+  ConsumerState<_SignUpRouteScreen> createState() => _SignUpRouteScreenState();
 }
 
-class _SignUpRouteScreenState extends State<_SignUpRouteScreen> {
-  late TextEditingController nameController;
-  late TextEditingController emailController;
-  late TextEditingController passwordController;
-
+class _SignUpRouteScreenState extends ConsumerState<_SignUpRouteScreen> {
   double get _maxWidth => 400.0;
   EdgeInsetsGeometry get _padding => const EdgeInsets.all(16.0);
+  Auth get authProviderNotifier => ref.read(authProvider.notifier);
 
   Future<void> _handleSignUp(BuildContext context) async {
-    final authProv = context.read<AuthProvider>();
-
     try {
-      await authProv.register(
-        username: nameController.text,
+      await authProviderNotifier.signUp(
+        name: nameController.text,
         email: emailController.text,
         password: passwordController.text,
       );
@@ -66,6 +61,10 @@ class _SignUpRouteScreenState extends State<_SignUpRouteScreen> {
       }
     }
   }
+
+  late final TextEditingController nameController;
+  late final TextEditingController emailController;
+  late final TextEditingController passwordController;
 
   @override
   void initState() {
@@ -90,8 +89,7 @@ class _SignUpRouteScreenState extends State<_SignUpRouteScreen> {
     final appL10n = AppL10n.of(context)!;
     final headerTextStyle = context.textTheme.headlineLarge;
 
-    final authProv = context.watch<AuthProvider>();
-    final isLoading = authProv.isLoading;
+    final AsyncValue(:isLoading) = ref.watch(authProvider);
 
     return Center(
       child: SizedBox(

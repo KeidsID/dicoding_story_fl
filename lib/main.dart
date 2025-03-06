@@ -1,8 +1,7 @@
 import "package:flutter/foundation.dart";
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";
-import "package:flutter_riverpod/flutter_riverpod.dart" show ProviderScope;
-import "package:provider/provider.dart";
+import "package:flutter_riverpod/flutter_riverpod.dart";
 
 import "interfaces/libs/l10n.dart";
 import "interfaces/libs/providers.dart";
@@ -27,42 +26,28 @@ void main() async {
   runApp(const ProviderScope(child: MainApp()));
 }
 
-class MainApp extends StatelessWidget {
+class MainApp extends ConsumerWidget {
   const MainApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider.value(value: AuthProvider()),
-        ChangeNotifierProvider.value(value: StoriesProvider()),
-      ],
-      builder: (context, _) {
-        /// To make sure redirect did'nt triggered on theme changes.
-        final appRouter = router(context);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final AppConfigsProviderState(:locale, :themeMode) =
+        ref.watch(appConfigsProvider);
 
-        return MultiProvider(
-          providers: [
-            ChangeNotifierProvider.value(value: ThemeModeProvider()),
-            ChangeNotifierProvider.value(value: LocaleProvider()),
-          ],
-          builder: (context, _) {
-            return MaterialApp.router(
-              routerConfig: appRouter,
-              title: kAppName,
-              debugShowCheckedModeBanner: false,
-              //
-              theme: AppThemes.light,
-              darkTheme: AppThemes.dark,
-              themeMode: context.watch<ThemeModeProvider>().value,
-              //
-              localizationsDelegates: AppL10n.localizationsDelegates,
-              supportedLocales: AppL10n.supportedLocales,
-              locale: context.watch<LocaleProvider>().value,
-            );
-          },
-        );
-      },
+    final router = ref.watch(routerProvider);
+
+    return MaterialApp.router(
+      routerConfig: router,
+      title: kAppName,
+      debugShowCheckedModeBanner: false,
+      //
+      theme: AppThemes.light,
+      darkTheme: AppThemes.dark,
+      themeMode: themeMode,
+      //
+      localizationsDelegates: AppL10n.localizationsDelegates,
+      supportedLocales: AppL10n.supportedLocales,
+      locale: locale,
     );
   }
 }

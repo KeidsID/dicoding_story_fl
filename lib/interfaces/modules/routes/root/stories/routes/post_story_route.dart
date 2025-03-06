@@ -1,17 +1,17 @@
-import "package:dicoding_story_fl/domain/entities.dart";
-import "package:dicoding_story_fl/interfaces/modules.dart";
 import "package:fl_utilities/fl_utilities.dart";
 import "package:flex_color_scheme/flex_color_scheme.dart";
 import "package:flutter/material.dart";
+import "package:flutter_riverpod/flutter_riverpod.dart";
 import "package:go_router/go_router.dart";
 import "package:image_picker/image_picker.dart";
-import "package:provider/provider.dart";
 
+import "package:dicoding_story_fl/domain/entities.dart";
 import "package:dicoding_story_fl/interfaces/libs/constants.dart";
 import "package:dicoding_story_fl/interfaces/libs/extensions.dart";
 import "package:dicoding_story_fl/interfaces/libs/l10n.dart";
 import "package:dicoding_story_fl/interfaces/libs/providers.dart";
 import "package:dicoding_story_fl/interfaces/libs/widgets.dart";
+import "package:dicoding_story_fl/interfaces/modules.dart";
 import "package:dicoding_story_fl/libs/constants.dart";
 import "package:dicoding_story_fl/libs/extensions.dart";
 
@@ -27,31 +27,31 @@ final class PostStoryRoute extends GoRouteData {
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return ChangeNotifierProvider.value(
-      value: PickedImageProvider(),
-      child: _PostStoryRouteScreen(description),
-    );
+    return _PostStoryRouteScreen(description);
   }
 }
 
-class _PostStoryRouteScreen extends StatefulWidget {
+class _PostStoryRouteScreen extends ConsumerStatefulWidget {
   const _PostStoryRouteScreen([this.description]);
 
   final String? description;
 
   @override
-  State<_PostStoryRouteScreen> createState() => _PostStoryRouteScreenState();
+  ConsumerState<_PostStoryRouteScreen> createState() =>
+      _PostStoryRouteScreenState();
 }
 
-class _PostStoryRouteScreenState extends State<_PostStoryRouteScreen> {
+class _PostStoryRouteScreenState extends ConsumerState<_PostStoryRouteScreen> {
   late final GlobalKey<FormState> _formKey;
   late final TextEditingController _descriptionController;
   LocationData? _locationData;
 
+  PickedImage get pickedImageProviderNotifier =>
+      ref.read(pickedImageProvider.notifier);
+  Stories get storiesProviderNotifier => ref.read(storiesProvider.notifier);
+
   VoidCallback _handleRepickImage(BuildContext context) {
     return () async {
-      final pickedImageProv = context.read<PickedImageProvider>();
-
       await showDialog(
         context: context,
         builder: (context) {
@@ -69,7 +69,8 @@ class _PostStoryRouteScreenState extends State<_PostStoryRouteScreen> {
                   children: [
                     TextButton.icon(
                       onPressed: () async {
-                        final img = await pickedImageProv.pickImage(context);
+                        final img = await pickedImageProviderNotifier
+                            .pickImage(context);
 
                         if (img == null) return;
 
@@ -80,7 +81,7 @@ class _PostStoryRouteScreenState extends State<_PostStoryRouteScreen> {
                     ),
                     TextButton.icon(
                       onPressed: () async {
-                        final img = await pickedImageProv.pickImage(
+                        final img = await pickedImageProviderNotifier.pickImage(
                           context,
                           source: ImageSource.camera,
                         );
@@ -114,23 +115,23 @@ class _PostStoryRouteScreenState extends State<_PostStoryRouteScreen> {
 
   VoidCallback _handlePostStory(BuildContext context) {
     return () async {
-      final imageFile = context.read<PickedImageProvider>().value;
+      final pickedImage = ref.read(pickedImageProvider).valueOrNull;
 
-      if (imageFile == null) return;
+      if (pickedImage == null) return;
 
       try {
         if (!(_formKey.currentState?.validate() ?? false)) return;
 
-        await context.read<StoriesProvider>().postStory(
-              description: _descriptionController.text,
-              imageBytes: await imageFile.readAsBytes(),
-              imageFilename: imageFile.name,
-              lat: _locationData?.latitude,
-              lon: _locationData?.longitude,
-            );
+        await storiesProviderNotifier.postStory(
+          description: _descriptionController.text,
+          imageBytes: await pickedImage.readAsBytes(),
+          imageFilename: pickedImage.name,
+          lat: _locationData?.latitude,
+          lon: _locationData?.longitude,
+        );
 
         if (context.mounted) {
-          context.read<PickedImageProvider>().dispose();
+          pickedImageProviderNotifier.removeCache();
 
           context.pop();
         }
@@ -185,109 +186,106 @@ class _PostStoryRouteScreenState extends State<_PostStoryRouteScreen> {
   Widget build(BuildContext context) {
     final appL10n = AppL10n.of(context)!;
 
+    final pickedImageAsync = ref.watch(pickedImageProvider);
+    final storiesAsync = ref.watch(storiesProvider);
+
+    final pickedImage = pickedImageAsync.valueOrNull;
+    final isLoading = pickedImageAsync.isLoading || storiesAsync.isLoading;
+
+    if (pickedImage == null) {
+      return Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            Text(
+              appL10n.pickAnImageForYourStory,
+              style: context.textTheme.headlineMedium,
+            ),
+            const SizedBox(height: 8.0),
+
+            //
+            Expanded(
+              child: Builder(builder: (context) {
+                final labelStyle = context.textTheme.titleMedium;
+                const iconSize = 32.0;
+
+                return Row(
+                  children: [
+                    Card(
+                      clipBehavior: Clip.hardEdge,
+                      child: InkWell(
+                        onTap: isLoading
+                            ? null
+                            : () =>
+                                pickedImageProviderNotifier.pickImage(context),
+                        child: Center(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(appL10n.fromGallery, style: labelStyle),
+                              const Icon(
+                                Icons.image_outlined,
+                                size: iconSize,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    //
+                    Card(
+                      clipBehavior: Clip.hardEdge,
+                      child: InkWell(
+                        onTap: isLoading
+                            ? null
+                            : () => pickedImageProviderNotifier.pickImage(
+                                  context,
+                                  source: ImageSource.camera,
+                                ),
+                        child: Center(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(appL10n.fromCamera, style: labelStyle),
+                              const Icon(
+                                Icons.camera_alt_outlined,
+                                size: iconSize,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ].map((e) => Expanded(child: e)).toList(),
+                );
+              }),
+            ),
+          ],
+        ),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(title: Text(appL10n.postStory)),
-      body: Builder(
-        builder: (context) {
-          final pickedImageProv = context.watch<PickedImageProvider>();
-          final pickedImage = pickedImageProv.value;
-
-          if (pickedImage == null) {
-            return Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                children: [
-                  Text(
-                    appL10n.pickAnImageForYourStory,
-                    style: context.textTheme.headlineMedium,
-                  ),
-                  const SizedBox(height: 8.0),
-
-                  //
-                  Expanded(
-                    child: Builder(builder: (context) {
-                      final labelStyle = context.textTheme.titleMedium;
-                      const iconSize = 32.0;
-
-                      return Row(
-                        children: [
-                          Card(
-                            clipBehavior: Clip.hardEdge,
-                            child: InkWell(
-                              onTap: () => pickedImageProv.pickImage(context),
-                              child: Center(
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Text(appL10n.fromGallery,
-                                        style: labelStyle),
-                                    const Icon(
-                                      Icons.image_outlined,
-                                      size: iconSize,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                          //
-                          Card(
-                            clipBehavior: Clip.hardEdge,
-                            child: InkWell(
-                              onTap: () => pickedImageProv.pickImage(
-                                context,
-                                source: ImageSource.camera,
-                              ),
-                              child: Center(
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Text(appL10n.fromCamera, style: labelStyle),
-                                    const Icon(
-                                      Icons.camera_alt_outlined,
-                                      size: iconSize,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ].map((e) => Expanded(child: e)).toList(),
-                      );
-                    }),
-                  ),
-                ],
-              ),
-            );
-          }
-
-          return Builder(builder: (context) {
-            final storiesProv = context.watch<StoriesProvider>();
-
-            final isLoading = storiesProv.isLoading;
-
-            return _PostStoryForm(_PostStoryFormDelegate(
-              pickedImage,
-              formKey: _formKey,
-              onImageTap: isLoading ? null : _handleRepickImage(context),
-              descriptionFieldDelegate: _DescriptionFieldDelegate(
-                controller: _descriptionController,
-                enabled: !isLoading,
-                onChanged: (value) {
-                  PostStoryRoute(value).go(context);
-                }.debounce(),
-              ),
-              addressSectionDelegate: _AddressSectionDelegate(
-                address: _locationData?.displayName ??
-                    _locationData?.address ??
-                    _locationData?.latLon,
-                onTap: isLoading ? null : _handleLocationSet(context),
-              ),
-              onPostButtonTap: isLoading ? null : _handlePostStory(context),
-            ));
-          });
-        },
-      ),
+      body: _PostStoryForm(_PostStoryFormDelegate(
+        pickedImage,
+        formKey: _formKey,
+        onImageTap: isLoading ? null : _handleRepickImage(context),
+        descriptionFieldDelegate: _DescriptionFieldDelegate(
+          controller: _descriptionController,
+          enabled: !isLoading,
+          onChanged: (String value) {
+            PostStoryRoute(value.isEmpty ? null : value).go(context);
+          }.debounce(),
+        ),
+        addressSectionDelegate: _AddressSectionDelegate(
+          address: _locationData?.displayName ??
+              _locationData?.address ??
+              _locationData?.latLon,
+          onTap: isLoading ? null : _handleLocationSet(context),
+        ),
+        onPostButtonTap: isLoading ? null : _handlePostStory(context),
+      )),
     );
   }
 }
@@ -367,14 +365,14 @@ abstract base class _PostStoryFormBase extends StatelessWidget {
   }
 
   Widget get _titleSection {
-    return Builder(builder: (context) {
-      final userCreds = context.watch<AuthProvider>().value;
+    return Consumer(builder: (context, ref, _) {
+      final user = ref.watch(authProvider).valueOrNull;
 
       return Wrap(
         crossAxisAlignment: WrapCrossAlignment.end,
         children: [
           Text(
-            '${userCreds?.name ?? 'Anonymous'} ',
+            '${user?.name ?? 'Anonymous'} ',
             style: context.textTheme.headlineMedium,
           ),
           Text(kDateFormat.format(DateTime.now())).applyOpacity(opacity: 0.5),

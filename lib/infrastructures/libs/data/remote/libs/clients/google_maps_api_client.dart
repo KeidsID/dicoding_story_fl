@@ -27,10 +27,9 @@ final class GoogleMapsApiClient extends ChopperClient {
                 level: Level.basic,
                 logger: chopperLogger,
               ),
-            if (_checkGeocodingType(type))
-              _GoogleMapsApiClientApiKeyInterceptor(apiKey),
+            //
+            _GoogleMapsApiClientApiKeyInterceptor(apiKey, type),
             HeadersInterceptor({
-              if (!_checkGeocodingType(type)) "X-Goog-Api-Key": apiKey,
               if (!kIsWeb) ...{
                 if (defaultTargetPlatform == TargetPlatform.android) ...{
                   "X-Android-Package": bundleId ?? "-",
@@ -44,9 +43,6 @@ final class GoogleMapsApiClient extends ChopperClient {
         );
 }
 
-bool _checkGeocodingType(GoogleMapsApiClientType type) =>
-    type == GoogleMapsApiClientType.geocoding;
-
 /// Determine which API to use on [GoogleMapsApiClient]
 enum GoogleMapsApiClientType {
   /// https://developers.google.com/maps/documentation/geocoding/overview
@@ -57,12 +53,25 @@ enum GoogleMapsApiClientType {
 }
 
 class _GoogleMapsApiClientApiKeyInterceptor implements Interceptor {
-  const _GoogleMapsApiClientApiKeyInterceptor(this.apiKey);
+  const _GoogleMapsApiClientApiKeyInterceptor(this.apiKey, this.clientType);
 
   final String apiKey;
+  final GoogleMapsApiClientType clientType;
 
   @override
   FutureOr<Response<BodyType>> intercept<BodyType>(Chain<BodyType> chain) {
-    return chain.proceed(applyHeader(chain.request, "key", apiKey));
+    final req = chain.request;
+    final isGeocoding = clientType == GoogleMapsApiClientType.geocoding;
+
+    return chain.proceed(req.copyWith(
+      headers: {
+        if (!isGeocoding) "X-Goog-Api-Key": apiKey,
+        ...req.headers,
+      },
+      parameters: {
+        if (isGeocoding) "key": apiKey,
+        ...req.parameters,
+      },
+    ));
   }
 }

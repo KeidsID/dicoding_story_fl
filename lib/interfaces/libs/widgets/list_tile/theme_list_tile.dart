@@ -1,5 +1,5 @@
 import "package:flutter/material.dart";
-import "package:provider/provider.dart";
+import "package:flutter_riverpod/flutter_riverpod.dart";
 
 import "package:dicoding_story_fl/interfaces/libs/l10n.dart";
 import "package:dicoding_story_fl/interfaces/libs/providers.dart";
@@ -14,8 +14,9 @@ class ThemeListTile extends StatelessWidget {
     return ListTile(
       leading: const Icon(Icons.color_lens_outlined),
       title: Text(appL10n.appTheme),
-      trailing: Builder(builder: (context) {
-        final themeModeProvider = context.watch<ThemeModeProvider>();
+      trailing: Consumer(builder: (context, ref, _) {
+        final AppConfigsProviderState(:themeMode) =
+            ref.watch(appConfigsProvider);
 
         final icons = ThemeMode.values.map((e) {
           return switch (e) {
@@ -26,20 +27,22 @@ class ThemeListTile extends StatelessWidget {
         }).toList();
 
         return DropdownButton<ThemeMode>(
-          value: themeModeProvider.value,
-          items: ThemeMode.values.map((themeMode) {
+          value: themeMode,
+          onChanged: (value) {
+            ref.read(appConfigsProvider.notifier).setThemeMode(value!);
+          },
+          items: ThemeMode.values.map((mode) {
             return DropdownMenuItem<ThemeMode>(
-              value: themeMode,
+              value: mode,
               child: Row(
                 children: [
-                  Icon(icons[themeMode.index]),
+                  Icon(icons[mode.index]),
                   const SizedBox(width: 8.0),
-                  Text(appL10n.flThemeMode(themeMode.name)),
+                  Text(appL10n.flThemeMode(mode.name)),
                 ],
               ),
             );
           }).toList(),
-          onChanged: (value) => themeModeProvider.value = value!,
         );
       }),
     );

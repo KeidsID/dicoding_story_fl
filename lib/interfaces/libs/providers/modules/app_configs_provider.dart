@@ -10,13 +10,13 @@ part "app_configs_provider.g.dart";
 
 /// Provide configs for [MaterialApp].
 @Riverpod(keepAlive: true)
-sealed class AppConfigs extends _$AppConfigs {
+class AppConfigs extends _$AppConfigs {
   @override
-  AppConfigsState build() {
+  AppConfigsProviderState build() {
     final locale = ref.watch(_appLocaleProvider);
     final themeMode = ref.watch(_appThemeModeProvider);
 
-    return AppConfigsState(locale: locale, themeMode: themeMode);
+    return AppConfigsProviderState(locale: locale, themeMode: themeMode);
   }
 
   void setLocale(Locale? locale) {
@@ -30,11 +30,11 @@ sealed class AppConfigs extends _$AppConfigs {
 
 /// [appConfigsProvider] state.
 @Freezed(copyWith: true)
-final class AppConfigsState with _$AppConfigsState {
-  const factory AppConfigsState({
+class AppConfigsProviderState with _$AppConfigsProviderState {
+  const factory AppConfigsProviderState({
     Locale? locale,
     @Default(ThemeMode.system) ThemeMode themeMode,
-  }) = _AppConfigsState;
+  }) = _AppConfigsProviderState;
 }
 
 SharedPreferences get _cacheService => ServiceLocator.find();
