@@ -6,7 +6,6 @@ import "package:go_router/go_router.dart";
 import "package:riverpod_annotation/riverpod_annotation.dart";
 
 import "package:dicoding_story_fl/domain/entities.dart";
-import "package:dicoding_story_fl/interfaces/libs/constants.dart";
 import "package:dicoding_story_fl/interfaces/libs/providers.dart";
 import "package:dicoding_story_fl/interfaces/libs/widgets.dart";
 import "package:dicoding_story_fl/interfaces/modules/routes.dart";
@@ -20,7 +19,7 @@ export "routes/story_detail_route.dart";
 
 /// [StoriesRoute] build decorator.
 const storiesRouteBuild = TypedGoRoute<StoriesRoute>(
-  path: "${AppRoutePaths.stories}${StoriesRoutePaths.root}",
+  path: "/stories",
   routes: [postStoryRouteBuild, storyDetailRouteBuild],
 );
 

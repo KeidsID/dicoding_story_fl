@@ -3,13 +3,12 @@ import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
 import "package:go_router/go_router.dart";
 
-import "package:dicoding_story_fl/interfaces/libs/constants.dart";
 import "package:dicoding_story_fl/interfaces/libs/l10n/modules.dart";
 import "package:dicoding_story_fl/interfaces/libs/providers.dart";
 import "package:dicoding_story_fl/interfaces/libs/widgets.dart";
 
 const profileRouteBuild = TypedGoRoute<ProfileRoute>(
-  path: AppRoutePaths.profile,
+  path: "/profile",
 );
 
 final class ProfileRoute extends GoRouteData {

@@ -16,9 +16,7 @@ import "package:dicoding_story_fl/libs/constants.dart";
 import "package:dicoding_story_fl/libs/extensions.dart";
 
 /// [PostStoryRoute] build decorator.
-const postStoryRouteBuild = TypedGoRoute<PostStoryRoute>(
-  path: StoriesRoutePaths.post,
-);
+const postStoryRouteBuild = TypedGoRoute<PostStoryRoute>(path: "post");
 
 final class PostStoryRoute extends GoRouteData {
   const PostStoryRoute([this.description]);
@@ -192,100 +190,99 @@ class _PostStoryRouteScreenState extends ConsumerState<_PostStoryRouteScreen> {
     final pickedImage = pickedImageAsync.valueOrNull;
     final isLoading = pickedImageAsync.isLoading || storiesAsync.isLoading;
 
-    if (pickedImage == null) {
-      return Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Text(
-              appL10n.pickAnImageForYourStory,
-              style: context.textTheme.headlineMedium,
-            ),
-            const SizedBox(height: 8.0),
-
-            //
-            Expanded(
-              child: Builder(builder: (context) {
-                final labelStyle = context.textTheme.titleMedium;
-                const iconSize = 32.0;
-
-                return Row(
-                  children: [
-                    Card(
-                      clipBehavior: Clip.hardEdge,
-                      child: InkWell(
-                        onTap: isLoading
-                            ? null
-                            : () =>
-                                pickedImageProviderNotifier.pickImage(context),
-                        child: Center(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(appL10n.fromGallery, style: labelStyle),
-                              const Icon(
-                                Icons.image_outlined,
-                                size: iconSize,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    //
-                    Card(
-                      clipBehavior: Clip.hardEdge,
-                      child: InkWell(
-                        onTap: isLoading
-                            ? null
-                            : () => pickedImageProviderNotifier.pickImage(
-                                  context,
-                                  source: ImageSource.camera,
-                                ),
-                        child: Center(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(appL10n.fromCamera, style: labelStyle),
-                              const Icon(
-                                Icons.camera_alt_outlined,
-                                size: iconSize,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ].map((e) => Expanded(child: e)).toList(),
-                );
-              }),
-            ),
-          ],
-        ),
-      );
-    }
-
     return Scaffold(
       appBar: AppBar(title: Text(appL10n.postStory)),
-      body: _PostStoryForm(_PostStoryFormDelegate(
-        pickedImage,
-        formKey: _formKey,
-        onImageTap: isLoading ? null : _handleRepickImage(context),
-        descriptionFieldDelegate: _DescriptionFieldDelegate(
-          controller: _descriptionController,
-          enabled: !isLoading,
-          onChanged: (String value) {
-            PostStoryRoute(value.isEmpty ? null : value).go(context);
-          }.debounce(),
-        ),
-        addressSectionDelegate: _AddressSectionDelegate(
-          address: _locationData?.displayName ??
-              _locationData?.address ??
-              _locationData?.latLon,
-          onTap: isLoading ? null : _handleLocationSet(context),
-        ),
-        onPostButtonTap: isLoading ? null : _handlePostStory(context),
-      )),
+      body: pickedImage == null
+          ? Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                children: [
+                  Text(
+                    appL10n.pickAnImageForYourStory,
+                    style: context.textTheme.headlineMedium,
+                  ),
+                  const SizedBox(height: 8.0),
+
+                  //
+                  Expanded(
+                    child: Builder(builder: (context) {
+                      final labelStyle = context.textTheme.titleMedium;
+                      const iconSize = 32.0;
+
+                      return Row(
+                        children: [
+                          Card(
+                            clipBehavior: Clip.hardEdge,
+                            child: InkWell(
+                              onTap: isLoading
+                                  ? null
+                                  : () => pickedImageProviderNotifier
+                                      .pickImage(context),
+                              child: Center(
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(appL10n.fromGallery,
+                                        style: labelStyle),
+                                    const Icon(
+                                      Icons.image_outlined,
+                                      size: iconSize,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                          //
+                          Card(
+                            clipBehavior: Clip.hardEdge,
+                            child: InkWell(
+                              onTap: isLoading
+                                  ? null
+                                  : () => pickedImageProviderNotifier.pickImage(
+                                        context,
+                                        source: ImageSource.camera,
+                                      ),
+                              child: Center(
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(appL10n.fromCamera, style: labelStyle),
+                                    const Icon(
+                                      Icons.camera_alt_outlined,
+                                      size: iconSize,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ].map((e) => Expanded(child: e)).toList(),
+                      );
+                    }),
+                  ),
+                ],
+              ),
+            )
+          : _PostStoryForm(_PostStoryFormDelegate(
+              pickedImage,
+              formKey: _formKey,
+              onImageTap: isLoading ? null : _handleRepickImage(context),
+              descriptionFieldDelegate: _DescriptionFieldDelegate(
+                controller: _descriptionController,
+                enabled: !isLoading,
+                onChanged: (String value) {
+                  PostStoryRoute(value.isEmpty ? null : value).go(context);
+                }.debounce(),
+              ),
+              addressSectionDelegate: _AddressSectionDelegate(
+                address: _locationData?.displayName ??
+                    _locationData?.address ??
+                    _locationData?.latLon,
+                onTap: isLoading ? null : _handleLocationSet(context),
+              ),
+              onPostButtonTap: isLoading ? null : _handlePostStory(context),
+            )),
     );
   }
 }

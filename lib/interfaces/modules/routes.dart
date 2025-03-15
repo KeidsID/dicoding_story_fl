@@ -1,43 +1,41 @@
 import "dart:async";
 
-import "package:dicoding_story_fl/interfaces/libs/l10n/modules.dart";
-import "package:fl_utilities/fl_utilities.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
 
-import "routes/auth.dart";
+import "_screens.dart";
 import "routes/root.dart";
 
-export "routes/auth.dart";
 export "routes/root.dart";
 
 part "routes.g.dart";
 
-@TypedShellRoute<AuthShellRoute>(routes: [
-  signInRouteBuild,
-  signUpRouteBuild,
-])
-final class AuthShellRoute extends ShellRouteData {
-  const AuthShellRoute();
+@TypedGoRoute<AuthRoute>(path: "/auth")
+final class AuthRoute extends GoRouteData {
+  const AuthRoute({
+    this.v,
+    this.email,
+    this.name,
+  });
+
+  AuthRoute.fromRouterState(GoRouterState state)
+      : v = state.uri.queryParameters["v"],
+        email = state.uri.queryParameters["email"],
+        name = state.uri.queryParameters["name"];
+
+  /// Variant of screen.
+  ///
+  /// Check [AuthRouteScreenVariant.toUrlParams].
+  final String? v;
+  final String? email;
+  final String? name;
 
   @override
-  Widget builder(BuildContext context, GoRouterState state, Widget navigator) {
-    return _AuthShellRouteScreen(child: navigator);
-  }
-}
+  Widget build(BuildContext context, GoRouterState state) {
+    final variant = AuthRouteScreenVariant.fromUrlParams(v ?? "") ??
+        AuthRouteScreenVariant.signIn;
 
-class _AuthShellRouteScreen extends StatelessWidget {
-  const _AuthShellRouteScreen({this.child});
-
-  final Widget? child;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: child ?? const SizedBox.shrink(),
-      ),
-    );
+    return AuthRouteScreen(variant: variant, email: email, name: name);
   }
 }
 
@@ -50,261 +48,6 @@ final class RootShellRoute extends ShellRouteData {
 
   @override
   Widget builder(BuildContext context, GoRouterState state, Widget navigator) {
-    return _RootShellRouteScreen(child: navigator);
-  }
-}
-
-class _RootShellRouteScreen extends StatefulWidget {
-  const _RootShellRouteScreen({this.child});
-
-  final Widget? child;
-
-  List<_RootShellRouteScreenNavDelegate> get navigationDelegates {
-    return [
-      _RootShellRouteScreenNavDelegate(
-        icon: const Icon(Icons.home_outlined),
-        label: "Home",
-        activeIcon: const Icon(Icons.home),
-        routePath: const StoriesRoute().location,
-        floatingActionButton: Builder(builder: (context) {
-          return FloatingActionButton.extended(
-            onPressed: () => const PostStoryRoute().go(context),
-            label: Text(AppL10n.of(context)!.postStory),
-            icon: const Icon(Icons.add),
-          );
-        }),
-      ),
-      _RootShellRouteScreenNavDelegate(
-        icon: const Icon(Icons.person_outlined),
-        label: "Profile",
-        activeIcon: const Icon(Icons.person),
-        routePath: const ProfileRoute().location,
-      ),
-    ];
-  }
-
-  @override
-  State<_RootShellRouteScreen> createState() => _RootShellRouteScreenState();
-}
-
-class _RootShellRouteScreenState extends State<_RootShellRouteScreen> {
-  bool isExtended = true;
-
-  void _handlePostNavigation() {
-    if (!isExtended) return;
-
-    setState(() => isExtended = false);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final navigationDelegates = widget.navigationDelegates;
-
-    return Scaffold(
-      body: _RootShellRouteScreenBody(
-        navigationDelegates: navigationDelegates,
-        isExtended: isExtended,
-        onNavigationRailTrailingTap: () {
-          setState(() => isExtended = !isExtended);
-        },
-        onPostNavigation: _handlePostNavigation,
-        child: widget.child,
-      ),
-      bottomNavigationBar: _RootShellRouteScreenBottomNavBar(
-        navigationDelegates: navigationDelegates,
-        onPostNavigation: _handlePostNavigation,
-      ),
-      floatingActionButton: _RootShellRouteScreenFAB(
-        navigationDelegates: navigationDelegates,
-      ),
-    );
-  }
-}
-
-class _RootShellRouteScreenNavDelegate {
-  const _RootShellRouteScreenNavDelegate({
-    required this.icon,
-    required this.label,
-    this.activeIcon,
-    required this.routePath,
-    this.floatingActionButton,
-  });
-
-  final Icon icon;
-  final String label;
-  final Icon? activeIcon;
-  final String routePath;
-
-  /// Only be rendered when the current route matches the [routePath].
-  final Widget? floatingActionButton;
-}
-
-mixin _RootShellRouteScreenNavHelperMixin on Widget {
-  double get minWidthForNavigationRail => 800.0;
-
-  /// Match [GoRouter] current route starts with the [navs] route path.
-  int _getCurrentNavigationIndex(
-    BuildContext context,
-    List<_RootShellRouteScreenNavDelegate> navs,
-  ) {
-    final currentRoute = GoRouterState.of(context).uri.path;
-
-    return navs.indexWhere((e) => currentRoute.startsWith(e.routePath));
-  }
-
-  /// Instead of matching the route starts like [_getCurrentNavigationIndex]
-  /// does, this method match the exact route path.
-  ///
-  /// If there is no matched route, it returns -1.
-  int _getActualRouteMatchIndex(
-    BuildContext context,
-    List<_RootShellRouteScreenNavDelegate> navs,
-  ) {
-    final currentRoute = GoRouterState.of(context).uri.path;
-
-    return navs.indexWhere((e) => currentRoute == e.routePath);
-  }
-}
-
-class _RootShellRouteScreenBody extends StatelessWidget
-    with _RootShellRouteScreenNavHelperMixin {
-  const _RootShellRouteScreenBody({
-    required this.navigationDelegates,
-    this.isExtended = false,
-    this.onNavigationRailTrailingTap,
-    this.onPostNavigation,
-    this.child,
-  });
-
-  final List<_RootShellRouteScreenNavDelegate> navigationDelegates;
-  final bool isExtended;
-  final VoidCallback? onNavigationRailTrailingTap;
-  final VoidCallback? onPostNavigation;
-  final Widget? child;
-
-  Widget _buildNavigationRail(BuildContext context) {
-    final currentNavIndex = _getCurrentNavigationIndex(
-      context,
-      navigationDelegates,
-    );
-
-    return SizedBox.expand(
-      child: Row(
-        children: [
-          NavigationRail(
-            extended: isExtended,
-            selectedIndex: currentNavIndex,
-            onDestinationSelected: (index) {
-              final routePath = navigationDelegates[index].routePath;
-
-              context.go(routePath);
-
-              onPostNavigation?.call();
-            },
-            destinations: navigationDelegates.map((e) {
-              return NavigationRailDestination(
-                icon: e.icon,
-                selectedIcon: e.activeIcon,
-                label: Text(e.label),
-              );
-            }).toList(),
-            trailing: Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  IconButton(
-                    tooltip: isExtended ? "Shrink" : "Expand",
-                    onPressed: onNavigationRailTrailingTap,
-                    icon: Icon(
-                      isExtended ? Icons.chevron_left : Icons.chevron_right,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          const VerticalDivider(width: 2.0, thickness: 2.0),
-          Expanded(child: child ?? const SizedBox.shrink()),
-        ],
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final deviceWidth = context.mediaQuery.size.width;
-    final isRenderNavRail = deviceWidth >= minWidthForNavigationRail;
-
-    return SafeArea(
-      child: isRenderNavRail
-          ? _buildNavigationRail(context)
-          : child ?? const SizedBox.shrink(),
-    );
-  }
-}
-
-class _RootShellRouteScreenBottomNavBar extends StatelessWidget
-    with _RootShellRouteScreenNavHelperMixin {
-  const _RootShellRouteScreenBottomNavBar({
-    required this.navigationDelegates,
-    this.onPostNavigation,
-  });
-
-  final List<_RootShellRouteScreenNavDelegate> navigationDelegates;
-  final VoidCallback? onPostNavigation;
-
-  Widget _buildBottomNavigationBar(BuildContext context) {
-    final currentNavIndex = _getCurrentNavigationIndex(
-      context,
-      navigationDelegates,
-    );
-
-    return BottomNavigationBar(
-      currentIndex: currentNavIndex,
-      onTap: (index) {
-        final routePath = navigationDelegates[index].routePath;
-
-        context.go(routePath);
-
-        onPostNavigation?.call();
-      },
-      items: navigationDelegates.map((e) {
-        return BottomNavigationBarItem(
-          icon: e.icon,
-          label: e.label,
-          activeIcon: e.activeIcon,
-        );
-      }).toList(),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final deviceWidth = context.mediaQuery.size.width;
-    final isRenderNavRail = deviceWidth >= minWidthForNavigationRail;
-
-    return isRenderNavRail
-        ? const SizedBox.shrink()
-        : _buildBottomNavigationBar(context);
-  }
-}
-
-class _RootShellRouteScreenFAB extends StatelessWidget
-    with _RootShellRouteScreenNavHelperMixin {
-  const _RootShellRouteScreenFAB({required this.navigationDelegates});
-
-  final List<_RootShellRouteScreenNavDelegate> navigationDelegates;
-
-  @override
-  Widget build(BuildContext context) {
-    final currentNavIndex = _getActualRouteMatchIndex(
-      context,
-      navigationDelegates,
-    );
-
-    if (currentNavIndex == -1) return const SizedBox.shrink();
-
-    return navigationDelegates[currentNavIndex].floatingActionButton ??
-        const SizedBox.shrink();
+    return RootShellRouteScreen(child: navigator);
   }
 }

@@ -11,7 +11,7 @@ import "package:dicoding_story_fl/interfaces/libs/providers.dart";
 import "package:dicoding_story_fl/interfaces/libs/widgets.dart";
 
 const storyDetailRouteBuild = TypedGoRoute<StoryDetailRoute>(
-  path: StoriesRoutePaths.view$storyId,
+  path: "view/:storyId",
 );
 
 final class StoryDetailRoute extends GoRouteData {

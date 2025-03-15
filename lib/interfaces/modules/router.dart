@@ -3,7 +3,6 @@ import "package:go_router/go_router.dart";
 import "package:riverpod_annotation/riverpod_annotation.dart";
 
 import "package:dicoding_story_fl/domain/entities.dart";
-import "package:dicoding_story_fl/interfaces/libs/constants.dart";
 import "package:dicoding_story_fl/interfaces/libs/providers.dart";
 import "package:dicoding_story_fl/interfaces/libs/widgets.dart";
 
@@ -38,16 +37,17 @@ GoRouter router(RouterRef ref) {
       );
     },
     //
-    initialLocation: const SignInRoute().location,
+    initialLocation: const AuthRoute().location,
     routes: $appRoutes,
     //
     redirect: (context, state) {
       final currentRoute = state.uri.path;
+      final authRoutePath = AuthRoute.fromRouterState(state).location;
 
       if (authAsync.isLoading) return null;
 
       final isLoggedIn = authAsync.value != null;
-      final isAuthRoute = currentRoute.startsWith(AppRoutePaths.auth);
+      final isAuthRoute = currentRoute.startsWith(authRoutePath);
 
       if (isAuthRoute) {
         if (isLoggedIn) return const StoriesRoute().location;
@@ -55,7 +55,7 @@ GoRouter router(RouterRef ref) {
         return null;
       }
 
-      if (!isLoggedIn) return const SignInRoute().location;
+      if (!isLoggedIn) return authRoutePath;
 
       return null;
     },
