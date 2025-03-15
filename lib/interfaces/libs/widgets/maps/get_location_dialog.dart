@@ -195,7 +195,7 @@ class _GetLocationDialogSearchViewState
                       if (text.length < 3) return;
 
                       await _handleSearchPlace(text);
-                    }.debounce(delay: Durations.long2),
+                    }.debounce(Durations.long2),
                   ),
                   if (actions.isNotEmpty) const SizedBox(height: 8.0),
                   ...actions,

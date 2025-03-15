@@ -20,14 +20,10 @@ abstract class RemoteDataModules {
       baseUrl: Uri.tryParse(kApiBaseUrl),
       converter: const JsonConverter(),
       errorConverter: const JsonConverter(),
-      interceptors: kDebugMode
-          ? [
-              HttpLoggingInterceptor(
-                level: Level.basic,
-                logger: chopperLogger,
-              ),
-            ]
-          : null,
+      interceptors: [
+        if (kDebugMode)
+          HttpLoggingInterceptor(level: Level.basic, logger: chopperLogger),
+      ],
     );
   }
 }

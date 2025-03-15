@@ -1,81 +1,80 @@
+import "package:riverpod_annotation/riverpod_annotation.dart";
+
 import "package:dicoding_story_fl/domain/entities.dart";
 import "package:dicoding_story_fl/libs/extensions.dart";
 import "package:dicoding_story_fl/service_locator.dart";
 import "package:dicoding_story_fl/use_cases.dart";
 
-import "../libs/types.dart";
+part "auth_provider.g.dart";
 
-final class AuthProvider extends AsyncValueNotifier<User?> {
-  AuthProvider([super.initialValue]) {
-    Future.microtask(() => _fetchToken()).catchError((e) => null);
+@Riverpod(keepAlive: true)
+class Auth extends _$Auth {
+  @override
+  Future<User?> build() {
+    return ServiceLocator.find<GetAuthUseCase>().execute(null);
   }
 
-  /// Logged in state.
-  ///
-  /// Same as [value] is not null.
-  bool get isLoggedIn => !hasValue;
-
-  Future<void> _fetchToken() async {
-    if (!isLoading) isLoading = true;
-
-    value = await ServiceLocator.find<GetAuthUseCase>().execute(null);
-  }
-
-  Future<void> login({required String email, required String password}) async {
-    isLoading = true;
-
-    try {
-      await ServiceLocator.find<SignInUseCase>()
-          .execute(SignInRequestDto(email: email, password: password));
-
-      await _fetchToken();
-    } catch (err, trace) {
-      final parsedError = err.toAppException(trace: trace);
-
-      setError(parsedError);
-      throw parsedError;
-    }
-  }
-
-  Future<void> logout() async {
-    isLoading = true;
-
-    try {
-      await ServiceLocator.find<SignOutUseCase>().execute(null);
-
-      await _fetchToken();
-    } catch (err, trace) {
-      final parsedError = err.toAppException(trace: trace);
-
-      setError(parsedError);
-      throw parsedError;
-    }
-  }
-
-  /// Register as new user to Dicoding Story API, then auto call [login] after
-  /// the register process is complete.
-  Future<void> register({
-    required String username,
+  Future<void> signIn({
     required String email,
     required String password,
   }) async {
-    isLoading = true;
+    state = const AsyncLoading();
+
+    final signInUseCase = ServiceLocator.find<SignInUseCase>();
 
     try {
-      await ServiceLocator.find<SignUpUseCase>().execute(
-        SignUpRequestDto(
-          name: username,
-          email: email,
-          password: password,
-        ),
-      );
-
-      await login(email: email, password: password);
+      state = AsyncData(await signInUseCase.execute(SignInRequestDto(
+        email: email,
+        password: password,
+      )));
     } catch (err, trace) {
-      final parsedError = err.toAppException(trace: trace);
+      final exception = err.toAppException(trace: trace);
 
-      setError(parsedError);
-      throw parsedError;
+      state = AsyncError(exception, exception.trace ?? trace);
+      throw exception;
+    }
+  }
+
+  /// Will do [signIn] after the registration process is complete.
+  Future<void> signUp({
+    required String name,
+    required String email,
+    required String password,
+  }) async {
+    state = const AsyncLoading();
+
+    final signUpUseCase = ServiceLocator.find<SignUpUseCase>();
+
+    try {
+      await signUpUseCase.execute(SignUpRequestDto(
+        name: name,
+        email: email,
+        password: password,
+      ));
+
+      await signIn(email: email, password: password);
+    } catch (err, trace) {
+      final exception = err.toAppException(trace: trace);
+
+      state = AsyncError(exception, exception.trace ?? trace);
+      throw exception;
+    }
+  }
+
+  Future<void> signOut() async {
+    state = const AsyncLoading();
+
+    final signOutUseCase = ServiceLocator.find<SignOutUseCase>();
+
+    try {
+      await signOutUseCase.execute(null);
+
+      state = const AsyncData(null);
+    } catch (err, trace) {
+      final exception = err.toAppException(trace: trace);
+
+      state = AsyncError(exception, exception.trace ?? trace);
+      throw exception;
     }
   }
 }

@@ -15,9 +15,7 @@ final class AuthRepositoryImpl implements AuthRepository {
   final AuthRemoteData _remoteData;
 
   @override
-  Future<User?> getAuth() async {
-    return _localData.getUser();
-  }
+  Future<User?> getAuth() async => _localData.getUser();
 
   @override
   Future<User> signIn({

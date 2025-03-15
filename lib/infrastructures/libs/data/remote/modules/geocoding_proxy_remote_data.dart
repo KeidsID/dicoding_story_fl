@@ -24,13 +24,13 @@ abstract class GeocodingProxyRemoteData extends ChopperService {
     ));
   }
 
-  @Get(path: "/geocode")
+  @GET(path: "/geocode")
   Future<Response<Map<String, dynamic>>> geocoding(
     @query String address, {
     @query String? languageCode,
   });
 
-  @Get(path: "/geocode/reverse")
+  @GET(path: "/geocode/reverse")
   Future<Response<Map<String, dynamic>>> reverseGeocoding(
     @query String lat,
     @query String lng, {

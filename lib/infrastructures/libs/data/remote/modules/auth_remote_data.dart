@@ -11,13 +11,13 @@ abstract class AuthRemoteData extends ChopperService {
       _$AuthRemoteData(client);
 
   /// https://story-api.dicoding.dev/v1/#/?id=register
-  @Post(path: "/register")
+  @POST(path: "/register")
   Future<Response<Map<String, dynamic>>> signUp({
     @body required Map<String, dynamic> body,
   });
 
   /// https://story-api.dicoding.dev/v1/#/?id=login
-  @Post(path: "/login")
+  @POST(path: "/login")
   Future<Response<Map<String, dynamic>>> signIn({
     @body required Map<String, dynamic> body,
   });

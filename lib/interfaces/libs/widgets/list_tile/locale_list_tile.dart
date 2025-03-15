@@ -1,5 +1,5 @@
 import "package:flutter/material.dart";
-import "package:provider/provider.dart";
+import "package:flutter_riverpod/flutter_riverpod.dart";
 
 import "package:dicoding_story_fl/interfaces/libs/l10n.dart";
 import "package:dicoding_story_fl/interfaces/libs/providers.dart";
@@ -7,8 +7,8 @@ import "package:dicoding_story_fl/interfaces/libs/providers.dart";
 class LocaleListTile extends StatelessWidget {
   const LocaleListTile({super.key});
 
-  String _handleLanguageName(BuildContext context, String languageCode) {
-    return switch (languageCode) {
+  String _getLocaleName(BuildContext context, [Locale? locale]) {
+    return switch ("$locale") {
       "en" => "English",
       "id" => "Bahasa Indonesia",
       _ => AppL10n.of(context)!.flThemeMode(ThemeMode.system.name),
@@ -22,21 +22,23 @@ class LocaleListTile extends StatelessWidget {
     return ListTile(
       leading: const Icon(Icons.language_outlined),
       title: Text(appL10n.language),
-      trailing: Builder(builder: (context) {
-        final localeProvider = context.watch<LocaleProvider>();
+      trailing: Consumer(builder: (context, ref, _) {
+        final AppConfigsProviderState(:locale) = ref.watch(appConfigsProvider);
 
         return DropdownButton<Locale?>(
-          value: localeProvider.value,
-          onChanged: (value) => localeProvider.value = value,
+          value: locale,
+          onChanged: (value) {
+            ref.read(appConfigsProvider.notifier).setLocale(value);
+          },
           items: [
             DropdownMenuItem(
               value: null,
-              child: Text(_handleLanguageName(context, "system")),
+              child: Text(_getLocaleName(context)),
             ),
-            ...AppL10n.supportedLocales.map((locale) {
+            ...AppL10n.supportedLocales.map((supportedLocale) {
               return DropdownMenuItem(
-                value: locale,
-                child: Text(_handleLanguageName(context, "$locale")),
+                value: supportedLocale,
+                child: Text(_getLocaleName(context, supportedLocale)),
               );
             })
           ],

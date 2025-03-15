@@ -1,76 +1,76 @@
-# interfaces modules
+# Interfaces Modules
 
 [typed-go-router]: https://pub.dev/documentation/go_router/latest/topics/Type-safe%20routes-topic.html
 
 This is where each application route is defined. We will use
 [Typed "go_router"][typed-go-router].
 
-[root-routes]: /lib/interfaces/modules/routes.dart
+[routes.dart]: /lib/interfaces/modules/routes.dart
 
-Root routes (root shell/go route data) are defined in
-[`routes.dart`][root-routes], while the sub-routes will be defined in
-`/routes`. The reason for this is because the typed route can only be annotated
-in single file.
+Root routes are defined in [routes.dart], while the sub-routes will be defined
+in `/routes`. The reason for this is because the typed route can only be
+annotated in single file.
 
-The route screen/widget, it will be defined along with the route data in the same file.
+## Rules
 
-For naming convention, end each route data class name with `Route`, end screen
-class name with `RouteScreen`, typed route annotation end with `Build`, and
-file name with `_route.dart`. Folder naming does not include any suffixes, but
+[/_screens]: /lib/interfaces/modules/_screens.dart
+
+- The route screen  will be defined along with the route data in the same file,
+  except for the root routes which will be defined on [/_screens] folder.
+
+- End route file name with `_route.dart`
+
+- End each route data class name with `Route`
+
+- End route screen class name with `RouteScreen`
+
+- Typed route annotation end with `Build`
+
+- All sub-routes must be exported in the file [routes.dart]
+
+Folder naming does not include any suffixes, but
 remember to store sub routes as `**/routes` folder (e.g
 `routes/root/stories/routes` is sub-routes of
 `routes/root/stories/stories_route.dart` and so on).
 
-For visualization, look at the following example:
+Here's an example:
 
 ```dart
-// lib/interfaces/modules/routes.dart
+// "~" = "<rootDir>/lib/interfaces/modules"
 
-import "routes/auth/sign_in_route.dart";
+// ~/routes.dart
 
-@TypedShellRoute<AuthShellRoute>(routes: [signInRouteBuild])
-final class AuthShellRoute extends ShellRouteData {
-  const AuthShellRoute();
+import "_screens.dart" show RootShellRouteScreen;
+
+import "routes/root/stories_route.dart";
+
+export "routes/root/stories_route.dart";
+
+@TypedShellRoute<RootShellRoute>(routes: [storiesRouteBuild])
+final class RootShellRoute extends ShellRouteData {
+  const RootShellRoute();
 
   @override
   Widget builder(BuildContext context, GoRouterState state, Widget navigator) {
-    return _AuthShellRouteScreen(child: navigator);
+    return RootShellRouteScreen(child: navigator);
   }
 }
 
-class _AuthShellRouteScreen extends StatelessWidget {
-  const _AuthShellRouteScreen({this.child});
+// ~/modules/routes/root/stories_route.dart
 
-  final Widget? child;
+/// [StoriesRoute] build decorator.
+const storiesRouteBuild = TypedGoRoute<StoriesRoute>(path: "/stories");
 
-  @override
-  Widget build(BuildContext context) {
-    // shell screen implementations
-  }
-}
-
-// lib/interfaces/modules/routes/auth/sign_in_route.dart
-
-/// [SignInRoute] build decorator.
-const signInRouteBuild = TypedGoRoute<SignInRoute>(path: "/auth/sign-in");
-
-final class SignInRoute extends GoRouteData {
-  const SignInRoute();
+final class StoriesRoute extends GoRouteData {
+  const StoriesRoute();
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return const _SignInRouteScreen();
+    return const _StoriesRouteScreen();
   }
 }
 
-class _SignInRouteScreen extends StatefulWidget {
-  const _SignInRouteScreen();
-
-  @override
-  State<_SignInRouteScreen> createState() => _SignInRouteScreenState();
-}
-
-class _SignInRouteScreenState extends State<_SignInRouteScreen> {
-  // route screen implementations
+class _StoriesRouteScreen extends StatelessWidget {
+  // screen implementations...
 }
 ```

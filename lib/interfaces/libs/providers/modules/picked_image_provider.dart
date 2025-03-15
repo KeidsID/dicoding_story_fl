@@ -3,7 +3,9 @@ import "dart:convert";
 import "package:camera/camera.dart";
 import "package:flutter/foundation.dart";
 import "package:flutter/material.dart";
+import "package:flutter_riverpod/flutter_riverpod.dart";
 import "package:image_picker/image_picker.dart";
+import "package:riverpod_annotation/riverpod_annotation.dart";
 import "package:shared_preferences/shared_preferences.dart";
 
 import "package:dicoding_story_fl/interfaces/libs/widgets.dart";
@@ -11,201 +13,131 @@ import "package:dicoding_story_fl/libs/constants.dart";
 import "package:dicoding_story_fl/libs/extensions.dart";
 import "package:dicoding_story_fl/service_locator.dart";
 
-import "../libs/types.dart";
+part "picked_image_provider.g.dart";
 
-/// {@template dicoding_story_fl.interfaces.ux.providers.PickedImageProvider}
-/// Picked image from gallery or camera and store it in [value].
-/// {@endtemplate}
-final class PickedImageProvider extends AsyncValueNotifier<XFile?> {
-  /// {@macro dicoding_story_fl.interfaces.ux.providers.PickedImageProvider}
-  PickedImageProvider() : super(null) {
-    cacheService = ServiceLocator.find<SharedPreferences>();
+@riverpod
+class PickedImage extends _$PickedImage {
+  final _cacheKey = "providers.picked_image_provider";
 
-    final cachedImageBytes = cacheService.getString(cacheKey);
-
-    if (cachedImageBytes != null) {
-      final imageBytes = jsonDecode(cachedImageBytes) as List;
-
-      value = XFile.fromData(
-        Uint8List.fromList(
-          imageBytes.map((e) => e is int ? e : int.parse(e)).toList(),
-        ),
-      );
-    }
-
-    if (defaultTargetPlatform == TargetPlatform.android) {
-      Future.microtask(() => _retrieveLostData()).then((_) => null);
-    }
-  }
+  SharedPreferences get _cacheService => ServiceLocator.find();
 
   @override
-  void dispose() {
-    cacheService.remove(cacheKey);
-
-    super.dispose();
+  FutureOr<XFile?> build() async {
+    return _cachedImage ?? await _imagePickerRecovery();
   }
 
-  late final SharedPreferences cacheService;
-  final cacheKey = "providers.picked_image_provider";
+  XFile? get _cachedImage {
+    final cachedImageBytes = _cacheService.getString(_cacheKey);
 
-  /// Reset [value] to `null`.
-  ///
-  /// Incase you need it.
-  void resetValue() {
-    cacheService.remove(cacheKey);
-    value = null;
+    if (cachedImageBytes == null) return null;
+
+    final imageBytes = jsonDecode(cachedImageBytes) as List;
+
+    return XFile.fromData(
+      Uint8List.fromList(
+        imageBytes.map((e) => e is int ? e : int.parse(e)).toList(),
+      ),
+    );
   }
 
-  /// Pick image from gallery or camera.
-  ///
-  /// For non mobile platform on [ImageSource.camera], this method will show
-  /// fullscreen dialog with custom camera support and do the async process
-  /// there.
-  ///
-  /// NOTE: This method will maintain the previous [value] even when you cancel
-  /// to re-pick an image. Refer to [resetValue] to set `null` into [value].
+  set _cachedImage(XFile? value) {
+    if (value == null) {
+      _cacheService.remove(_cacheKey);
+
+      return;
+    }
+
+    Future.microtask(() async {
+      _cacheService.setString(
+        _cacheKey,
+        jsonEncode((await value.readAsBytes()).toList()),
+      );
+    });
+  }
+
+  Future<XFile?> _imagePickerRecovery() async {
+    if (defaultTargetPlatform != TargetPlatform.android) return null;
+
+    final response = await ImagePicker().retrieveLostData();
+
+    return response.file;
+  }
+
   Future<XFile?> pickImage(
+    // ignore: avoid_build_context_in_providers
     BuildContext context, {
     ImageSource source = ImageSource.gallery,
   }) async {
-    isLoading = true;
+    state = const AsyncLoading();
 
-    if (!kIsMobile && source == ImageSource.camera) {
-      final dialogResult = await showDialog<XFile?>(
-        context: context,
-        builder: (_) => const _CustomCamDialog(),
-      );
-
-      if (dialogResult == null) return null;
-
-      cacheService.setString(
-        cacheKey,
-        jsonEncode((await dialogResult.readAsBytes()).toList()),
-      );
-      value = dialogResult;
-
-      return dialogResult;
-    }
+    final isRequireCustomCamera = !kIsMobile && source == ImageSource.camera;
 
     try {
-      final image = await ImagePicker().pickImage(
-        source: source,
-        imageQuality: 50,
-      );
+      final image = await (isRequireCustomCamera
+          ? showDialog<XFile?>(
+              context: context,
+              builder: (_) => const _CustomCameraDialog(),
+            )
+          : ImagePicker().pickImage(source: source, imageQuality: 50));
 
       if (image == null) return null;
 
-      cacheService.setString(
-        cacheKey,
-        jsonEncode((await image.readAsBytes()).toList()),
-      );
-      value = image;
+      _cachedImage = image;
+      state = AsyncData(image);
 
       return image;
     } catch (err, trace) {
       final exception = err.toAppException(
+        trace: trace,
         message: switch (source) {
           ImageSource.camera => "Camera is not available",
           ImageSource.gallery => "Can't access gallery",
         },
-        trace: trace,
       );
 
-      kLogger.e(
-        "PickedImageProvider.pickImage",
-        error: exception,
-        stackTrace: exception.trace,
-      );
-
-      setError(exception, exception.trace);
+      state = AsyncError(exception, exception.trace ?? trace);
 
       return null;
     }
   }
 
-  /// `Android` data recovery.
-  Future<void> _retrieveLostData() async {
-    isLoading = true;
-
-    final LostDataResponse response = await ImagePicker().retrieveLostData();
-
-    if (response.isEmpty) return;
-
-    final file = response.file;
-
-    if (file != null) {
-      value = file;
-      return;
-    }
-
-    final rawException = response.exception;
-
-    if (rawException != null) {
-      final exception = rawException.toAppException(trace: StackTrace.current);
-
-      kLogger.w(
-        "PickedImageProvider._retrieveLostData",
-        error: exception,
-        stackTrace: exception.trace,
-      );
-
-      setError(exception, exception.trace);
-      return;
-    }
-
-    isLoading = false;
-  }
+  Future<bool> removeCache() => _cacheService.remove(_cacheKey);
 }
 
-class _CustomCamDialog extends StatefulWidget {
-  const _CustomCamDialog();
-
-  @override
-  State<_CustomCamDialog> createState() => _CustomCamDialogState();
+@riverpod
+FutureOr<List<CameraDescription>> _cameras(_CamerasRef ref) {
+  return availableCameras();
 }
 
-class _CustomCamDialogState extends State<_CustomCamDialog> {
-  final Future<List<CameraDescription>> _cameras = availableCameras();
+class _CustomCameraDialog extends ConsumerWidget {
+  const _CustomCameraDialog();
 
   @override
-  Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: _cameras,
-      initialData: const <CameraDescription>[],
-      builder: (context, snapshot) {
-        final isLoading = snapshot.connectionState == ConnectionState.waiting;
-        final hasError = snapshot.hasError;
-        final error = snapshot.error;
+  Widget build(BuildContext context, WidgetRef ref) {
+    final camerasAsync = ref.watch(_camerasProvider);
 
-        return Dialog.fullscreen(
-          child: Column(
-            children: [
-              AppBar(leading: const CloseButton()),
-              Expanded(
-                child: isLoading
-                    ? const Center(child: CircularProgressIndicator())
-                    : hasError
-                        ? SizedErrorWidget(
-                            error: error.toAppException(
-                              message: error is CameraException
-                                  ? error.description
-                                  : "Camera is not available",
-                            ),
-                          )
-                        : CustomCamera(
-                            snapshot.data ?? [],
-                            delegate: const CustomCameraDelegate(
-                              enableAudio: false,
-                            ),
-                            onAcceptResult: (result) {
-                              Navigator.maybePop(context, result);
-                            },
-                          ),
+    return Dialog.fullscreen(
+      child: Column(children: [
+        AppBar(leading: const CloseButton()),
+        Expanded(
+          child: switch (camerasAsync) {
+            AsyncData(:final value) => CustomCamera(
+                value,
+                delegate: const CustomCameraDelegate(enableAudio: false),
+                onAcceptResult: (result) => Navigator.maybePop(context, result),
               ),
-            ],
-          ),
-        );
-      },
+            AsyncError(:final error) => SizedErrorWidget(
+                error: error,
+                action: ElevatedButton.icon(
+                  onPressed: () => ref.invalidate(_camerasProvider),
+                  icon: const Icon(Icons.refresh),
+                  label: const Text("Refresh"),
+                ),
+              ),
+            _ => const Center(child: CircularProgressIndicator()),
+          },
+        ),
+      ]),
     );
   }
 }

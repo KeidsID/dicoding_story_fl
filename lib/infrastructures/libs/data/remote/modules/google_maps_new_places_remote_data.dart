@@ -20,7 +20,7 @@ abstract class GoogleMapsNewPlacesRemoteData extends ChopperService {
   }
 
   /// https://developers.google.com/maps/documentation/places/web-service/place-details
-  @Get(path: "/places/{placeId}")
+  @GET(path: "/places/{placeId}")
   Future<Response<Map<String, dynamic>>> placeDetails(
     @path String placeId, {
     @Header("X-Goog-FieldMask") required String fieldMask,
@@ -28,7 +28,7 @@ abstract class GoogleMapsNewPlacesRemoteData extends ChopperService {
   });
 
   /// https://developers.google.com/maps/documentation/places/web-service/text-search
-  @Post(path: "/places:searchText")
+  @POST(path: "/places:searchText")
   Future<Response<Map<String, dynamic>>> textSearch({
     @Header("X-Goog-FieldMask") required String fieldMask,
     @body required Map<String, dynamic> body,

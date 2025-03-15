@@ -1,11 +1,14 @@
-import "package:dicoding_story_fl/libs/constants.dart";
-import "package:dicoding_story_fl/libs/extensions.dart";
+import "package:freezed_annotation/freezed_annotation.dart";
 import "package:injectable/injectable.dart";
 
 import "package:dicoding_story_fl/domain/entities.dart";
 import "package:dicoding_story_fl/domain/repositories.dart";
 import "package:dicoding_story_fl/domain/services.dart";
+import "package:dicoding_story_fl/libs/constants.dart";
+import "package:dicoding_story_fl/libs/extensions.dart";
 import "package:dicoding_story_fl/use_cases/libs/types.dart";
+
+part "get_stories_use_case.freezed.dart";
 
 @singleton
 final class GetStoriesUseCase
@@ -52,19 +55,16 @@ final class GetStoriesUseCase
   }
 }
 
-final class GetStoriesRequestDto {
-  const GetStoriesRequestDto({
-    required this.page,
-    required this.size,
-    this.hasCoordinates = false,
-  });
+@Freezed(copyWith: true)
+class GetStoriesRequestDto with _$GetStoriesRequestDto {
+  const factory GetStoriesRequestDto({
+    /// Fetch pagination order. Must be greater than `0`.
+    required int page,
 
-  /// Fetch pagination order. Must be greater than `0`.
-  final int page;
+    /// Stories count for each [page]. Must be greater than `0`.
+    required int size,
 
-  /// Stories count for each [page]. Must be greater than `0`.
-  final int size;
-
-  /// Include location coordinate on the [Story].
-  final bool hasCoordinates;
+    /// Include location coordinate on the [Story].
+    @Default(false) bool hasCoordinates,
+  }) = _GetStoriesRequestDto;
 }
