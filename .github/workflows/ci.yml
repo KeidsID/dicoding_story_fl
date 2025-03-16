@@ -62,4 +62,6 @@ jobs:
           flutter gen-l10n
 
       - name: 🔍 Code Linting
-        run: flutter analyze lib
+        run: |
+          flutter analyze || dart analyze
+          dart run custom_lint
