@@ -173,6 +173,7 @@ class _AuthRouteScreenState extends ConsumerState<AuthRouteScreen> {
                   // inputs
                   AnimatedSize(
                     duration: Durations.medium1,
+                    curve: Curves.easeInOutSine,
                     child: switch (isSignInVariant) {
                       true => const SizedBox.shrink(),
                       _ => TextField(

@@ -4,6 +4,9 @@ on:
   pull_request:
     branches:
       - main
+    paths:
+      - "{lib,test}/**"
+      - "pubspec.*"
 
   workflow_dispatch:
 
@@ -15,9 +18,6 @@ jobs:
   dependencies:
     name: 📦 Setup Dependencies
     runs-on: ubuntu-latest
-    outputs:
-      fl-cache-key: ${{ steps.fl-setup.outputs.CACHE-KEY }}
-      fl-pub-cache-key: ${{ steps.fl-setup.outputs.PUB-CACHE-KEY }}
 
     steps:
       - name: 📚 Code Checkout
@@ -37,6 +37,10 @@ jobs:
 
       - name: 📦 Get dependencies
         run: flutter pub get
+
+    outputs:
+      fl-cache-key: ${{ steps.fl-setup.outputs.CACHE-KEY }}
+      fl-pub-cache-key: ${{ steps.fl-setup.outputs.PUB-CACHE-KEY }}
 
   lint:
     name: 🔍 Code Linting

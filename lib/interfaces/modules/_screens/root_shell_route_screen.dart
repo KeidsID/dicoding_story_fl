@@ -257,6 +257,7 @@ class _RootShellRouteScreenFAB extends StatelessWidget
 
     return AnimatedSize(
       duration: Durations.medium1,
+      curve: Curves.easeInOutSine,
       child: isNegativeIndex
           ? const SizedBox.shrink()
           : navigationDelegates[currentNavIndex].floatingActionButton ??

@@ -6,9 +6,9 @@
 
 ![Dart version][dart-badge] ![Flutter][fl-badge]
 
-Projects from [dicoding.com flutter class][dicoding-fl] as a practice in
-advanced navigation, use of media (audio, images, and video), and use of maps
-such as Google Maps.
+Simple media social app, project from [dicoding.com flutter class][dicoding-fl]
+as a practice in advanced navigation, use of media (audio, images, and video),
+and use of maps such as Google Maps.
 
 ## Table Of Contents
 
@@ -39,24 +39,24 @@ such as Google Maps.
 
 ### Dependencies
 
-[build-runner]: https://pub.dev/packages/build_runner
+[build_runner]: https://pub.dev/packages/build_runner
 [injectable]: https://pub.dev/packages/injectable
 [freezed]: https://pub.dev/packages/freezed
 [chopper]: https://pub.dev/packages/chopper
 [shared_preferences]: https://pub.dev/packages/shared_preferences
 [go_router]: https://pub.dev/packages/go_router
-[provider]: https://pub.dev/packages/provider
+[riverpod]: https://riverpod.dev
 
 Main packages that are used as foundation for this project.
 
-- [injectable][injectable] -- Dependency injection framework.
-- [freezed][freezed] -- Data model with short and simple syntax.
-- [chopper][chopper] -- HTTP client service.
-- [shared_preferences][shared_preferences] -- Local storage.
-- [go_router][go_router] -- Web friendly routing.
-- [provider][provider] -- State management.
+- [injectable] -- Dependency injection framework.
+- [freezed] -- Data model with short and simple syntax.
+- [chopper] -- HTTP client service.
+- [shared_preferences] -- Local storage.
+- [go_router] -- Web friendly routing.
+- [riverpod] -- State management.
 
-Most of them need to generate its utilities with [build_runner][build-runner].
+Most of them need to generate its utilities with [build_runner].
 
 ### Setup
 
@@ -106,6 +106,8 @@ Most of them need to generate its utilities with [build_runner][build-runner].
 
 - [Dicoding Story API Docs][dicoding-story-api].
 - [Google Maps API Docs][google-maps-docs].
+- [Google Maps Proxy API Docs](https://nest-gmaps-api.fly.dev).
+  - [Source Code](https://github.com/KeidsID/nest-gmaps-api)
 
 ### Project Structures
 

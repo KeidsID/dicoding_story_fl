@@ -145,7 +145,7 @@ class AppImage extends Image {
 /// [AppImage.frameBuilder] default implementation.
 ImageFrameBuilder get _appImageDefaultFrameBuilder {
   const fadeDuration = Durations.medium1;
-  const fadeCurve = Curves.fastOutSlowIn;
+  const fadeCurve = Curves.easeInOutSine;
 
   return (context, child, frame, wasSyncLoaded) {
     if (wasSyncLoaded) return child;
@@ -173,6 +173,11 @@ ImageFrameBuilder get _appImageDefaultFrameBuilder {
 /// [AppImage.errorBuilder] default implementation.
 ImageErrorWidgetBuilder get _appImageDefaultErrorBuilder {
   return (context, _, __) {
-    return const Center(child: Icon(Icons.image_not_supported_outlined));
+    return const Center(
+      child: Icon(
+        Icons.image_not_supported_outlined,
+        size: 40.0,
+      ),
+    );
   };
 }

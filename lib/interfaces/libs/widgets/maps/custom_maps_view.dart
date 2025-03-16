@@ -320,6 +320,7 @@ class _CustomMapsViewState extends State<CustomMapsView> {
 
                     AnimatedCrossFade(
                       duration: Durations.medium1,
+                      sizeCurve: Curves.easeInOutSine,
                       crossFadeState: switch (_mapController) {
                         null => CrossFadeState.showFirst,
                         _ => CrossFadeState.showSecond,

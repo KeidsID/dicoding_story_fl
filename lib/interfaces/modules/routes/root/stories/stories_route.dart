@@ -79,15 +79,17 @@ class _StoriesRouteScreenState extends ConsumerState<_StoriesRouteScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final storiesAsync = ref.watch(storiesProvider);
-
     return Scaffold(
       appBar: AppBar(title: const Text(kAppName)),
-      body: _buildBody(storiesAsync),
+      body: Consumer(builder: (context, ref, _) {
+        return _buildBody(context, ref);
+      }),
     );
   }
 
-  Widget _buildBody(AsyncValue<StoriesProviderValue> storiesAsync) {
+  Widget _buildBody(BuildContext context, WidgetRef ref) {
+    final storiesAsync = ref.watch(storiesProvider);
+
     if (storiesAsync.isLoading) {
       return const Center(child: CircularProgressIndicator());
     }

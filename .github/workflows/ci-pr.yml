@@ -24,10 +24,6 @@ jobs:
     name: 📦 Setup Dependencies
     runs-on: ubuntu-latest
 
-    outputs:
-      fl-cache-key: ${{ steps.fl-setup.outputs.CACHE-KEY }}
-      fl-pub-cache-key: ${{ steps.fl-setup.outputs.PUB-CACHE-KEY }}
-
     steps:
       - name: 📚 Code Checkout
         uses: actions/checkout@v4
@@ -46,6 +42,10 @@ jobs:
 
       - name: 📦 Get dependencies
         run: flutter pub get
+
+    outputs:
+      fl-cache-key: ${{ steps.fl-setup.outputs.CACHE-KEY }}
+      fl-pub-cache-key: ${{ steps.fl-setup.outputs.PUB-CACHE-KEY }}
 
   ci-pr:
     name: 🔍 PR Linting

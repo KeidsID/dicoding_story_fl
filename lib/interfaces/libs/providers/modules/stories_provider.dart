@@ -1,8 +1,9 @@
+import "package:flutter_riverpod/flutter_riverpod.dart";
 import "package:freezed_annotation/freezed_annotation.dart";
 import "package:riverpod_annotation/riverpod_annotation.dart";
-import "package:flutter_riverpod/flutter_riverpod.dart";
 
 import "package:dicoding_story_fl/domain/entities.dart";
+import "package:dicoding_story_fl/interfaces/libs/providers.dart";
 import "package:dicoding_story_fl/libs/extensions.dart";
 import "package:dicoding_story_fl/service_locator.dart";
 import "package:dicoding_story_fl/use_cases.dart";
@@ -19,11 +20,14 @@ part "stories_provider.g.dart";
 class Stories extends _$Stories {
   /// The count of stories to fetch.
   final int _storiesCount = 10;
-
   int get _halfStoriesCount => _storiesCount ~/ 2;
 
   @override
   FutureOr<StoriesProviderValue> build() async {
+    final authAsync = ref.watch(authProvider);
+
+    if (authAsync.isLoading) return const StoriesProviderValue();
+
     try {
       final stories = await _getStories();
 
@@ -98,7 +102,7 @@ class Stories extends _$Stories {
     }
   }
 
-  /// Post a new story, then rebuild the [storiesProvider].
+  /// Post a new story, then reset stories fetch.
   ///
   /// May throw an [AppException].
   Future<void> postStory({
@@ -145,5 +149,5 @@ class StoriesProviderValue with _$StoriesProviderValue {
     ///
     /// You may need to rebuild the [storiesProvider] if this value is `true`.
     @Default(false) bool isLatestPage,
-  }) = _StoriesProviderState;
+  }) = _StoriesProviderValue;
 }
