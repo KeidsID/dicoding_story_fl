@@ -20,13 +20,13 @@ abstract class GoogleMapsGeocodingRemoteData extends ChopperService {
     ));
   }
 
-  @Get(path: "/json")
+  @GET(path: "/json")
   Future<Response<Map<String, dynamic>>> geocoding(
     @query String address, {
     @Query("language") String? languageCode,
   });
 
-  @Get(path: "/json")
+  @GET(path: "/json")
   Future<Response<Map<String, dynamic>>> reverseGeocoding(
     @query String latlng, {
     @Query("language") String? languageCode,

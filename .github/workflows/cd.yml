@@ -19,10 +19,6 @@ jobs:
       contents: write
       pull-requests: write
 
-    outputs:
-      release_created: ${{ steps.rp.outputs.release_created }}
-      created_tag: ${{ steps.rp.outputs.tag_name }}
-
     steps:
       - name: 📚 Code Checkout
         uses: actions/checkout@v4
@@ -34,6 +30,10 @@ jobs:
           manifest-file: release.manifest.json
           config-file: release.config.json
           include-component-in-tag: false
+
+    outputs:
+      release_created: ${{ steps.rp.outputs.release_created }}
+      created_tag: ${{ steps.rp.outputs.tag_name }}
 
   dependencies:
     name: 📦 Setup Dependencies For Deployment

@@ -1,0 +1,7 @@
+{
+  "dart.flutterSdkPath": ".fvm/versions/3.19.6",
+  "files.exclude": {
+    "{.dart_tool,.fvm,.idea}": true,
+    "**/*.{g,freezed,chopper}.dart": true
+  }
+}

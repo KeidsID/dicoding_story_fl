@@ -1,7 +1,8 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-dart run commitlint_cli --edit ${1} || {
-  echo "Commit lint failed. Trying run on fvm..."
-  fvm dart run commitlint_cli --edit ${1}
+d() {
+  dart "$@" || fvm dart "$@"
 }
+
+d run commitlint_cli --edit ${1}

@@ -1,30 +1,26 @@
+import "package:flutter/foundation.dart";
+import "package:riverpod_annotation/riverpod_annotation.dart";
+
 import "package:dicoding_story_fl/domain/entities.dart";
+import "package:dicoding_story_fl/interfaces/libs/providers.dart";
 import "package:dicoding_story_fl/libs/extensions.dart";
 import "package:dicoding_story_fl/service_locator.dart";
 import "package:dicoding_story_fl/use_cases.dart";
 
-import "../libs/types.dart";
+part "story_detail_provider.g.dart";
 
-final class StoryDetailProvider extends AsyncValueNotifier<Story> {
-  StoryDetailProvider(this.storyId) : super(null) {
-    Future.microtask(() => refresh()).then((_) => null);
-  }
+@protected
+@riverpod
+FutureOr<Story> storyDetail(StoryDetailRef ref, String storyId) async {
+  final authAsync = ref.watch(authProvider);
 
-  final String storyId;
+  if (authAsync.isLoading) throw StateError("authProvider is loading");
 
-  /// Refresh [value].
-  Future<void> refresh() async {
-    isLoading = true;
+  try {
+    return await ServiceLocator.find<GetStoryByIdUseCase>().execute(storyId);
+  } catch (err, trace) {
+    final exception = err.toAppException(trace: trace);
 
-    try {
-      value = await ServiceLocator.find<GetStoryByIdUseCase>().execute(
-        storyId,
-      );
-    } catch (err, trace) {
-      final parsedError = err.toAppException(trace: trace);
-
-      setError(parsedError);
-      throw parsedError;
-    }
+    throw exception;
   }
 }

@@ -1,15 +1,14 @@
 import "package:fl_utilities/fl_utilities.dart";
 import "package:flutter/material.dart";
+import "package:flutter_riverpod/flutter_riverpod.dart";
 import "package:go_router/go_router.dart";
-import "package:provider/provider.dart";
 
-import "package:dicoding_story_fl/interfaces/libs/constants.dart";
 import "package:dicoding_story_fl/interfaces/libs/l10n/modules.dart";
 import "package:dicoding_story_fl/interfaces/libs/providers.dart";
 import "package:dicoding_story_fl/interfaces/libs/widgets.dart";
 
 const profileRouteBuild = TypedGoRoute<ProfileRoute>(
-  path: AppRoutePaths.profile,
+  path: "/profile",
 );
 
 final class ProfileRoute extends GoRouteData {
@@ -21,15 +20,19 @@ final class ProfileRoute extends GoRouteData {
   }
 }
 
-class _ProfileRouteScreen extends StatelessWidget {
+class _ProfileRouteScreen extends ConsumerWidget {
   const _ProfileRouteScreen();
 
   final EdgeInsetsGeometry _padding = const EdgeInsets.all(16.0);
 
+  void _handleSignOut(WidgetRef ref) {
+    ref.read(authProvider.notifier).signOut();
+  }
+
   @override
-  Widget build(BuildContext context) {
-    final authProvider = context.watch<AuthProvider>();
-    final user = authProvider.value;
+  Widget build(BuildContext context, WidgetRef ref) {
+    final authAsync = ref.watch(authProvider);
+    final user = authAsync.valueOrNull;
 
     final appL10n = AppL10n.of(context)!;
     final colorScheme = context.colorScheme;
@@ -51,7 +54,7 @@ class _ProfileRouteScreen extends StatelessWidget {
           ListTile(
             iconColor: colorScheme.error,
             textColor: colorScheme.error,
-            onTap: authProvider.isLoading ? null : () => authProvider.logout(),
+            onTap: authAsync.isLoading ? null : () => _handleSignOut(ref),
             leading: const Icon(Icons.logout),
             title: Text(appL10n.logout),
           ),

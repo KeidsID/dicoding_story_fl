@@ -1,22 +1,23 @@
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
-import "package:provider/provider.dart";
+import "package:riverpod_annotation/riverpod_annotation.dart";
 
 import "package:dicoding_story_fl/domain/entities.dart";
-import "package:dicoding_story_fl/interfaces/libs/constants.dart";
 import "package:dicoding_story_fl/interfaces/libs/providers.dart";
 import "package:dicoding_story_fl/interfaces/libs/widgets.dart";
 
 import "routes.dart";
 
+part "router.g.dart";
+
 /// Key that store the [router] state.
 final routerKey = GlobalKey<NavigatorState>();
 
-/// Depend on [AuthProvider].
-///
-/// [routerKey] will presist the [router] state.
-GoRouter router(BuildContext context) {
-  return GoRouter(
+@riverpod
+GoRouter router(RouterRef ref) {
+  final authAsync = ref.watch(authProvider);
+
+  final router = GoRouter(
     navigatorKey: routerKey,
     debugLogDiagnostics: true,
     errorBuilder: (context, state) {
@@ -36,18 +37,17 @@ GoRouter router(BuildContext context) {
       );
     },
     //
-    initialLocation: const SignInRoute().location,
+    initialLocation: const AuthRoute().location,
     routes: $appRoutes,
     //
-    refreshListenable: context.read<AuthProvider>(),
     redirect: (context, state) {
       final currentRoute = state.uri.path;
-      final authProv = context.read<AuthProvider>();
+      final authRoutePath = AuthRoute.fromRouterState(state).location;
 
-      if (authProv.isLoading) return null;
+      if (authAsync.isLoading) return null;
 
-      final isLoggedIn = authProv.value != null;
-      final isAuthRoute = currentRoute.startsWith(AppRoutePaths.auth);
+      final isLoggedIn = authAsync.value != null;
+      final isAuthRoute = currentRoute.startsWith(authRoutePath);
 
       if (isAuthRoute) {
         if (isLoggedIn) return const StoriesRoute().location;
@@ -55,9 +55,12 @@ GoRouter router(BuildContext context) {
         return null;
       }
 
-      if (!isLoggedIn) return const SignInRoute().location;
+      if (!isLoggedIn) return authRoutePath;
 
       return null;
     },
   );
+  ref.onDispose(router.dispose);
+
+  return router;
 }
